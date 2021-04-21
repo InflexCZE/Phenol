@@ -59,5 +59,25 @@ namespace NetPrints.Core
         {
             return Name;
         }
+
+        public static bool operator ==(BaseType a, BaseType b)
+        {
+            if (a is null)
+            {
+                return b is null;
+            }
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(BaseType a, BaseType b)
+        {
+            if (a is null)
+            {
+                return !(b is null);
+            }
+
+            return !a.Equals(b);
+        }
     }
 }
