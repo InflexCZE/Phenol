@@ -99,6 +99,10 @@ namespace NetPrints.Translator
             {
                 return $"{obj}M";
             }
+            else if (type == TypeSpecifier.FromType<bool>())
+            {
+                return obj.ToString().ToLower();
+            }
             else
             {
                 return obj.ToString();
@@ -177,7 +181,7 @@ namespace NetPrints.Translator
             return nodes;
         }
 
-        private static void AddExecNodes(Node node, ref HashSet<Node> nodes)
+        public static void AddExecNodes(Node node, HashSet<Node> nodes)
         {
             nodes.Add(node);
 
@@ -185,7 +189,7 @@ namespace NetPrints.Translator
             {
                 if (pin.OutgoingPin != null && !nodes.Contains(pin.OutgoingPin.Node))
                 {
-                    AddExecNodes(pin.OutgoingPin.Node, ref nodes);
+                    AddExecNodes(pin.OutgoingPin.Node, nodes);
                 }
             }
         }
@@ -199,7 +203,7 @@ namespace NetPrints.Translator
         {
             HashSet<Node> nodes = new HashSet<Node>();
 
-            AddExecNodes(graph.EntryNode, ref nodes);
+            AddExecNodes(graph.EntryNode, nodes);
 
             return nodes;
         }
