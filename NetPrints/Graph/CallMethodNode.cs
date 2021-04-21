@@ -46,11 +46,14 @@ namespace NetPrints.Graph
         {
             get
             {
-                string boundName = MethodSpecifier.Name;
+                string boundName = this.MethodSpecifier.Name;
 
-                if (InputTypePins.Count > 0)
+                if (this.InputTypePins.Count > 0)
                 {
-                    boundName += $"<{string.Join(",", InputTypePins.Select(p => p.InferredType?.Value?.FullCodeName ?? p.Name))}>";
+                    if(this.InputTypePins.Any(x => x.InferredType is not null))
+                    {
+                        boundName += $"<{string.Join(",", this.InputTypePins.Select(p => p.InferredType?.Value?.FullCodeName ?? p.Name))}>";
+                    }
                 }
 
                 return boundName;
