@@ -11,6 +11,7 @@
     <ApplicationIcon>NetPrintsLogo.ico</ApplicationIcon>
     <CodeAnalysisRuleSet>../CSharpRuleSet.ruleset</CodeAnalysisRuleSet>
     <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="ClassEditorWindow.xaml" />
@@ -43,6 +44,7 @@
     <PackageReference Include="System.Management" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LiveLink\LiveLink.csproj" />
     <ProjectReference Include="..\NetPrints\NetPrints.csproj" />
   </ItemGroup>
   <ItemGroup>
