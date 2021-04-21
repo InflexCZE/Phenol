@@ -12,6 +12,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:BoolToDoubleConverter x:Key="FaintToOpacity" True="0.1" False="0.7" />
         <converters:BoolToDoubleConverter x:Key="FaintToThickness" True="2" False="4" />
+        <DoubleCollection x:Key="AnimatedDashes">1</DoubleCollection>
     </UserControl.Resources>
 
     <Grid x:Name="grid" ClipToBounds="True" AllowDrop="True" DragOver="OnDragOver" Drop="OnGridDrop"
@@ -98,6 +99,36 @@
                                     </PathGeometry.Figures>
                                 </PathGeometry>
                             </Path.Data>
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCableAnimated}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard Name="CableAnimation">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:0" Duration="0:0:0" Storyboard.TargetProperty="StrokeDashArray">
+                                                            <DiscreteObjectKeyFrame Value="{StaticResource AnimatedDashes}" KeyTime="0:0:0" />
+                                                        </ObjectAnimationUsingKeyFrames>                                                
+                                                        <DoubleAnimation 
+                                                            Name="OffsetAnimation"
+                                                            From="0"
+                                                            To="-80000" 
+                                                            By="-8" 
+                                                            Duration="1:0:0" 
+                                                            Storyboard.TargetProperty="StrokeDashOffset" />
+                                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:0" Duration="1:0:0" Storyboard.TargetProperty="StrokeDashArray">
+                                                            <DiscreteObjectKeyFrame Value="{x:Null}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <SkipStoryboardToFill BeginStoryboardName="CableAnimation" />
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
                         </Path>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -27,6 +27,9 @@
                 <x:Type TypeName="npc:BinaryType"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <System:String x:Key="CompilationOutputTip">What to output when on compilation</System:String>
+        <System:String x:Key="BinaryTypeTip">Type of binary to output</System:String>
+        <System:String x:Key="LiveLinkTip">Type of LiveLink injection</System:String>
     </Window.Resources>
 
     <mah:MetroWindow.Flyouts>
@@ -49,36 +52,38 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" ToolTip="Type of binary to output" />
+                        <RowDefinition Height="Auto" ToolTip="LiveLink type" />
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Row="0" ToolTip="What to output when on compilation.">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Output" VerticalAlignment="Center" />
 
-                        <ComboBox Grid.Row="0" Grid.Column="1"
-                            FontSize="12" Margin="4" 
-                            IsEnabled="{Binding IsProjectOpen}"
-                            ItemsSource="{Binding Source={StaticResource ProjectCompilationOutputItems}}"
-                            SelectedItem="{Binding Project.CompilationOutput}"/>
-                    </Grid>
-                    
-                    <Grid Grid.Row="1" ToolTip="Type of binary to output.">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Binary type" VerticalAlignment="Center" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="Output" VerticalAlignment="Center" ToolTip="{StaticResource CompilationOutputTip}" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                        ToolTip="{StaticResource CompilationOutputTip}"
+                        FontSize="12" Margin="4" 
+                        IsEnabled="{Binding IsProjectOpen}"
+                        ItemsSource="{Binding Source={StaticResource ProjectCompilationOutputItems}}"
+                        SelectedItem="{Binding Project.CompilationOutput}"/>
 
-                        <ComboBox Grid.Row="0" Grid.Column="1"
-                            FontSize="12" Margin="4" 
-                            IsEnabled="{Binding IsProjectOpen}"
-                            ItemsSource="{Binding Source={StaticResource BinaryTypeItems}}"
-                            SelectedItem="{Binding Project.OutputBinaryType}"/>
-                    </Grid>
+                    <Label Grid.Row="1" Grid.Column="0" Content="Binary type" VerticalAlignment="Center" ToolTip="{StaticResource BinaryTypeTip}" />
+                    <ComboBox Grid.Row="1" Grid.Column="1"
+                        ToolTip="{StaticResource BinaryTypeTip}"
+                        FontSize="12" Margin="4" 
+                        IsEnabled="{Binding IsProjectOpen}"
+                        ItemsSource="{Binding Source={StaticResource BinaryTypeItems}}"
+                        SelectedItem="{Binding Project.OutputBinaryType}"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="LiveLink" VerticalAlignment="Center" ToolTip="{StaticResource LiveLinkTip}"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1"
+                        ToolTip="{StaticResource LiveLinkTip}"
+                        Name="LiveLinkComboBox"
+                        FontSize="12" Margin="4"
+                        IsEnabled="{Binding IsProjectOpen}"
+                        SelectedItem="{Binding Project.LiveLinkType}"/>
                 </Grid>
             </mah:Flyout>
         </mah:FlyoutsControl>

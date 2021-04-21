@@ -21,11 +21,13 @@ namespace NetPrints.Core
     [Flags]
     public enum ProjectCompilationOutput
     {
-        Nothing = 0,
-        SourceCode = 1,
-        Binaries = 2,
-        Errors = 4,
-        All = SourceCode | Binaries | Errors,
+        Nothing    = 0,
+        SourceCode = 1 << 0,
+        Binaries   = 1 << 1,
+        Errors     = 1 << 2,
+        PBScript   = 1 << 3,
+        
+        Default = SourceCode | Binaries | Errors,
     }
 
     public enum BinaryType
@@ -148,8 +150,17 @@ namespace NetPrints.Core
             set;
         }
 
-        private Project()
+        public const string LiveLinkTypeNone = "None";
+
+        /// <summary>
+        /// Type of LifeLink injection
+        /// String so it can be dynamically extended
+        /// </summary>
+        [DataMember]
+        public string LiveLinkType
         {
+            get;
+            set;
         }
 
         public string GetClassStoragePath(ClassGraph cls)
@@ -185,13 +196,14 @@ namespace NetPrints.Core
         /// <param name="addDefaultReferences">Whether to add default references to the project.</param>
         /// <returns>The created project.</returns>
         public static Project CreateNew(string name, string defaultNamespace, bool addDefaultReferences=true,
-            ProjectCompilationOutput compilationOutput=ProjectCompilationOutput.All)
+            ProjectCompilationOutput compilationOutput=ProjectCompilationOutput.Default)
         {
             Project project = new Project()
             {
                 Name = name,
+                LiveLinkType = LiveLinkTypeNone,
                 DefaultNamespace = defaultNamespace,
-                CompilationOutput = compilationOutput
+                CompilationOutput = compilationOutput,
             };
 
             if (addDefaultReferences)
@@ -343,18 +355,7 @@ namespace NetPrints.Core
                 // Translate classes in parallel
                 Parallel.ForEach(Classes, cls =>
                 {
-                    // Translate the class to C#
-                    ClassTranslator classTranslator = new ClassTranslator();
-
-                    string code;
-                    try
-                    {
-                        code = classTranslator.TranslateClass(cls);
-                    }
-                    catch (Exception ex)
-                    {
-                        code = ex.ToString();
-                    }
+                    var code = EmitClassSource(cls, this.CompilationOutput);
 
                     string[] directories = cls.FullName.Split('.');
                     directories = directories
@@ -365,7 +366,7 @@ namespace NetPrints.Core
                     // Write source to file
                     string outputDirectory = System.IO.Path.Combine(directories);
 
-                    System.IO.Directory.CreateDirectory(outputDirectory);
+                    Directory.CreateDirectory(outputDirectory);
 
                     if (CompilationOutput.HasFlag(ProjectCompilationOutput.SourceCode))
                     {
@@ -436,35 +437,73 @@ namespace NetPrints.Core
             IsCompiling = false;
         }
 
-        public IEnumerable<string> GenerateClassSources()
+        public IEnumerable<string> GenerateClassSources(ProjectCompilationOutput? outputType = null)
         {
             if (Classes is null)
             {
                 return new string[0];
             }
 
-            ConcurrentBag<string> classSources = new ConcurrentBag<string>();
+            var ot = outputType ?? this.CompilationOutput;
+            var classSources = new ConcurrentBag<string>();
 
-            // Translate classes in parallel
             Parallel.ForEach(Classes, cls =>
             {
-                // Translate the class to C#
-                ClassTranslator classTranslator = new ClassTranslator();
-
-                string code;
-                try
-                {
-                    code = classTranslator.TranslateClass(cls);
-                }
-                catch (Exception ex)
-                {
-                    code = ex.ToString();
-                }
-
+                var code = EmitClassSource(cls, ot);
                 classSources.Add(code);
             });
 
             return classSources;
+        }
+
+        private static string EmitClassSource(ClassGraph cls, ProjectCompilationOutput outputType)
+        {
+            // Translate the class to C#
+            var classTranslator = new ClassTranslator();
+
+            string code;
+            try
+            {
+                code = classTranslator.TranslateClass(cls);
+
+                if ((outputType & ProjectCompilationOutput.PBScript) != 0)
+                {
+                    if (cls.SuperType.Name == "Sandbox.ModAPI.Ingame.MyGridProgram")
+                    {
+                        const string searchPattern = " : Sandbox.ModAPI.Ingame.MyGridProgram";
+                        var index = code.IndexOf(searchPattern, StringComparison.InvariantCulture);
+                        if (index > 0)
+                        {
+                            index = code.IndexOf('{', index);
+                            if (index > 0)
+                            {
+                                var beginInf = "#if " + CodeCompiler.PreprocessorSymbol + Environment.NewLine;
+                                var endIf = Environment.NewLine + "#endif";
+
+                                var openingBraces = code.Take(index + 1).Count(x => x == '{');
+
+                                code = code.Insert(index + 1, endIf);
+                                code = code.Insert(0, beginInf);
+
+                                index = code.Length;
+                                for (int i = 0; i < openingBraces; i++)
+                                {
+                                    index = code.LastIndexOf('}', index - 1, index);
+                                }
+
+                                code = code.Insert(index, beginInf);
+                                code = code.Insert(code.Length, endIf);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                code = ex.ToString();
+            }
+
+            return code;
         }
 
         public void RunProject()

@@ -20,6 +20,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetPrintsCLI", "NetPrintsCL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetPrintsVSIX", "NetPrintsVSIX\NetPrintsVSIX.csproj", "{F67E1137-28AA-44BD-A173-ECE01D50DC44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLink", "LiveLink\LiveLink.csproj", "{CFB7A036-79AB-4BCF-B8F5-06C7EC5C2079}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceLink", "SpaceLink\SpaceLink.csproj", "{2A52D138-7238-4EDD-B9A2-9BBE0DF1F233}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{F67E1137-28AA-44BD-A173-ECE01D50DC44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F67E1137-28AA-44BD-A173-ECE01D50DC44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F67E1137-28AA-44BD-A173-ECE01D50DC44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFB7A036-79AB-4BCF-B8F5-06C7EC5C2079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFB7A036-79AB-4BCF-B8F5-06C7EC5C2079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFB7A036-79AB-4BCF-B8F5-06C7EC5C2079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFB7A036-79AB-4BCF-B8F5-06C7EC5C2079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A52D138-7238-4EDD-B9A2-9BBE0DF1F233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A52D138-7238-4EDD-B9A2-9BBE0DF1F233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A52D138-7238-4EDD-B9A2-9BBE0DF1F233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A52D138-7238-4EDD-B9A2-9BBE0DF1F233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

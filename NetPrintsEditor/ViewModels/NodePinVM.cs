@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace NetPrintsEditor.ViewModels
 {
@@ -485,6 +485,44 @@ namespace NetPrintsEditor.ViewModels
         public bool IsCableVisible
         {
             get => IsConnected || IsBeingConnected;
+        }
+
+        private bool cableAnimated;
+        public bool IsCableAnimated
+        {
+            get => cableAnimated;
+            set
+            {
+                if(cableAnimated != value)
+                {
+                    cableAnimated = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private DispatcherTimer PingExpirationTimer;
+
+        public void Ping()
+        {
+            var timer = this.PingExpirationTimer;
+            if(timer is null)
+            {
+                this.PingExpirationTimer = timer = new()
+                {
+                    Interval = TimeSpan.FromSeconds(1)
+                };
+
+                timer.Tick += (_, _) =>
+                {
+                    this.IsCableAnimated = false;
+                    timer.Stop();
+                };
+            }
+
+            timer.Stop();
+            timer.Start();
+            this.IsCableAnimated = true;
         }
 
         private void OnConnectedPinNodePositionChanged(Node node, double posX, double posY)

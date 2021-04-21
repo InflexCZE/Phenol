@@ -11,6 +11,8 @@ namespace NetPrints.Compilation
     /// </summary>
     public class CodeCompiler : ICodeCompiler
     {
+        public static readonly string PreprocessorSymbol = "__IN_EDITOR__";
+
         /// <summary>
         /// Compiles code into a binary.
         /// </summary>
@@ -22,7 +24,8 @@ namespace NetPrints.Compilation
         public CodeCompileResults CompileSources(string outputPath, IEnumerable<string> assemblyPaths,
             IEnumerable<string> sources, bool generateExecutable)
         {
-            IEnumerable<SyntaxTree> syntaxTrees = sources.Select(source => SyntaxFactory.ParseSyntaxTree(source));
+            var parseOptions = CSharpParseOptions.Default.WithPreprocessorSymbols(PreprocessorSymbol);
+            IEnumerable<SyntaxTree> syntaxTrees = sources.Select(source => SyntaxFactory.ParseSyntaxTree(source, parseOptions));
             IEnumerable<MetadataReference> references = assemblyPaths.Select(path => MetadataReference.CreateFromFile(path));
             var compilationOptions = new CSharpCompilationOptions(generateExecutable ? OutputKind.ConsoleApplication : OutputKind.DynamicallyLinkedLibrary);
 

@@ -30,7 +30,14 @@ namespace NetPrintsEditor
         {
             InitializeComponent();
 
-            DataContext = new MainEditorVM(null);
+            //TODO: Load from dynamic source
+            this.LiveLinkComboBox.ItemsSource = new[]
+            {
+                Project.LiveLinkTypeNone,
+                "SpaceLink"
+            };
+
+            this.DataContext = new MainEditorVM(null);
 
             if (App.StartupArguments?.Length == 1 && App.StartupArguments[0] != null)
             {

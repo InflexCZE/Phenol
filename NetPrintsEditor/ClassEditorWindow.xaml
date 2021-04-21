@@ -41,7 +41,10 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
             <Button Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" x:Name="compileButton"
@@ -60,6 +63,13 @@
             <Button Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Grid.Column="3" x:Name="saveButton" Margin="5"
                     ToolTip="Saves the project and all its classes."
                     Content="Save" FontWeight="Bold" FontSize="16" Click="OnSaveButtonClicked" />
+
+            <Button Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Grid.Column="5" x:Name="deployButton" Margin="5"
+                    ToolTip="Deploy script ot PB"
+                    Content="Deploy" FontWeight="Bold" FontSize="16" Click="OnDeployButtonClicked" />
+            <Button Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Grid.Column="6" x:Name="attachButton" Margin="5"
+                    ToolTip="Attach to running instance"
+                    Content="Attach" FontWeight="Bold" FontSize="16" Click="OnAttachButtonClicked" />
         </Grid>
 
         <Grid Grid.Row="1">

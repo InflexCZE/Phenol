@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetPrints.Utils;
 
 namespace NetPrints.Translator
 {
@@ -338,18 +339,7 @@ namespace NetPrints.Translator
             }
 
             // Translate every exec node
-            foreach (Node node in execNodes)
-            {
-                if (!(node is MethodEntryNode))
-                {
-                    for (int pinIndex = 0; pinIndex < node.InputExecPins.Count; pinIndex++)
-                    {
-                        builder.AppendLine($"State{nodeStateIds[node][pinIndex]}:");
-                        TranslateNode(node, pinIndex);
-                        builder.AppendLine();
-                    }
-                }
-            }
+            TranslateNodeChain(execNodes);
 
             // Write the jump stack if it was ever used
             if (pinsJumpedTo.Count > 0)
@@ -369,6 +359,57 @@ namespace NetPrints.Translator
 
             // Remove unused labels
             return RemoveUnnecessaryLabels(code);
+        }
+
+        private void TranslateNodeChain(IEnumerable<Node> nodesToTranslate)
+        {
+            var method = this.graph;
+            var @class = graph.Class;
+            var project = @class.Project;
+            var classIndex = project.Classes.IndexOf(@class);
+            var methodIndex = @class.Methods.Cast<NodeGraph>().Concat(@class.Constructors).IndexOf(method);
+
+            string lifeLinkFormat = null;
+
+            if(classIndex >= 0 && methodIndex >= 0)
+            {
+                //TODO: Load from dynamic source
+                switch(project.LiveLinkType)
+                {
+                    case "SpaceLink":
+                        lifeLinkFormat = "__HIT__.Hit({0}, {1}, {2}, {3});";
+                        break;
+                    
+                    case Project.LiveLinkTypeNone:
+                        lifeLinkFormat = null;
+                        break;
+                    
+                    default:
+                        Debug.Fail("Unknown LifeLink type");
+                        goto case Project.LiveLinkTypeNone;
+                }
+            }
+
+            foreach (var node in nodesToTranslate)
+            {
+                if (!(node is MethodEntryNode))
+                {
+                    var nodeIndex = method.Nodes.IndexOf(node);
+
+                    for (int pinIndex = 0; pinIndex < node.InputExecPins.Count; pinIndex++)
+                    {
+                        builder.AppendLine($"State{nodeStateIds[node][pinIndex]}:");
+
+                        if(nodeIndex >= 0 && lifeLinkFormat is not null)
+                        {
+                            builder.AppendLine(string.Format(lifeLinkFormat, classIndex, methodIndex, nodeIndex, pinIndex));
+                        }
+                        
+                        TranslateNode(node, pinIndex);
+                        builder.AppendLine();
+                    }
+                }
+            }
         }
 
         private string RemoveUnnecessaryLabels(string code)

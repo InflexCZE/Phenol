@@ -6,11 +6,18 @@ using NetPrintsEditor.Controls;
 using NetPrintsEditor.Messages;
 using NetPrintsEditor.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LiveLink.Connection;
+using LiveLink.Messages;
+using NetPrints.Utils;
 using static NetPrintsEditor.Commands.NetPrintsCommands;
 
 namespace NetPrintsEditor
@@ -344,6 +351,154 @@ namespace NetPrintsEditor
             // we could get issues like the project still referencing the
             // old class if the project isn't saved.
             ViewModel.Project.Save();
+        }
+
+        private DebugTargets.DebugTarget DebugTarget;
+
+        private async void OnDeployButtonClicked(object sender, RoutedEventArgs e)
+        {
+            var sources = this.ViewModel.Project.GenerateClassSources();
+            var code = string.Join(Environment.NewLine, sources);
+
+            var externalSources = this.ViewModel.Project.References
+                    .OfType<SourceDirectoryReference>()
+                    .Where(sourceRef => sourceRef.IncludeInCompilation)
+                    .SelectMany(sourceRef => sourceRef.SourceFilePaths)
+                    .Select(sourcePath => File.ReadAllText(sourcePath))
+                    .SelectMany(sourceCode =>
+                    {
+                        return sourceCode.SplitByLines().Where(x => x.StartsWith("using ") == false);
+                    });
+
+            code += Environment.NewLine + string.Join(Environment.NewLine, externalSources);
+
+            //TODO: Merge connection code
+            bool dispose = false;
+            Connection connection = null;
+            try
+            {
+                if(this.Connection == null)
+                {
+                    connection = new Connection(Side.Out);
+                    dispose = true;
+                }
+                else
+                {
+                    connection = this.Connection;
+                }
+                
+                var debugTargets = await Request<DebugTargets>.From(connection);
+
+                if(debugTargets.Targets.Count > 0)
+                {
+                    //TODO: Show selection dialog
+                    var target = debugTargets.Targets[0];
+                    connection.Send(new DeployScript
+                    {
+                        Code = code,
+                        DebugTarget = target.Id,
+                    });
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if(dispose)
+                {
+                    connection?.Dispose();
+                }
+            }
+        }
+
+        private Connection Connection;
+
+        private async void OnAttachButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if(this.Connection != null)
+            {
+                Disconnect();
+                return;
+            }
+            
+            void Disconnect()
+            {
+                this.Connection?.Dispose();
+                this.Connection = null;
+
+                attachButton.Content = "Attach";
+                attachButton.IsEnabled = true;
+            }
+
+            attachButton.IsEnabled = false;
+
+            try
+            {
+                this.Connection = new Connection(Side.Out);
+                this.Connection.OnConnectionLost += Disconnect;
+            }
+            catch
+            {
+                Disconnect();
+                return;
+            }
+            
+            var debugTargets = await Request<DebugTargets>.From(Connection);
+
+            var graphVM = this.ViewModel.OpenedGraph;
+            var method = graphVM.Graph;
+            var @class = method.Class;
+            var pinToVM = graphVM.AllPins.ToDictionary(x => x.Pin, x => x);
+
+            var classIndex = @class.Project.Classes.IndexOf(@class);
+            var methodIndex = @class.Methods.Cast<NodeGraph>().Concat(@class.Constructors).IndexOf(method);
+            
+            Connection.RegisterMessageHandler<HitPoints>(message =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    foreach(var hit in message.Ids)
+                    {
+                        if(hit.Class != classIndex || hit.Method != methodIndex)
+                            continue;
+
+                        var pinIndex = hit.PinIndex;
+                        var nodeIndex = hit.NodeIndex;
+
+                        var node = method.Nodes[nodeIndex];
+                        var pin = node.InputExecPins[pinIndex];
+                        if(pin.IncomingPins.Count > 0)
+                        {
+                            var pinToPing = pin.IncomingPins.Last();
+                            pinToVM[pinToPing].Ping();
+                        }
+                    }
+
+                    GC.KeepAlive(Connection);
+                });
+                
+                return true;
+            });
+
+            if(debugTargets.Targets.Count > 0)
+            {
+                //TODO: Show selection dialog
+                this.DebugTarget = debugTargets.Targets[0];
+                this.Connection.OnConnectionLost += () =>
+                {
+                    this.DebugTarget = default;
+                };
+                
+                this.Connection.Send(new HitpointsRequest {Target = this.DebugTarget.Id});
+
+                attachButton.Content = "Detach";
+                attachButton.IsEnabled = true;
+            }
+            else
+            {
+                Disconnect();
+            }
         }
     }
 }
