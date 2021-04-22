@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using NetPrintsEditor.Messages;
 
@@ -511,9 +512,6 @@ namespace NetPrintsEditor.ViewModels
             if (newNode != null)
             {
                 // Remember old exec pins to reconnect them.
-                // Data pin's are trickier to reconnect (or impossible).
-                // They could be reconnected by heuristics (eg. name, type etc.).
-
                 NodeOutputExecPin[] oldIncomingPins = null;
                 NodeInputExecPin oldOutgoingPin = null;
 
@@ -522,6 +520,24 @@ namespace NetPrintsEditor.ViewModels
                 {
                     oldIncomingPins = Node.InputExecPins[0].IncomingPins.ToArray();
                     oldOutgoingPin = Node.OutputExecPins[0].OutgoingPin;
+                }
+                
+                // Data pin's are trickier to reconnect (or impossible).
+                List<(NodeInputDataPin, NodeOutputDataPin)> dataNodesToReconnect = new();
+                var availableInputPins = newNode.InputDataPins.ToList();
+                foreach(var inputPin in this.Node.InputDataPins)
+                {
+                    if(inputPin.IncomingPin is null)
+                        continue;
+
+                    var newInput = availableInputPins.FirstOrDefault(x => x.Name == inputPin.Name && x.PinType.Value == inputPin.PinType.Value)
+                                ?? availableInputPins.FirstOrDefault(x => x.PinType.Value == inputPin.PinType.Value);
+
+                    if(newInput is not null)
+                    {
+                        availableInputPins.Remove(newInput);
+                        dataNodesToReconnect.Add((newInput, inputPin.IncomingPin));
+                    }
                 }
 
                 // Disconnect the old node from other nodes and remove it
@@ -553,6 +569,11 @@ namespace NetPrintsEditor.ViewModels
                             GraphUtil.ConnectExecPins(oldIncomingPin, newNode.InputExecPins[0]);
                         }
                     }
+                }
+
+                foreach(var (input, output) in dataNodesToReconnect)
+                {
+                    GraphUtil.ConnectDataPins(output, input);
                 }
 
                 // Set the node of this view model which will trigger an update
