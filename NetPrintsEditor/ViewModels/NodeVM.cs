@@ -456,7 +456,7 @@ namespace NetPrintsEditor.ViewModels
         /// </summary>
         public bool ShowOverloads
         {
-            get => Overloads.Count > 0;
+            get => this.IsSelected && this.Overloads.Count > 0;
         }
 
         /// <summary>
