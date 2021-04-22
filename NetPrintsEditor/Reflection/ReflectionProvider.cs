@@ -628,11 +628,27 @@ namespace NetPrintsEditor.Reflection
 
                 if (type == null)
                 {
-                    return new VariableSpecifier[0];
+                    return Array.Empty<VariableSpecifier>();
                 }
 
-                propertySymbols = type.GetAllMembers()
-                    .Where(m => m.Kind == SymbolKind.Property || m.Kind == SymbolKind.Field);
+                var typesToVisit = new List<ITypeSymbol>(4);
+
+                typesToVisit.Add(type);
+                if(type.TypeKind == TypeKind.Interface)
+                {
+                    typesToVisit.AddRange(type.AllInterfaces);
+                }
+                else
+                {
+                    var @base = type.BaseType;
+                    while(@base != null)
+                    {
+                        typesToVisit.Add(@base);
+                        @base = @base.BaseType;
+                    }
+                }
+
+                propertySymbols = typesToVisit.SelectMany(x => x.GetMembers().Where(m => m.Kind == SymbolKind.Property || m.Kind == SymbolKind.Field));
             }
             else
             {
