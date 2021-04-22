@@ -26,9 +26,8 @@ namespace NetPrintsEditor.Messages
                 throw new ArgumentException("Invalid type for node");
             }
 
-            // TODO: Get MethodGraph / ConstructorGraph is graph is one of them.
-            Type[] constructorParamTypes = (new Type[] { typeof(NodeGraph) }).Concat
-                (constructorParameters.Select(p => p.GetType()))
+            var constructorParamTypes = new[] { graph.GetType() }
+                .Concat(constructorParameters.Select(p => p.GetType()))
                 .ToArray();
 
             if (nodeType.GetConstructor(constructorParamTypes) == null)
