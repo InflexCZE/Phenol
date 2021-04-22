@@ -41,7 +41,7 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ComboBox IsEditable="True"
+        <ComboBox IsEditable="True" Name="SelectionBox"
             SelectedItem="{Binding SelectedType, ElementName=wnd}" 
             ItemsSource="{Binding Source={x:Static npe:App.NonStaticTypes}}"/>
 

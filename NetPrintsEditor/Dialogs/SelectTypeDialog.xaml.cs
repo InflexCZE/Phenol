@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using NetPrints.Core;
 using System.Windows;
+using NetPrintsEditor.Utils;
 
 namespace NetPrintsEditor.Dialogs
 {
@@ -23,6 +24,7 @@ namespace NetPrintsEditor.Dialogs
             InitializeComponent();
 
             SelectedType = TypeSpecifier.FromType<object>();
+            this.SelectionBox.MakeComboBoxSearchable();
         }
 
         private void OnSelectButtonClicked(object sender, RoutedEventArgs e)
