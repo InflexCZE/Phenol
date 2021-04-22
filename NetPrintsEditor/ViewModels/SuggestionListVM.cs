@@ -139,16 +139,8 @@ namespace NetPrintsEditor.ViewModels
                 }
                 else if (t == TypeSpecifier.FromType<ConstructorNode>())
                 {
-                    SelectTypeDialog selectTypeDialog = new SelectTypeDialog();
-                    if (selectTypeDialog.ShowDialog() == true)
+                    if (PromptForType(out var selectedType))
                     {
-                        TypeSpecifier selectedType = selectTypeDialog.SelectedType;
-
-                        if (selectedType.Equals(null))
-                        {
-                            throw new Exception($"Type {selectTypeDialog.SelectedType} was not found using reflection.");
-                        }
-
                         // Get all public constructors for the type
                         IEnumerable<ConstructorSpecifier> constructors =
                             App.ReflectionProvider.GetConstructors(selectedType);
@@ -195,32 +187,16 @@ namespace NetPrintsEditor.ViewModels
                 }
                 else if (t == TypeSpecifier.FromType<LiteralNode>())
                 {
-                    SelectTypeDialog selectTypeDialog = new SelectTypeDialog();
-                    if (selectTypeDialog.ShowDialog() == true)
+                    if (PromptForType(out var selectedType))
                     {
-                        TypeSpecifier selectedType = selectTypeDialog.SelectedType;
-
-                        if (selectedType.Equals(null))
-                        {
-                            throw new Exception($"Type {selectTypeDialog.SelectedType} was not found using reflection.");
-                        }
-
                         // LiteralNode(Method method, TypeSpecifier literalType)
                         AddNode<LiteralNode>(selectedType);
                     }
                 }
                 else if (t == TypeSpecifier.FromType<TypeNode>())
                 {
-                    SelectTypeDialog selectTypeDialog = new SelectTypeDialog();
-                    if (selectTypeDialog.ShowDialog() == true)
+                    if (PromptForType(out var selectedType))
                     {
-                        TypeSpecifier selectedType = selectTypeDialog.SelectedType;
-
-                        if (selectedType.Equals(null))
-                        {
-                            throw new Exception($"Type {selectTypeDialog.SelectedType} was not found using reflection.");
-                        }
-
                         // LiteralNode(Method method, TypeSpecifier literalType)
                         AddNode<TypeNode>(selectedType);
                     }
@@ -244,5 +220,22 @@ namespace NetPrintsEditor.ViewModels
                 }
             }
         }
+
+        private static bool PromptForType(out TypeSpecifier type)
+        {
+            SelectTypeDialog selectTypeDialog = new SelectTypeDialog();
+            if (selectTypeDialog.ShowDialog() == true)
+            {
+                type = selectTypeDialog.SelectedType;
+                if(type is not null && type.Equals(null) == false)
+                {
+                    return true;
+                }
+            }
+
+            type = default;
+            return false;
+        }
+
     }
 }
