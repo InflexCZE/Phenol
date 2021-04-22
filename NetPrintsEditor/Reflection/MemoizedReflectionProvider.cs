@@ -34,40 +34,40 @@ namespace NetPrintsEditor.Reflection
         public void Reset()
         {
             memoizedGetConstructors = provider.GetConstructors;
-            memoizedGetConstructors = memoizedGetConstructors.Memoize();
+            memoizedGetConstructors = memoizedGetConstructors.Memorize();
 
             memoizedGetEnumNames = provider.GetEnumNames;
-            memoizedGetEnumNames = memoizedGetEnumNames.Memoize();
+            memoizedGetEnumNames = memoizedGetEnumNames.Memorize();
 
             memoizedGetMethodDocumentation = provider.GetMethodDocumentation;
-            memoizedGetMethodDocumentation = memoizedGetMethodDocumentation.Memoize();
+            memoizedGetMethodDocumentation = memoizedGetMethodDocumentation.MemorizeValue();
 
             memoizedGetMethodParameterDocumentation = provider.GetMethodParameterDocumentation;
-            memoizedGetMethodParameterDocumentation = memoizedGetMethodParameterDocumentation.Memoize();
+            memoizedGetMethodParameterDocumentation = memoizedGetMethodParameterDocumentation.MemorizeValue();
 
             memoizedGetMethodReturnDocumentation = provider.GetMethodReturnDocumentation;
-            memoizedGetMethodReturnDocumentation = memoizedGetMethodReturnDocumentation.Memoize();
+            memoizedGetMethodReturnDocumentation = memoizedGetMethodReturnDocumentation.MemorizeValue();
 
             memoizedGetNonStaticTypes = provider.GetNonStaticTypes;
-            memoizedGetNonStaticTypes = memoizedGetNonStaticTypes.Memoize();
+            memoizedGetNonStaticTypes = memoizedGetNonStaticTypes.Memorize();
 
             memoizedGetOverridableMethodsForType = provider.GetOverridableMethodsForType;
-            memoizedGetOverridableMethodsForType = memoizedGetOverridableMethodsForType.Memoize();
+            memoizedGetOverridableMethodsForType = memoizedGetOverridableMethodsForType.Memorize();
 
             memoizedGetMethods = provider.GetMethods;
-            memoizedGetMethods = memoizedGetMethods.Memoize();
+            memoizedGetMethods = memoizedGetMethods.Memorize();
 
             memoizedGetPublicMethodOverloads = provider.GetPublicMethodOverloads;
-            memoizedGetPublicMethodOverloads = memoizedGetPublicMethodOverloads.Memoize();
+            memoizedGetPublicMethodOverloads = memoizedGetPublicMethodOverloads.Memorize();
 
             memoizedGetVariables = provider.GetVariables;
-            memoizedGetVariables = memoizedGetVariables.Memoize();
+            memoizedGetVariables = memoizedGetVariables.Memorize();
 
             memoizedHasImplicitCast = provider.HasImplicitCast;
-            memoizedHasImplicitCast = memoizedHasImplicitCast.Memoize();
+            memoizedHasImplicitCast = memoizedHasImplicitCast.MemorizeValue();
 
             memoizedTypeSpecifierIsSubclassOf = provider.TypeSpecifierIsSubclassOf;
-            memoizedTypeSpecifierIsSubclassOf = memoizedTypeSpecifierIsSubclassOf.Memoize();
+            memoizedTypeSpecifierIsSubclassOf = memoizedTypeSpecifierIsSubclassOf.MemorizeValue();
         }
 
         public IEnumerable<ConstructorSpecifier> GetConstructors(TypeSpecifier typeSpecifier)

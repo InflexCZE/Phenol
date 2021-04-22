@@ -59,85 +59,58 @@ namespace NetPrints.Core
     /// </summary>
     [Serializable]
     [DataContract]
-    public partial class MethodSpecifier
+    public class MethodSpecifier
     {
         /// <summary>
         /// Name of the method without any prefixes.
         /// </summary>
         [DataMember]
-        public string Name
-        {
-            get;
-            private set;
-        }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Specifier for the type this method is contained in.
         /// </summary>
         [DataMember]
-        public TypeSpecifier DeclaringType
-        {
-            get;
-            private set;
-        }
+        public TypeSpecifier DeclaringType { get; private set; }
 
         /// <summary>
         /// Named specifiers for the types this method takes as arguments.
         /// </summary>
         [DataMember]
-        public IList<MethodParameter> Parameters
-        {
-            get;
-            private set;
-        }
+        public IList<MethodParameter> Parameters { get; private set; }
 
         /// <summary>
         /// Specifiers for the types this method takes as arguments.
         /// </summary>
-        public IReadOnlyList<BaseType> ArgumentTypes
-        {
-            get => Parameters.Select(t => (BaseType)t).ToArray();
-        }
+        public IReadOnlyList<BaseType> ArgumentTypes => this.ArgumentTypesFast.ToArray();
+        
+        private IEnumerable<BaseType> ArgumentTypesFast => this.Parameters.Select(t => (BaseType)t);
 
         /// <summary>
         /// Specifiers for the types this method returns.
         /// </summary>
         [DataMember]
-        public IList<BaseType> ReturnTypes
-        {
-            get;
-            private set;
-        }
+        public IList<BaseType> ReturnTypes { get; private set; }
 
         /// <summary>
         /// Modifiers this method has.
         /// </summary>
         [DataMember]
-        public MethodModifiers Modifiers
-        {
-            get;
-            private set;
-        }
+        public MethodModifiers Modifiers { get; private set; }
 
         /// <summary>
         /// Visibility of this method.
         /// </summary>
         [DataMember]
-        public MemberVisibility Visibility
-        {
-            get;
-            private set;
-        }
+        public MemberVisibility Visibility { get; private set; }
 
         /// <summary>
         /// Generic arguments this method takes.
         /// </summary>
         [DataMember]
-        public IList<BaseType> GenericArguments
-        {
-            get;
-            private set;
-        }
+        public IList<BaseType> GenericArguments { get; private set; }
+
+        private readonly int HashCodeCache;
 
         /// <summary>
         /// Creates a MethodSpecifier.
@@ -148,17 +121,35 @@ namespace NetPrints.Core
         /// <param name="modifiers">Modifiers of the method.</param>
         /// <param name="declaringType">Specifier for the type this method is contained in.</param>
         /// <param name="genericArguments">Generic arguments this method takes.</param>
-        public MethodSpecifier(string name, IEnumerable<MethodParameter> arguments,
-            IEnumerable<BaseType> returnTypes, MethodModifiers modifiers, MemberVisibility visibility, TypeSpecifier declaringType,
-            IList<BaseType> genericArguments)
+        public MethodSpecifier
+        (
+            string name, 
+            IEnumerable<MethodParameter> arguments,
+            IEnumerable<BaseType> returnTypes, 
+            MethodModifiers modifiers, 
+            MemberVisibility visibility, 
+            TypeSpecifier declaringType,
+            IEnumerable<BaseType> genericArguments
+        )
         {
-            Name = name;
-            DeclaringType = declaringType;
-            Parameters = arguments.ToList();
-            ReturnTypes = returnTypes.ToList();
-            Modifiers = modifiers;
-            Visibility = visibility;
-            GenericArguments = genericArguments.ToList();
+            this.Name = name;
+            this.DeclaringType = declaringType;
+            this.Parameters = arguments.ToList();
+            this.ReturnTypes = returnTypes.ToList();
+            this.Modifiers = modifiers;
+            this.Visibility = visibility;
+            this.GenericArguments = genericArguments.ToList();
+
+            this.HashCodeCache = HashCode.Combine
+            (
+                this.Name, 
+                this.Modifiers, 
+                string.Join(",", this.GenericArguments), 
+                string.Join(",", this.ReturnTypes), 
+                string.Join(",", this.Parameters), 
+                this.Visibility, 
+                this.DeclaringType
+            );
         }
 
         public override string ToString()
@@ -196,22 +187,23 @@ namespace NetPrints.Core
             if (obj is MethodSpecifier methodSpec)
             {
                 return
-                    methodSpec.Name == Name
+                    methodSpec.Modifiers == Modifiers
+                    && methodSpec.Parameters.Count == Parameters.Count
+                    && methodSpec.Name == Name
                     && methodSpec.DeclaringType == DeclaringType
-                    && methodSpec.ArgumentTypes.SequenceEqual(ArgumentTypes)
                     && methodSpec.ReturnTypes.SequenceEqual(ReturnTypes)
-                    && methodSpec.Modifiers == Modifiers
-                    && methodSpec.GenericArguments.SequenceEqual(GenericArguments);
-            }
-            else
-            {
-                return base.Equals(obj);
-            }
-        }
+                    && methodSpec.GenericArguments.SequenceEqual(GenericArguments)
 
+                    //TODO: This doesn't seem right. Hash code is calculated based on full parameters while Equality is based only on parameters
+                    && methodSpec.ArgumentTypesFast.SequenceEqual(ArgumentTypesFast);
+            }
+
+            return base.Equals(obj);
+        }
+        
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Modifiers, string.Join(",", GenericArguments), string.Join(",", ReturnTypes), string.Join(",", Parameters), Visibility, DeclaringType);
+            return this.HashCodeCache;
         }
 
         public static bool operator==(MethodSpecifier a, MethodSpecifier b)

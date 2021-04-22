@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace NetPrintsEditor.Reflection
@@ -7,28 +8,19 @@ namespace NetPrintsEditor.Reflection
     {
         // https://stackoverflow.com/a/2852595/4332314
 
-        public static Func<R> Memoize<R>(this Func<R> f)
+        public static Func<IEnumerable<R>> Memorize<R>(this Func<IEnumerable<R>> f)
         {
-            R r = default;
-
-            return () =>
-            {
-                if (r == null)
-                {
-                    r = f();
-                }
-
-                return r;
-            };
+            IEnumerable<R> r = null;
+            return () => r ??= f().ToArray();
         }
-
-        public static Func<A, R> Memoize<A, R>(this Func<A, R> f)
+        
+        public static Func<A, R> MemorizeValue<A, R>(this Func<A, R> f)
         {
             var d = new Dictionary<A, R>();
 
             return a =>
             {
-                if (!d.TryGetValue(a, out R r))
+                if (!d.TryGetValue(a, out var r))
                 {
                     r = f(a);
                     d.Add(a, r);
@@ -38,19 +30,29 @@ namespace NetPrintsEditor.Reflection
             };
         }
 
-        public static Func<A, B, R> Memoize<A, B, R>(this Func<A, B, R> f)
+        public static Func<A, IEnumerable<R>> Memorize<A, R>(this Func<A, IEnumerable<R>> f)
         {
-            return f.Tuplify().Memoize().Detuplify();
+            return ((Func<A, IEnumerable<R>>)(a => f(a).ToArray())).MemorizeValue();
         }
 
-        public static Func<Tuple<A, B>, R> Tuplify<A, B, R>(this Func<A, B, R> f)
+        public static Func<A, B, R> MemorizeValue<A, B, R>(this Func<A, B, R> f)
+        {
+            return f.Tuplify().MemorizeValue().Detuplify();
+        }
+        
+        public static Func<A, B, IEnumerable<R>> Memorize<A, B, R>(this Func<A, B, IEnumerable<R>> f)
+        {
+            return f.Tuplify().Memorize().Detuplify();
+        }
+
+        public static Func<ValueTuple<A, B>, R> Tuplify<A, B, R>(this Func<A, B, R> f)
         {
             return t => f(t.Item1, t.Item2);
         }
 
-        public static Func<A, B, R> Detuplify<A, B, R>(this Func<Tuple<A, B>, R> f)
+        public static Func<A, B, R> Detuplify<A, B, R>(this Func<ValueTuple<A, B>, R> f)
         {
-            return (a, b) => f(Tuple.Create(a, b));
+            return (a, b) => f((a, b));
         }
     }
 }

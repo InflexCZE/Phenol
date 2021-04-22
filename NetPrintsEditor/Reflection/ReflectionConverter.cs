@@ -11,24 +11,19 @@ namespace NetPrintsEditor.Reflection
     /// </summary>
     public static class ReflectionConverter
     {
-        private static readonly Dictionary<Microsoft.CodeAnalysis.Accessibility, MemberVisibility> roslynToNetprintsVisibility = new Dictionary<Microsoft.CodeAnalysis.Accessibility, MemberVisibility>()
+        public static MemberVisibility VisibilityFromAccessibility(Accessibility accessibility)
         {
-            [Microsoft.CodeAnalysis.Accessibility.Private] = MemberVisibility.Private,
-            [Microsoft.CodeAnalysis.Accessibility.Protected] = MemberVisibility.Protected,
-            [Microsoft.CodeAnalysis.Accessibility.Public] = MemberVisibility.Public,
-            [Microsoft.CodeAnalysis.Accessibility.Internal] = MemberVisibility.Internal,
-        };
-
-        public static MemberVisibility VisibilityFromAccessibility(Microsoft.CodeAnalysis.Accessibility accessibility)
-        {
-            if (roslynToNetprintsVisibility.TryGetValue(accessibility, out var visibility))
+            return accessibility switch
             {
-                return visibility;
-            }
-
-            // TODO: Do this correctly (eg. internal protected, private protected etc.)
-            // https://stackoverflow.com/a/585869/4332314
-            return MemberVisibility.Public;
+                Accessibility.Private   => MemberVisibility.Private,
+                Accessibility.Protected => MemberVisibility.Protected,
+                Accessibility.Public    => MemberVisibility.Public,
+                Accessibility.Internal  => MemberVisibility.Internal,
+                
+                // TODO: Do this correctly (eg. internal protected, private protected etc.)
+                // https://stackoverflow.com/a/585869/4332314
+                _ => MemberVisibility.Public
+            };
         }
 
         public static TypeSpecifier TypeSpecifierFromSymbol(ITypeSymbol type)
@@ -120,7 +115,7 @@ namespace NetPrintsEditor.Reflection
             [RefKind.In] = MethodParameterPassType.In,
         };
 
-        public static MethodParameter MethodParameterFromSymbol(in IParameterSymbol paramSymbol)
+        public static MethodParameter MethodParameterFromSymbol(IParameterSymbol paramSymbol)
         {
             return new MethodParameter(paramSymbol.Name, BaseTypeSpecifierFromSymbol(paramSymbol.Type), refKindToPassType[paramSymbol.RefKind],
                 paramSymbol.HasExplicitDefaultValue, paramSymbol.HasExplicitDefaultValue ? paramSymbol.ExplicitDefaultValue : null);
@@ -162,24 +157,23 @@ namespace NetPrintsEditor.Reflection
                 modifiers |= MethodModifiers.Async;
             }
 
-            BaseType[] returnTypes = method.ReturnsVoid ?
-                new BaseType[] { } :
-                new BaseType[] { BaseTypeSpecifierFromSymbol(method.ReturnType) };
+            var returnTypes = method.ReturnsVoid ?
+                Array.Empty<BaseType>() :
+                new[] { BaseTypeSpecifierFromSymbol(method.ReturnType) };
 
-            MethodParameter[] parameters = method.Parameters.Select(
-                p => MethodParameterFromSymbol(p)).ToArray();
+            var parameters = method.Parameters.Select(p => MethodParameterFromSymbol(p));
+            var genericArgs = method.TypeParameters.Select(p => BaseTypeSpecifierFromSymbol(p));
 
-            BaseType[] genericArgs = method.TypeParameters.Select(
-                p => BaseTypeSpecifierFromSymbol(p)).ToArray();
-
-            return new MethodSpecifier(
+            return new MethodSpecifier
+            (
                 method.Name,
                 parameters,
                 returnTypes,
                 modifiers,
                 visibility,
                 TypeSpecifierFromSymbol(method.ContainingType),
-                genericArgs);
+                genericArgs
+            );
         }
 
         public static VariableSpecifier VariableSpecifierFromSymbol(IPropertySymbol property)

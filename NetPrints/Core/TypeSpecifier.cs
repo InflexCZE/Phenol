@@ -220,7 +220,13 @@ namespace NetPrints.Core
         /// <returns>Whether the generic arguments for the types match.</returns>
         public bool GenericArgumentsEqual(TypeSpecifier t)
         {
-            return GenericArguments.SequenceEqual(t.GenericArguments);
+            if(this.GenericArguments.Count == 0 && t.GenericArguments.Count == 0)
+            {
+                //Fast path for common case
+                return true;
+            }
+
+            return this.GenericArguments.SequenceEqual(t.GenericArguments);
         }
 
         public override int GetHashCode()

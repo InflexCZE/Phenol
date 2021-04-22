@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Threading;
 
 namespace NetPrintsEditor.ViewModels
 {
@@ -74,6 +75,8 @@ namespace NetPrintsEditor.ViewModels
 
         public event EventHandler OnHideContextMenu;
 
+        private DispatcherTimer SuggestionWarmupTimer;
+
         private List<object> GetBuiltInNodes(NodeGraph graph)
         {
             if (builtInNodes.TryGetValue(graph.GetType(), out var nodes))
@@ -86,11 +89,17 @@ namespace NetPrintsEditor.ViewModels
 
         public void UpdateSuggestions(double mouseX, double mouseY)
         {
-            SuggestionViewModel.Graph = Graph;
-            SuggestionViewModel.PositionX = mouseX;
-            SuggestionViewModel.PositionY = mouseY;
-            SuggestionViewModel.SuggestionPin = SuggestionPin;
-            SuggestionViewModel.HideContextMenu = () => OnHideContextMenu?.Invoke(this, EventArgs.Empty);
+            if(this.SuggestionWarmupTimer != null)
+            {
+                this.SuggestionWarmupTimer.Stop();
+                this.SuggestionWarmupTimer = null;
+            }
+
+            this.SuggestionViewModel.Graph = Graph;
+            this.SuggestionViewModel.PositionX = mouseX;
+            this.SuggestionViewModel.PositionY = mouseY;
+            this.SuggestionViewModel.SuggestionPin = SuggestionPin;
+            this.SuggestionViewModel.HideContextMenu = () => OnHideContextMenu?.Invoke(this, EventArgs.Empty);
 
             // Show all relevant methods for the type of the pin
             IEnumerable<(string, object)> suggestions = new (string, object)[0];
@@ -232,8 +241,6 @@ namespace NetPrintsEditor.ViewModels
                                 .WithVisibleFrom(Graph.Class.Type)));
                     }
                 }
-
-                Suggestions = suggestions.Distinct().Select(x => new SearchableComboBoxItem(x.Item1, x.Item2));
             }
             else
             {
@@ -273,7 +280,7 @@ namespace NetPrintsEditor.ViewModels
                 }
             }
 
-            Suggestions = suggestions.Distinct().Select(x => new SearchableComboBoxItem(x.Item1, x.Item2));
+            this.Suggestions = suggestions.Distinct().Select(x => new SearchableComboBoxItem(x.Item1, x.Item2));
         }
 
         public IEnumerable<NodeVM> SelectedNodes
@@ -846,5 +853,20 @@ namespace NetPrintsEditor.ViewModels
         }
 
         public void AddNode(AddNodeMessage msg) => OnAddNodeReceived(msg);
+
+        public void ScheduleSuggestionWarmup()
+        {
+            this.SuggestionWarmupTimer = new DispatcherTimer(DispatcherPriority.ContextIdle)
+            {
+                Interval = TimeSpan.FromSeconds(5),
+            };
+
+            this.SuggestionWarmupTimer.Tick += (_, _) =>
+            {
+                UpdateSuggestions(0, 0);
+            };
+
+            this.SuggestionWarmupTimer.Start();
+        }
     }
 }
