@@ -107,24 +107,23 @@ namespace NetPrints.Translator
         {
             if (pin.IncomingPin == null)
             {
+                var valueType = (TypeSpecifier)pin.PinType.Value;
+                
                 if (pin.UsesUnconnectedValue && pin.UnconnectedValue != null)
                 {
-                    return TranslatorUtil.ObjectToLiteral(pin.UnconnectedValue, (TypeSpecifier)pin.PinType.Value);
+                    return TranslatorUtil.ObjectToLiteral(pin.UnconnectedValue, valueType);
                 }
-                else if (pin.UsesExplicitDefaultValue)
+                
+                if (pin.UsesExplicitDefaultValue)
                 {
-                    return null;
+                    return TranslatorUtil.ObjectToLiteral(pin.ExplicitDefaultValue, valueType);
                 }
-                else
-                {
-                    throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
-                    //return $"default({pin.PinType.Value.FullCodeName})";
-                }
+
+                throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+                //return $"default({pin.PinType.Value.FullCodeName})";
             }
-            else
-            {
-                return GetOrCreatePinName(pin.IncomingPin);
-            }
+
+            return GetOrCreatePinName(pin.IncomingPin);
         }
 
         private IEnumerable<string> GetOrCreatePinNames(IEnumerable<NodeOutputDataPin> pins)
