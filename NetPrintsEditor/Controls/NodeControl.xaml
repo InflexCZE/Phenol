@@ -18,11 +18,11 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis" True="Visible" False="Collapsed" />
         <converters:BoolToVisibilityConverter x:Key="InverseBoolToVis" True="Collapsed" False="Visible" />
-        <converters:BoolToDoubleConverter x:Key="BoolToDouble" True="56" False="224" />
+        <converters:BoolToDoubleConverter x:Key="BoolToRerouteNodeSize" True="56" False="224" />
         <converters:BoolToThicknessConverter x:Key="MarginConverter" True="0" False="10,10,10,5" />
     </UserControl.Resources>
 
-    <Grid MinWidth="{Binding IsRerouteNode, Converter={StaticResource ResourceKey=BoolToDouble}}"
+    <Grid MinWidth="{Binding IsRerouteNode, Converter={StaticResource ResourceKey=BoolToRerouteNodeSize}}"
           Cursor="Hand" ToolTip="{Binding ToolTip}">
         <Rectangle Stroke="{Binding BorderBrush}" StrokeThickness="2" Fill="#AA202020">
             <Rectangle.Effect>
