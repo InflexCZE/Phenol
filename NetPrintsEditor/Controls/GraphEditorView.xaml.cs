@@ -73,7 +73,7 @@ namespace NetPrintsEditor.Controls
             Canvas.SetLeft(variableGetSet, pos.X - variableGetSet.Width / 2);
             Canvas.SetTop(variableGetSet, pos.Y - variableGetSet.Height / 2);
 
-            variableGetSet.Visibility = Visibility.Visible;
+            variableGetSet.ShowOrSelect();
         }
 
         public void HideVariableGetSet()

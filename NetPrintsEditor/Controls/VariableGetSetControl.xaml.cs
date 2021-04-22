@@ -55,5 +55,27 @@ namespace NetPrintsEditor.Controls
         {
             OnVariableGetSet?.Invoke(this, VariableSpecifier, false);
         }
+
+        public void ShowOrSelect()
+        {
+            var get = this.CanGet;
+            var set = this.CanSet;
+
+            if(get != set)
+            {
+                if(get)
+                {
+                    OnVariableGetClicked(this, null);
+                }
+                else
+                {
+                    OnVariableSetClicked(this, null);
+                }
+            }
+            else
+            {
+                this.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
