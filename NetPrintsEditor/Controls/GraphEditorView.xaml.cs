@@ -254,7 +254,7 @@ namespace NetPrintsEditor.Controls
         private const double DrawCanvasMaxScale = 1.0;
         private const double DrawCanvasScaleFactor = 1.3;
 
-        private void SelectWithinRectangle(Rect rectangle)
+        private void SelectWithinRectangle(Rect rectangle, NodeSelectionMessage.Mode selectionMode)
         {
             if (Graph != null)
             {
@@ -278,16 +278,25 @@ namespace NetPrintsEditor.Controls
                     }
                 }
 
-                Graph.SelectNodes(selectedNodes);
+                Graph.SelectNodes(selectedNodes, selectionMode);
             }
         }
 
+        private static bool IsAddToSelectionPressed => Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+        private static bool IsToggleSelectionPressed => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+        public static NodeSelectionMessage.Mode CurrentSelectionMode => IsAddToSelectionPressed  ? NodeSelectionMessage.Mode.Add :
+                                                                        IsToggleSelectionPressed ? NodeSelectionMessage.Mode.Toggle :
+                                                                                                   NodeSelectionMessage.Mode.Set;
+
         private void OnDrawCanvasLeftMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Deselect node
-            if (Graph?.SelectedNodes != null)
+            if (this.Graph?.SelectedNodes != null)
             {
-                Graph.DeselectNodes();
+                if(IsAddToSelectionPressed == false && IsToggleSelectionPressed == false)
+                {
+                    this.Graph.DeselectNodes();
+                }
             }
 
             boxSelect = true;
@@ -310,7 +319,17 @@ namespace NetPrintsEditor.Controls
                 drawCanvas.ReleaseMouseCapture();
                 Mouse.OverrideCursor = null;
                 boxSelectionBorder.Visibility = Visibility.Hidden;
-                SelectWithinRectangle(new Rect(Canvas.GetLeft(boxSelectionBorder), Canvas.GetTop(boxSelectionBorder), boxSelectionBorder.Width, boxSelectionBorder.Height));
+                SelectWithinRectangle
+                (
+                    new Rect
+                    (
+                        Canvas.GetLeft(boxSelectionBorder), 
+                        Canvas.GetTop(boxSelectionBorder), 
+                        boxSelectionBorder.Width, 
+                        boxSelectionBorder.Height
+                    ),
+                    CurrentSelectionMode
+                );
                 e.Handled = movedDuringDrag;
             }
         }

@@ -25,6 +25,7 @@ namespace NetPrintsEditor.Controls
         #region Dragging
         private bool dragging = false;
         private bool dragged = false;
+        private bool newlySelected = false;
         private Point dragMousePos;
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -34,9 +35,14 @@ namespace NetPrintsEditor.Controls
             dragged = false;
             dragging = true;
 
-            if (!Node.IsSelected)
+            if(this.Node.IsSelected == false)
             {
-                Node.Select();
+                OnClicked();
+                newlySelected = true;
+            }
+            else
+            {
+                newlySelected = false;
             }
 
             Node.DragStart();
@@ -59,12 +65,17 @@ namespace NetPrintsEditor.Controls
                 ReleaseMouseCapture();
             }
 
-            if (!dragged)
+            if (dragged == false && newlySelected == false)
             {
-                Node.Select();
+                OnClicked();
             }
 
             e.Handled = true;
+        }
+
+        private void OnClicked()
+        {
+            this.Node.Select(GraphEditorView.CurrentSelectionMode);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

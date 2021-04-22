@@ -723,9 +723,9 @@ namespace NetPrintsEditor.ViewModels
             }
         }
 
-        public void Select()
+        public void Select(NodeSelectionMessage.Mode selectionMode)
         {
-            MessengerInstance.Send(new NodeSelectionMessage(this));
+            this.MessengerInstance.Send(new NodeSelectionMessage(new []{this}, selectionMode));
         }
     }
 }

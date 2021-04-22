@@ -749,12 +749,13 @@ namespace NetPrintsEditor.ViewModels
         }
 
         /// <summary>
-        /// Sends a message to deselect all nodes and select the given nodes.
+        /// Sends a message to adjust node selection.
         /// </summary>
-        /// <param name="nodes">Nodes to be selected.</param>
-        public void SelectNodes(IEnumerable<NodeVM> nodes)
+        /// <param name="nodes">Nodes to be affected</param>
+        /// <param name="selectionMode">Mode of selection change</param>
+        public void SelectNodes(IEnumerable<NodeVM> nodes, NodeSelectionMessage.Mode selectionMode)
         {
-            MessengerInstance.Send(new NodeSelectionMessage(nodes, true));
+            this.MessengerInstance.Send(new NodeSelectionMessage(nodes, selectionMode));
         }
 
         /// <summary>
@@ -762,7 +763,7 @@ namespace NetPrintsEditor.ViewModels
         /// </summary>
         public void DeselectNodes()
         {
-            MessengerInstance.Send(NodeSelectionMessage.DeselectAll);
+            this.MessengerInstance.Send(NodeSelectionMessage.DeselectAll);
         }
 
         public NodeGraphVM(NodeGraph graph)
@@ -775,12 +776,44 @@ namespace NetPrintsEditor.ViewModels
 
         private void OnNodeSelectionReceived(NodeSelectionMessage msg)
         {
-            if (msg.DeselectPrevious)
+            switch(msg.SelectionMode)
             {
-                SelectedNodes = new NodeVM[0] { };
-            }
+                case NodeSelectionMessage.Mode.Set:
+                    this.SelectedNodes = msg.Nodes.Distinct().ToArray();
+                    break;
+                
+                case NodeSelectionMessage.Mode.Add:
+                    this.SelectedNodes = this.SelectedNodes.Concat(msg.Nodes).Distinct().ToArray();
+                    break;
 
-            SelectedNodes = SelectedNodes.Concat(msg.Nodes).Distinct();
+                case NodeSelectionMessage.Mode.Toggle:
+                {
+                    var xorNodes = new HashSet<NodeVM>(msg.Nodes);
+                    this.SelectedNodes = Generator().ToArray();
+
+                    IEnumerable<NodeVM> Generator()
+                    {
+                        //Remove nodes that were already present
+                        foreach(var node in this.SelectedNodes)
+                        {
+                            if(xorNodes.Remove(node) == false)
+                            {
+                                yield return node;
+                            }
+                        }
+
+                        //Add nodes that were not previously selected
+                        foreach(var node in xorNodes)
+                        {
+                            yield return node;
+                        }
+                    }
+                }
+                break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void OnAddNodeReceived(AddNodeMessage msg)
