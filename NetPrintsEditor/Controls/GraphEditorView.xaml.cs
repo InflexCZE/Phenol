@@ -482,7 +482,8 @@ namespace NetPrintsEditor.Controls
 
             if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
             {
-                pin.AddRerouteNode();
+                var position = e.GetPosition(drawCanvas);
+                pin.AddRerouteNode((int) position.X, (int) position.Y);
             }
             else if (e.ChangedButton == MouseButton.Middle)
             {

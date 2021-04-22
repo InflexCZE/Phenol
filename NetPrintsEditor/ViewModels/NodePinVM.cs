@@ -622,30 +622,27 @@ namespace NetPrintsEditor.ViewModels
         /// Adds a reroute node for this pin. Only valid
         /// for input data pins and output execution pins.
         /// </summary>
-        public void AddRerouteNode()
+        public void AddRerouteNode(int x, int y)
         {
+            RerouteNode rerouteNode;
             if (Pin is NodeInputDataPin dataPin)
             {
-                RerouteNode rerouteNode = GraphUtil.AddRerouteNode(dataPin);
-                rerouteNode.PositionX = (Pin.Node.PositionX + dataPin.IncomingPin.Node.PositionX) / 2;
-                rerouteNode.PositionY = (Pin.Node.PositionY + dataPin.IncomingPin.Node.PositionY) / 2;
+                rerouteNode = GraphUtil.AddRerouteNode(dataPin);
             }
             else if (Pin is NodeOutputExecPin execPin)
             {
-                RerouteNode rerouteNode = GraphUtil.AddRerouteNode(execPin);
-                rerouteNode.PositionX = (Pin.Node.PositionX + execPin.OutgoingPin.Node.PositionX) / 2;
-                rerouteNode.PositionY = (Pin.Node.PositionY + execPin.OutgoingPin.Node.PositionY) / 2;
+                rerouteNode = GraphUtil.AddRerouteNode(execPin);
             }
             else if (Pin is NodeInputTypePin typePin)
             {
-                RerouteNode rerouteNode = GraphUtil.AddRerouteNode(typePin);
-                rerouteNode.PositionX = (Pin.Node.PositionX + typePin.IncomingPin.Node.PositionX) / 2;
-                rerouteNode.PositionY = (Pin.Node.PositionY + typePin.IncomingPin.Node.PositionY) / 2;
+                rerouteNode = GraphUtil.AddRerouteNode(typePin);
             }
             else
             {
                 throw new Exception("Can't add reroute node for invalid pin type");
             }
+            rerouteNode.PositionX = x;
+            rerouteNode.PositionY = y;
         }
         
         /// <summary>
