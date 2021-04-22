@@ -88,10 +88,10 @@
 
             <ComboBox Visibility="{Binding ShowEnumValue, Converter={StaticResource ResourceKey=BoolToVis}}" 
                 MouseUp="OnClearUnconnectedValue"
-                SelectedItem="{Binding UnconnectedValue}"
+                SelectedItem="{Binding UnconnectedValueEnum}"
                 ItemsSource="{Binding PossibleEnumNames}" />
 
-            <CheckBox IsChecked="{Binding UnconnectedValue, Mode=TwoWay}"
+            <CheckBox IsChecked="{Binding UnconnectedValueBool, Mode=TwoWay}"
                 MouseUp="OnClearUnconnectedValue"
                 Visibility="{Binding ShowBooleanValue, Converter={StaticResource ResourceKey=BoolToVis}}" />
         </Grid>

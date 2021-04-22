@@ -218,7 +218,37 @@ namespace NetPrintsEditor.ViewModels
                     }
 
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(UnconnectedValueBool));
+                    RaisePropertyChanged(nameof(UnconnectedValueEnum));
                 }
+            }
+        }
+
+        public object UnconnectedValueBool
+        {
+            set => this.UnconnectedValue = value;
+            get
+            {
+                if(this.ShowBooleanValue)
+                {
+                    return this.UnconnectedValue;
+                }
+
+                return default;
+            }
+        }
+
+        public object UnconnectedValueEnum
+        {
+            set => this.UnconnectedValue = value;
+            get
+            {
+                if (this.ShowEnumValue)
+                {
+                    return this.UnconnectedValue;
+                }
+
+                return default;
             }
         }
 
