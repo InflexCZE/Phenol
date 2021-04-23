@@ -71,8 +71,15 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
-                    <ItemsControl x:Name="inputExecPinList" ItemsSource="{Binding InputExecPins}"  Background="#00000000" Foreground="#00000000" BorderBrush="#00000000">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <ItemsControl x:Name="inputExecPinList" ItemsSource="{Binding InputExecPins}"  Background="#00000000" Foreground="#00000000" BorderBrush="#00000000" Grid.Row="0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <local:PinControl ParentNodeControl="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:NodeControl}}" Height="28" />
@@ -80,7 +87,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <ItemsControl x:Name="inputDataPinList" ItemsSource="{Binding InputDataPins}" Background="#00000000" Foreground="#00000000" BorderBrush="#00000000">
+                    <ItemsControl x:Name="inputDataPinList" ItemsSource="{Binding InputDataPins}" Background="#00000000" Foreground="#00000000" BorderBrush="#00000000"  Grid.Row="1">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <local:PinControl ParentNodeControl="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:NodeControl}}" Height="28" />
@@ -88,7 +95,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <ItemsControl x:Name="inputTypePinList" ItemsSource="{Binding InputTypePins}" Background="#00000000" Foreground="#00000000" BorderBrush="#00000000">
+                    <ItemsControl x:Name="inputTypePinList" ItemsSource="{Binding InputTypePins}" Background="#00000000" Foreground="#00000000" BorderBrush="#00000000"  Grid.Row="2">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <local:PinControl ParentNodeControl="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:NodeControl}}" Height="28" />
@@ -96,7 +103,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Visibility="{Binding ShowLeftPinButtons, Converter={StaticResource ResourceKey=BoolToVis}}">
+                    <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Visibility="{Binding ShowLeftPinButtons, Converter={StaticResource ResourceKey=BoolToVis}}"  Grid.Row="3">
                         <Button Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Margin="2" Width="24" Height="24" Click="OnLeftPinsPlusClicked"
                                 ToolTip="{Binding LeftPlusToolTip}">
                             <iconPacks:PackIconMaterial Kind="Plus" />
@@ -106,7 +113,7 @@
                             <iconPacks:PackIconMaterial Kind="Minus" />
                         </Button>
                     </StackPanel>
-                </StackPanel>
+                </Grid>
 
                 <StackPanel Grid.Column="1">
                     <ItemsControl x:Name="outputExecPinList" ItemsSource="{Binding OutputExecPins}" Background="#00000000" Foreground="#00000000" BorderBrush="#00000000">
