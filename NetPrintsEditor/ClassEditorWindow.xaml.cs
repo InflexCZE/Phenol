@@ -321,7 +321,7 @@ namespace NetPrintsEditor
                     viewerTabControl.SelectedIndex = 0;
                 }
 
-                if (graphEditor.Graph.Graph == m.Graph)
+                if (graphEditor.Graph?.Graph == m.Graph)
                 {
                     graphEditor.Graph = null;
                 }
