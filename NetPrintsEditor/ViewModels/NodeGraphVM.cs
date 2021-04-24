@@ -106,7 +106,7 @@ namespace NetPrintsEditor.ViewModels
             this.SuggestionViewModel.HideContextMenu = () => OnHideContextMenu?.Invoke(this, EventArgs.Empty);
 
             // Show all relevant methods for the type of the pin
-            IEnumerable<(string, object)> suggestions = new (string, object)[0];
+            IEnumerable<(string, object)> suggestions = Array.Empty<(string, object)>();
 
             void AddSuggestionsWithCategory(string category, IEnumerable<object> newSuggestions)
             {
