@@ -59,7 +59,7 @@ namespace NetPrintsEditor.ViewModels
         {
             get
             {
-                if (Node is ExecutionEntryNode)
+                if (Node is ExecutionEntryNode || Node is DelayNode)
                 {
                     return EntryNodeBrush;
                 }

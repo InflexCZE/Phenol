@@ -12,13 +12,14 @@ namespace NetPrints.Core
     [Flags]
     public enum MethodModifiers
     {
-        None = 0,
-        Sealed = 8,
-        Abstract = 16,
-        Static = 32,
-        Virtual = 64,
-        Override = 128,
-        Async = 256,
+        None       = 0,
+        Sealed     = 1 << 3,
+        Abstract   = 1 << 4,
+        Static     = 1 << 5,
+        Virtual    = 1 << 6,
+        Override   = 1 << 7,
+        Async      = 1 << 8,
+        Coroutine  = 1 << 9,
 
         // DEPRECATED
         // Moved to MethodVisibility
@@ -57,17 +58,17 @@ namespace NetPrints.Core
         /// <summary>
         /// Ordered return types this method returns.
         /// </summary>
-        public IEnumerable<BaseType> ReturnTypes
+        public IReadOnlyList<BaseType> ReturnTypes
         {
-            get => MainReturnNode?.InputTypePins?.Select(pin => pin.InferredType?.Value ?? TypeSpecifier.FromType<object>())?.ToList() ?? new List<BaseType>();
+            get => MainReturnNode?.InputTypePins?.Select(pin => pin.InferredType?.Value ?? TypeSpecifier.FromType<object>()).ToList() ?? new List<BaseType>();
         }
 
         /// <summary>
         /// Generic type arguments of the method.
         /// </summary>
-        public IEnumerable<GenericType> GenericArgumentTypes
+        public IReadOnlyList<GenericType> GenericArgumentTypes
         {
-            get => EntryNode != null ? EntryNode.OutputTypePins.Select(pin => pin.InferredType.Value).Cast<GenericType>().ToList() : new List<GenericType>();
+            get => EntryNode?.OutputTypePins.Select(pin => pin.InferredType.Value).Cast<GenericType>().ToList() ?? new List<GenericType>();
         }
 
         /// <summary>
@@ -84,7 +85,7 @@ namespace NetPrints.Core
         /// Modifiers this method has.
         /// </summary>
         [DataMember]
-        public MethodModifiers Modifiers
+        public ObservableValue<MethodModifiers> Modifiers
         {
             get;
             set;
@@ -97,6 +98,8 @@ namespace NetPrints.Core
         {
             get => (MethodEntryNode)EntryNode;
         }
+
+        public bool IsCoroutine => (this.Modifiers.Value & MethodModifiers.Coroutine) != 0;
 
         /// <summary>
         /// Creates a method given its name.

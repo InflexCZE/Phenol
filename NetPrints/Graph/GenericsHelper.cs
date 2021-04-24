@@ -1,4 +1,5 @@
-﻿using NetPrints.Core;
+﻿using System;
+using NetPrints.Core;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -64,6 +65,17 @@ namespace NetPrints.Graph
             }
 
             return type;
+        }
+
+        public static TypeSpecifier BuildAggregateType(IEnumerable<BaseType> types)
+        {
+            return new
+            (
+                TypeSpecifier.TypeName(typeof(ValueTuple)),
+                false,
+                false,
+                types
+            );
         }
     }
 }

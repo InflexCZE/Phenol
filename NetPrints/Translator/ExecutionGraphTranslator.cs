@@ -1,6 +1,7 @@
 ﻿using NetPrints.Core;
 using NetPrints.Graph;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -126,14 +127,14 @@ namespace NetPrints.Translator
             return GetOrCreatePinName(pin.IncomingPin);
         }
 
-        private IEnumerable<string> GetOrCreatePinNames(IEnumerable<NodeOutputDataPin> pins)
+        private string[] GetOrCreatePinNames(IEnumerable<NodeOutputDataPin> pins)
         {
-            return pins.Select(pin => GetOrCreatePinName(pin)).ToList();
+            return pins.Select(pin => GetOrCreatePinName(pin)).ToArray();
         }
 
-        private IEnumerable<string> GetPinIncomingValues(IEnumerable<NodeInputDataPin> pins)
+        private string[] GetPinIncomingValues(IEnumerable<NodeInputDataPin> pins)
         {
-            return pins.Select(pin => GetPinIncomingValue(pin)).ToList();
+            return pins.Select(pin => GetPinIncomingValue(pin)).ToArray();
         }
 
         private string GetOrCreateTypedPinName(NodeOutputDataPin pin)
@@ -144,7 +145,7 @@ namespace NetPrints.Translator
 
         private IEnumerable<string> GetOrCreateTypedPinNames(IEnumerable<NodeOutputDataPin> pins)
         {
-            return pins.Select(pin => GetOrCreateTypedPinName(pin)).ToList();
+            return pins.Select(pin => GetOrCreateTypedPinName(pin));
         }
 
         private void CreateStates()
@@ -194,57 +195,62 @@ namespace NetPrints.Translator
             // Write visibility
             builder.Append($"{TranslatorUtil.VisibilityTokens[graph.Visibility]} ");
 
-            MethodGraph methodGraph = graph as MethodGraph;
+            var methodGraph = graph as MethodGraph;
 
             if (methodGraph != null)
             {
                 // Write modifiers
-                if (methodGraph.Modifiers.HasFlag(MethodModifiers.Async))
+                var modifiers = methodGraph.Modifiers.Value;
+                if (modifiers.HasFlag(MethodModifiers.Async))
                 {
                     builder.Append("async ");
                 }
 
-                if (methodGraph.Modifiers.HasFlag(MethodModifiers.Static))
+                if (modifiers.HasFlag(MethodModifiers.Static))
                 {
                     builder.Append("static ");
                 }
 
-                if (methodGraph.Modifiers.HasFlag(MethodModifiers.Abstract))
+                if (modifiers.HasFlag(MethodModifiers.Abstract))
                 {
                     builder.Append("abstract ");
                 }
 
-                if (methodGraph.Modifiers.HasFlag(MethodModifiers.Sealed))
+                if (modifiers.HasFlag(MethodModifiers.Sealed))
                 {
                     builder.Append("sealed ");
                 }
 
-                if (methodGraph.Modifiers.HasFlag(MethodModifiers.Override))
+                if (modifiers.HasFlag(MethodModifiers.Override))
                 {
                     builder.Append("override ");
                 }
-                else if (methodGraph.Modifiers.HasFlag(MethodModifiers.Virtual))
+                else if (modifiers.HasFlag(MethodModifiers.Virtual))
                 {
                     builder.Append("virtual ");
                 }
 
                 // Write return type
-                if (methodGraph.ReturnTypes.Count() > 1)
+                var isCoroutine = methodGraph.IsCoroutine;
+                if(isCoroutine)
                 {
-                    // Tuple<Types..> (won't be needed in the future)
-                    string returnType = typeof(Tuple).FullName + "<" + string.Join(", ", methodGraph.ReturnTypes.Select(t => t.FullCodeName)) + ">";
-                    builder.Append(returnType + " ");
-
-                    //builder.Append($"({string.Join(", ", method.ReturnTypes.Select(t => t.FullName))}) ");
-                }
-                else if (methodGraph.ReturnTypes.Count() == 1)
-                {
-                    builder.Append($"{methodGraph.ReturnTypes.Single().FullCodeName} ");
+                    builder.Append(TypeSpecifier.FromType<IEnumerator>().FullCodeName);
                 }
                 else
                 {
-                    builder.Append("void ");
+                    var returnTypes = methodGraph.ReturnTypes;
+                    if(returnTypes.Count == 0)
+                    {
+                        builder.Append("void");
+                    }
+                    else
+                    {
+                        var returnType = returnTypes.Count == 1 ? returnTypes[0] : GenericsHelper.BuildAggregateType(returnTypes);
+                        builder.AppendLine(returnType.FullCodeName);
+                    }
                 }
+
+                builder.Append(' ');
             }
 
             // Write name
@@ -260,7 +266,18 @@ namespace NetPrints.Translator
             }
 
             // Write parameters
-            builder.AppendLine($"({string.Join(", ", GetOrCreateTypedPinNames(graph.EntryNode.OutputDataPins))})");
+            var args = GetOrCreateTypedPinNames(graph.EntryNode.OutputDataPins);
+            
+            if(methodGraph?.IsCoroutine == true)
+            {
+                if(methodGraph.ReturnTypes is { Count: > 0 } returnTypes)
+                {
+                    var returnType = CoroutineUtils.GetCoroutineReturnType(returnTypes);
+                    args = args.Append($"{returnType.FullCodeName} {CoroutineUtils.CoroutineReturnArgName}");
+                }
+            }
+
+            builder.AppendLine($"({string.Join(", ", args)})");
         }
 
         private void TranslateJumpStack()
@@ -536,60 +553,85 @@ namespace NetPrints.Translator
             }
 
             // Write assignment of return values
-            if (node.ReturnValuePins.Count == 1)
+            var returnValuePins = node.ReturnValuePins;
+            var returnTypes = returnValuePins.Select(x => x.PinType.Value);
+            
+            if (node.IsCoroutine)
             {
-                string returnName = GetOrCreatePinName(node.ReturnValuePins[0]);
+                if(node.NaturalSignature && returnValuePins.Count > 0)
+                {
+                    temporaryReturnName = TranslatorUtil.GetTemporaryVariableName(random);
+                    builder.Append($"var {temporaryReturnName} = new {CoroutineUtils.GetCoroutineReturnType(returnTypes)}();");
+                }
+                else
+                {
+                    
+                }
 
-                builder.Append($"{returnName} = ");
+                if(node.IsInCoroutine)
+                {
+                    builder.Append("yield return ");
+                }
             }
-            else if (node.ReturnValuePins.Count > 1)
+
+            if(node.IsCoroutine == false || node.IsInCoroutine == false)
             {
-                temporaryReturnName = TranslatorUtil.GetTemporaryVariableName(random);
+                if (returnValuePins.Count == 1)
+                {
+                    string returnName = GetOrCreatePinName(returnValuePins[0]);
+                    builder.Append($"{returnName} = ");
+                }
+                else if (returnValuePins.Count > 1)
+                {
+                    Debug.Assert(node.IsCoroutine == false);
+                    Debug.Assert(temporaryReturnName is null);
+                    temporaryReturnName = TranslatorUtil.GetTemporaryVariableName(random);
 
-                var returnTypeNames = string.Join(", ", node.ReturnValuePins.Select(pin => pin.PinType.Value.FullCodeName));
-
-                builder.Append($"{typeof(Tuple).FullName}<{returnTypeNames}> {temporaryReturnName} = ");
+                    var tempType = GenericsHelper.BuildAggregateType(returnTypes);
+                    builder.Append($"{tempType.FullCodeName} {temporaryReturnName} = ");
+                }
             }
 
             // Get arguments for method call
-            var argumentNames = GetPinIncomingValues(node.ArgumentPins);
+            var argumentValues = GetPinIncomingValues(node.ArgumentPins);
 
             // Check whether the method is an operator and we need to translate its name
             // into operator symbols. Otherwise just call the method normally.
             if (OperatorUtil.TryGetOperatorInfo(node.MethodSpecifier, out OperatorInfo operatorInfo))
             {
-                Debug.Assert(!argumentNames.Any(a => a is null));
+                Debug.Assert(node.IsCoroutine == false);
+                Debug.Assert(!argumentValues.Any(a => a is null));
 
                 if (operatorInfo.Unary)
                 {
-                    if (argumentNames.Count() != 1)
+                    if (argumentValues.Length != 1)
                     {
                         throw new Exception($"Unary operator was found but did not have one argument: {node.MethodName}");
                     }
 
                     if (operatorInfo.UnaryRightPosition)
                     {
-                        builder.AppendLine($"{argumentNames.ElementAt(0)}{operatorInfo.Symbol};");
+                        builder.AppendLine($"{argumentValues[0]}{operatorInfo.Symbol};");
                     }
                     else
                     {
-                        builder.AppendLine($"{operatorInfo.Symbol}{argumentNames.ElementAt(0)};");
+                        builder.AppendLine($"{operatorInfo.Symbol}{argumentValues[0]};");
                     }
                 }
                 else
                 {
-                    if (argumentNames.Count() != 2)
+                    if (argumentValues.Length != 2)
                     {
                         throw new Exception($"Binary operator was found but did not have two arguments: {node.MethodName}");
                     }
 
-                    builder.AppendLine($"{argumentNames.ElementAt(0)}{operatorInfo.Symbol}{argumentNames.ElementAt(1)};");
+                    builder.AppendLine($"{argumentValues[0]}{operatorInfo.Symbol}{argumentValues[1]};");
                 }
             }
             else
             {
                 // Static: Write class name / target, default to own class name
-                // Instance: Write target, default to this
+                // Instance: Write target, default to `this`
 
                 if (node.IsStatic)
                 {
@@ -597,9 +639,9 @@ namespace NetPrints.Translator
                 }
                 else
                 {
-                    if (node.TargetPin.IncomingPin != null)
+                    if (node.TargetPin.IncomingPin is {} incomingPin)
                     {
-                        string targetName = GetOrCreatePinName(node.TargetPin.IncomingPin);
+                        string targetName = GetOrCreatePinName(incomingPin);
                         builder.Append($"{targetName}.");
                     }
                     else
@@ -609,19 +651,35 @@ namespace NetPrints.Translator
                     }
                 }
 
-                string[] argNameArray = argumentNames.ToArray();
-                Debug.Assert(argNameArray.Length == node.MethodSpecifier.Parameters.Count);
-
-                bool prependArgumentName = argNameArray.Any(a => a is null);
-
-                List<string> arguments = new List<string>();
-
-                foreach ((var argName, var methodParameter) in argNameArray.Zip(node.MethodSpecifier.Parameters, Tuple.Create))
+                var parameterDefinitions = node.MethodSpecifier.Parameters;
+                
+                if(node.NaturalSignature == false && node.MethodSpecifier.ReturnTypes.Count > 0)
                 {
-                    // null means use default value
-                    if (!(argName is null))
+                    parameterDefinitions = parameterDefinitions.Append(new MethodParameter
+                    (
+                        CoroutineUtils.CoroutineReturnArgName,
+                        null,
+                        MethodParameterPassType.Default,
+                        false,
+                        null
+                    )).ToArray();
+                }
+                
+                Debug.Assert(argumentValues.Length == parameterDefinitions.Count);
+
+                bool prependArgumentName = false;
+                var arguments = new List<string>();
+                foreach (var (argValue, methodParameter) in argumentValues.Zip(parameterDefinitions, ValueTuple.Create))
+                {
+                    if(argValue is null)
                     {
-                        string argument = argName;
+                        //null means use default value
+                        //from now on we need to name parameters explicitly
+                        prependArgumentName = true;
+                    }
+                    else
+                    {
+                        string argument = argValue;
 
                         // Prepend with argument name if wanted
                         if (prependArgumentName)
@@ -635,14 +693,14 @@ namespace NetPrints.Translator
                             case MethodParameterPassType.Out:
                                 argument = "out " + argument;
                                 break;
+                            
                             case MethodParameterPassType.Reference:
                                 argument = "ref " + argument;
                                 break;
+                            
                             case MethodParameterPassType.In:
                                 // Don't pass with in as it could break implicit casts.
                                 // argument = "in " + argument;
-                                break;
-                            default:
                                 break;
                         }
 
@@ -650,17 +708,30 @@ namespace NetPrints.Translator
                     }
                 }
 
+                if(temporaryReturnName is not null && node.IsCoroutine)
+                {
+                    var coroutineReturnStorage = temporaryReturnName;
+                    temporaryReturnName += '.' + CoroutineUtils.CoroutineReturnValueField;
+                    
+                    if(prependArgumentName)
+                    {
+                        coroutineReturnStorage = $"{CoroutineUtils.CoroutineReturnArgName}: {coroutineReturnStorage}";
+                    }
+
+                    arguments.Add(coroutineReturnStorage);
+                }
+
                 // Write the method call
                 builder.AppendLine($"{node.BoundMethodName}({string.Join(", ", arguments)});");
             }
 
             // Assign the real variables from the temporary tuple
-            if (node.ReturnValuePins.Count > 1)
+            if (temporaryReturnName is not null)
             {
-                var returnNames = GetOrCreatePinNames(node.ReturnValuePins);
-                for(int i = 0; i < returnNames.Count(); i++)
+                var returnNames = GetOrCreatePinNames(returnValuePins);
+                for(int i = 0; i < returnNames.Length; i++)
                 {
-                    builder.AppendLine($"{returnNames.ElementAt(i)} = {temporaryReturnName}.Item{i+1};");
+                    builder.AppendLine($"{returnNames[i]} = {temporaryReturnName}.Item{i+1};");
                 }
             }
 
@@ -686,7 +757,7 @@ namespace NetPrints.Translator
                 builder.AppendLine($"{GetOrCreatePinName(node.ExceptionPin)} = {exceptionVarName};");
 
                 // Set all return values to default on exception
-                foreach (var returnValuePin in node.ReturnValuePins)
+                foreach (var returnValuePin in returnValuePins)
                 {
                     string returnName = GetOrCreatePinName(returnValuePin);
                     builder.AppendLine($"{returnName} = default({returnValuePin.PinType.Value.FullCodeName});");
@@ -718,14 +789,13 @@ namespace NetPrints.Translator
             var argumentNames = GetPinIncomingValues(node.ArgumentPins);
             //builder.AppendLine($"({string.Join(", ", argumentNames)});");
 
-            string[] argNameArray = argumentNames.ToArray();
-            Debug.Assert(argNameArray.Length == node.ConstructorSpecifier.Arguments.Count);
+            Debug.Assert(argumentNames.Length == node.ConstructorSpecifier.Arguments.Count);
 
-            bool prependArgumentName = argNameArray.Any(a => a is null);
+            bool prependArgumentName = argumentNames.Any(a => a is null);
 
             List<string> arguments = new List<string>();
 
-            foreach ((var argName, var constructorParameter) in argNameArray.Zip(node.ConstructorSpecifier.Arguments, Tuple.Create))
+            foreach ((var argName, var constructorParameter) in argumentNames.Zip(node.ConstructorSpecifier.Arguments, Tuple.Create))
             {
                 // null means use default value
                 if (!(argName is null))
@@ -913,37 +983,42 @@ namespace NetPrints.Translator
 
         public void TranslateReturnNode(ReturnNode node)
         {
-            // Translate all the pure nodes this node depends on in
-            // the correct order
             TranslateDependentPureNodes(node);
 
-            if (node.InputDataPins.Count == 0)
+            string value = null;
+            var returnPins = node.InputDataPins;
+            var returnValues = returnPins.Select(pin => GetPinIncomingValue(pin));
+
+            if(returnPins.Count == 1 && node.IsInCoroutine == false)
             {
-                // Only write return if the return node is not the last node
-                if (GetExecPinStateId(node.InputExecPins[0]) != nodeStateIds.Count - 1)
+                value = returnValues.Single();
+            }
+            else if(returnPins.Count >= 1)
+            {
+                var returnType = GenericsHelper.BuildAggregateType(returnPins.Select(pin => pin.PinType.Value));
+                value = $"new {returnType.FullCodeName}({string.Join(", ", returnValues)})";
+                
+                if(node.IsInCoroutine)
                 {
-                    builder.AppendLine("return;");
+                    builder.AppendLine($"{CoroutineUtils.CoroutineReturnArgName}.{CoroutineUtils.CoroutineReturnValueField} = {value};");
                 }
             }
-            else if (node.InputDataPins.Count == 1)
+
+            if (returnPins.Count == 0 || node.IsInCoroutine)
             {
-                // Special case for async functions returning Task (no return value)
-                if (node.InputDataPins[0].PinType == TypeSpecifier.FromType<Task>())
+                EmitControlFlowEnd(node.InputExecPins[0]);
+            }
+            else
+            {
+                if(returnPins.Count == 1 && returnPins[0].PinType == TypeSpecifier.FromType<Task>())
                 {
+                    // Special case for async functions returning Task (no return value)
                     builder.AppendLine("return;");
                 }
                 else
                 {
-                    builder.AppendLine($"return {GetPinIncomingValue(node.InputDataPins[0])};");
+                    builder.AppendLine($"return {value};");
                 }
-            }
-            else
-            {
-                var returnValues = node.InputDataPins.Select(pin => GetPinIncomingValue(pin));
-
-                // Tuple<Types..> (won't be needed in the future)
-                string returnType = typeof(Tuple).FullName + "<" + string.Join(", ", node.InputDataPins.Select(pin => pin.PinType.Value.FullCodeName)) + ">";
-                builder.AppendLine($"return new {returnType}({string.Join(", ", returnValues)});");
             }
         }
 
@@ -964,7 +1039,7 @@ namespace NetPrints.Translator
             }
             else
             {
-                builder.AppendLine("return;");
+                EmitControlFlowEnd(node.ExecutionPin);
             }
 
             builder.AppendLine("}");
@@ -978,7 +1053,7 @@ namespace NetPrints.Translator
             }
             else
             {
-                builder.AppendLine("return;");
+                EmitControlFlowEnd(node.ExecutionPin);
             }
 
             builder.AppendLine("}");
@@ -1142,6 +1217,23 @@ namespace NetPrints.Translator
             else if (node.ExecRerouteCount == 1)
             {
                 WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
+            }
+        }
+
+        public void EmitControlFlowEnd(NodeInputExecPin nodeInputExecPin)
+        {
+            if (this.graph is MethodGraph {IsCoroutine: true})
+            {
+                builder.AppendLine("yield break;");
+            }
+            else
+            {
+                // Only write return if the return node is not the last node
+                if (GetExecPinStateId(nodeInputExecPin) != nodeStateIds.Count - 1)
+                {
+                    builder.AppendLine("return;");
+
+                }
             }
         }
     }

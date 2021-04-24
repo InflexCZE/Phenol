@@ -27,27 +27,34 @@ namespace NetPrintsEditor.ViewModels
 
                     if (dataPin.Node is CallMethodNode callMethodNode)
                     {
-                        if (dataPin is NodeInputDataPin inputDataPin)
+                        //TODO: Fix for coroutines
+                        if(callMethodNode.IsCoroutine == false)
                         {
-                            int paramIndex = callMethodNode.ArgumentPins.IndexOf(inputDataPin);
-                            if (paramIndex >= 0)
+                            if (dataPin is NodeInputDataPin inputDataPin)
                             {
-                                var parameter = callMethodNode.MethodSpecifier.Parameters[paramIndex];
-
-                                if (parameter.HasExplicitDefaultValue)
+                                //if(inputDataPin != callMethodNode.CoroutineReturnInputPin)
                                 {
-                                    toolTip += $"{Environment.NewLine}Default: {TranslatorUtil.ObjectToLiteral(parameter.ExplicitDefaultValue, TypeSpecifier.FromType(parameter.ExplicitDefaultValue?.GetType() ?? typeof(object)))}";
-                                }
+                                    int paramIndex = callMethodNode.ArgumentPins.IndexOf(inputDataPin);
+                                    if (paramIndex >= 0)
+                                    {
+                                        var parameter = callMethodNode.MethodSpecifier.Parameters[paramIndex];
 
-                                documentation = App.ReflectionProvider.GetMethodParameterDocumentation(callMethodNode.MethodSpecifier, paramIndex);
+                                        if (parameter.HasExplicitDefaultValue)
+                                        {
+                                            toolTip += $"{Environment.NewLine}Default: {TranslatorUtil.ObjectToLiteral(parameter.ExplicitDefaultValue, TypeSpecifier.FromType(parameter.ExplicitDefaultValue?.GetType() ?? typeof(object)))}";
+                                        }
+
+                                        documentation = App.ReflectionProvider.GetMethodParameterDocumentation(callMethodNode.MethodSpecifier, paramIndex);
+                                    }
+                                }
                             }
-                        }
-                        else if (dataPin is NodeOutputDataPin outputDataPin)
-                        {
-                            int returnIndex = callMethodNode.OutputDataPins.IndexOf(outputDataPin);
-                            if (returnIndex >= 0)
+                            else if (dataPin is NodeOutputDataPin outputDataPin)
                             {
-                                documentation = App.ReflectionProvider.GetMethodReturnDocumentation(callMethodNode.MethodSpecifier, returnIndex);
+                                int returnIndex = callMethodNode.OutputDataPins.IndexOf(outputDataPin);
+                                if (returnIndex >= 0)
+                                {
+                                    documentation = App.ReflectionProvider.GetMethodReturnDocumentation(callMethodNode.MethodSpecifier, returnIndex);
+                                }
                             }
                         }
                     }

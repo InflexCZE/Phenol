@@ -20,6 +20,8 @@ namespace NetPrints.Graph
             get { return InputExecPins[0]; }
         }
 
+        public bool IsInCoroutine => this.MethodGraph.IsCoroutine;
+
         public ReturnNode(MethodGraph graph)
             : base(graph)
         {

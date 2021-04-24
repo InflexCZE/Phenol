@@ -1,5 +1,6 @@
 ﻿using NetPrints.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -109,6 +110,14 @@ namespace NetPrints.Graph
         }
 
         /// <summary>
+        /// Pin that accepts storage for coroutine return values
+        /// </summary>
+        public NodeInputDataPin CoroutineReturnInputPin
+        {
+            get { return this.NaturalSignature ? null : InputDataPins.Last(); }
+        }
+
+        /// <summary>
         /// Pin that holds the exception when catch is executed.
         /// </summary>
         public NodeOutputDataPin ExceptionPin
@@ -159,6 +168,12 @@ namespace NetPrints.Graph
             get => (OutputDataPins.Where(p => p.Name != ExceptionPinName)).ToList();
         }
 
+        public bool IsCoroutine => (this.MethodSpecifier.Modifiers & MethodModifiers.Coroutine) != 0;
+        
+        public bool IsInCoroutine => this.MethodGraph?.IsCoroutine ?? false;
+
+        public bool NaturalSignature => this.IsInCoroutine || this.IsCoroutine == false;
+
         public CallMethodNode(NodeGraph graph, MethodSpecifier methodSpecifier,
             IList<BaseType> genericArgumentTypes = null)
             : base(graph)
@@ -191,9 +206,23 @@ namespace NetPrints.Graph
                 }
             }
 
-            foreach (BaseType returnType in MethodSpecifier.ReturnTypes)
+            //TODO: Listen for changes
+            if (this.NaturalSignature)
             {
-                AddOutputDataPin(returnType.ShortName, returnType);
+                foreach (var returnType in this.MethodSpecifier.ReturnTypes)
+                {
+                    AddOutputDataPin(returnType.ShortName, returnType);
+                }
+            }
+            else
+            {
+                AddOutputDataPin(CoroutineUtils.CoroutineEnumeratorName, TypeSpecifier.FromType<IEnumerator>());
+
+                if(this.MethodSpecifier.ReturnTypes is {Count: > 0} returnTypes)
+                {
+                    //Note: Type will be fixed in `UpdateTypes`
+                    AddInputDataPin(CoroutineUtils.CoroutineReturnArgName, TypeSpecifier.FromType<object>());
+                }
             }
 
             // TODO: Set the correct types to begin with.
@@ -278,17 +307,37 @@ namespace NetPrints.Graph
                 }
             }
 
-            for (int i = 0; i < MethodSpecifier.ReturnTypes.Count; i++)
+            var specRetTypes = this.MethodSpecifier.ReturnTypes;
+            if(specRetTypes.Count > 0)
             {
-                BaseType type = MethodSpecifier.ReturnTypes[i];
+                var outputPinTypes = new BaseType[specRetTypes.Count];
 
-                // Construct type with generic arguments replaced by our input type pins
-                BaseType constructedType = GenericsHelper.ConstructWithTypePins(type, InputTypePins);
-
-                // +1 because the first pin is the exception pin
-                if (ReturnValuePins[i].PinType.Value != constructedType)
+                for (int i = 0; i < specRetTypes.Count; i++)
                 {
-                    ReturnValuePins[i].PinType.Value = constructedType;
+                    BaseType type = specRetTypes[i];
+
+                    // Construct type with generic arguments replaced by our input type pins
+                    outputPinTypes[i] = GenericsHelper.ConstructWithTypePins(type, InputTypePins);
+                }
+
+                if(this.NaturalSignature)
+                {
+                    for(int i = 0; i < outputPinTypes.Length; i++)
+                    {
+                        var expectedType = outputPinTypes[i];
+                        if (this.ReturnValuePins[i].PinType.Value != expectedType)
+                        {
+                            this.ReturnValuePins[i].PinType.Value = expectedType;
+                        }
+                    }
+                }
+                else
+                {
+                    var returnStorageType = CoroutineUtils.GetCoroutineReturnType(outputPinTypes);
+                    if(this.CoroutineReturnInputPin.PinType.Value != returnStorageType)
+                    {
+                        this.CoroutineReturnInputPin.PinType.Value = returnStorageType;
+                    }
                 }
             }
         }

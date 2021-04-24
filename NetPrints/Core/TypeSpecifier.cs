@@ -162,15 +162,12 @@ namespace NetPrints.Core
                 throw new ArgumentException(nameof(type));
             }
 
-            string typeName = type.Name.Split('`').First();
-            if (!string.IsNullOrEmpty(type.Namespace))
-            {
-                typeName = type.Namespace + "." + typeName;
-            }
-
-            TypeSpecifier typeSpecifier = new TypeSpecifier(typeName,
+            var typeSpecifier = new TypeSpecifier
+            (
+                TypeName(type),
                 type.IsSubclassOf(typeof(Enum)),
-                type.IsInterface);
+                type.IsInterface
+            );
 
             foreach (Type genType in type.GetGenericArguments())
             {
@@ -186,6 +183,18 @@ namespace NetPrints.Core
             }
 
             return typeSpecifier;
+        }
+
+        public static string TypeName(Type type)
+        {
+            string typeName = type.Name.Split('`').First();
+            
+            if (!string.IsNullOrEmpty(type.Namespace))
+            {
+                typeName = type.Namespace + "." + typeName;
+            }
+
+            return typeName;
         }
 
         public override bool Equals(object obj)

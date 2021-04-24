@@ -349,7 +349,7 @@ namespace NetPrintsEditor.ViewModels
             {
                 if (graph is MethodGraph methodGraph && methodGraph.Modifiers != value)
                 {
-                    methodGraph.Modifiers = value;
+                    methodGraph.Modifiers.Value = value;
                 }
             }
         }
