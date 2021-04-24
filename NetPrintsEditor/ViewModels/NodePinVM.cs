@@ -213,16 +213,15 @@ namespace NetPrintsEditor.ViewModels
                     {
                         try
                         {
-                            p.UnconnectedValue = Convert.ChangeType(value, t);
+                            value = Convert.ChangeType(value, t);
                         }
-                        catch (InvalidCastException)
+                        catch(Exception e) when(e is InvalidCastException || e is FormatException)
                         {
+                            value = null;
                         }
                     }
-                    else
-                    {
-                        p.UnconnectedValue = value;
-                    }
+
+                    p.UnconnectedValue = value;
 
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(UnconnectedValueBool));
