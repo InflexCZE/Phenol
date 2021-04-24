@@ -125,7 +125,11 @@ namespace NetPrintsEditor.ViewModels
                     if (odp.PinType.Value is TypeSpecifier pinTypeSpec)
                     {
                         // Add make delegate
-                        AddSuggestionsWithCategory("NetPrints", new[] { new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type) });
+                        AddSuggestionsWithCategory("NetPrints", new object[]
+                        {
+                            new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type),
+                            TypeSpecifier.FromType<ExplicitCastNode>()
+                        });
 
                         // Add variables and methods of the pin type
                         AddSuggestionsWithCategory("Pin Variables",
