@@ -35,6 +35,7 @@ namespace NetPrintsEditor.ViewModels
             [typeof(MethodGraph)] = new List<object>()
             {
                 TypeSpecifier.FromType<ForLoopNode>(),
+                TypeSpecifier.FromType<ForeachLoopNode>(),
                 TypeSpecifier.FromType<DelayNode>(),
                 TypeSpecifier.FromType<IfElseNode>(),
                 TypeSpecifier.FromType<ConstructorNode>(),
@@ -53,6 +54,7 @@ namespace NetPrintsEditor.ViewModels
             [typeof(ConstructorGraph)] = new List<object>()
             {
                 TypeSpecifier.FromType<ForLoopNode>(),
+                TypeSpecifier.FromType<ForeachLoopNode>(),
                 TypeSpecifier.FromType<DelayNode>(),
                 TypeSpecifier.FromType<IfElseNode>(),
                 TypeSpecifier.FromType<ConstructorNode>(),

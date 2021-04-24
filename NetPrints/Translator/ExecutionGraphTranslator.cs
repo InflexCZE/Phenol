@@ -32,6 +32,7 @@ namespace NetPrints.Translator
 
         private ExecutionGraph graph;
 
+        //TODO: Produce stable code
         private Random random;
 
         private delegate void NodeTypeHandler(ExecutionGraphTranslator translator, Node node);
@@ -50,9 +51,19 @@ namespace NetPrints.Translator
             { typeof(AwaitNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateAwaitNode(node as AwaitNode) } },
             { typeof(TernaryNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateTernaryNode(node as TernaryNode) } },
 
-            { typeof(ForLoopNode), new List<NodeTypeHandler> {
+            { typeof(ForLoopNode), new List<NodeTypeHandler>
+              {
                 (translator, node) => translator.TranslateStartForLoopNode(node as ForLoopNode),
-                (translator, node) => translator.TranslateContinueForLoopNode(node as ForLoopNode)} },
+                (translator, node) => translator.TranslateContinueForLoopNode(node as ForLoopNode)
+              }
+            },
+
+            { typeof(ForeachLoopNode), new List<NodeTypeHandler> 
+              {
+                (translator, node) => translator.TranslateForeachLoopNode(node as ForeachLoopNode),
+                (translator, node) => translator.TranslateBreakForeachLoopNode(node as ForeachLoopNode),
+              }
+            },
 
             { typeof(RerouteNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateRerouteNode(node as RerouteNode) } },
 
@@ -1072,11 +1083,17 @@ namespace NetPrints.Translator
             // the correct order
             TranslateDependentPureNodes(node);
 
-            builder.AppendLine($"{GetOrCreatePinName(node.IndexPin)} = {GetPinIncomingValue(node.InitialIndexPin)};");
-            builder.AppendLine($"if ({GetOrCreatePinName(node.IndexPin)} < {GetPinIncomingValue(node.MaxIndexPin)})");
+            //builder.AppendLine($"{GetOrCreatePinName(node.IndexPin)} = {GetPinIncomingValue(node.InitialIndexPin)};");
+            //builder.AppendLine($"if ({GetOrCreatePinName(node.IndexPin)} < {GetPinIncomingValue(node.MaxIndexPin)})");
+            //builder.AppendLine("{");
+            //WritePushJumpStack(node.ContinuePin);
+            //WriteGotoOutputPinIfNecessary(node.LoopPin, node.ExecutionPin);
+            //builder.AppendLine("}");
+
+            var index = GetOrCreatePinName(node.IndexPin);
+            builder.AppendLine($"for({index} = {GetPinIncomingValue(node.InitialIndexPin)}; {index} < {GetPinIncomingValue(node.MaxIndexPin)}; {index}++)");
             builder.AppendLine("{");
-            WritePushJumpStack(node.ContinuePin);
-            WriteGotoOutputPinIfNecessary(node.LoopPin, node.ExecutionPin);
+            TranslateLoopBody(node.LoopPin);
             builder.AppendLine("}");
         }
 
@@ -1094,6 +1111,45 @@ namespace NetPrints.Translator
             builder.AppendLine("}");
 
             WriteGotoOutputPinIfNecessary(node.CompletedPin, node.ContinuePin);
+        }
+
+        public void TranslateForeachLoopNode(ForeachLoopNode node)
+        {
+            TranslateDependentPureNodes(node);
+            
+            var elementName = GetOrCreatePinName(node.DataPin);
+            var indexName = GetOrCreatePinName(node.IndexPin);
+            var tmpElementName = $"__{elementName}_tmp__";
+
+            builder.AppendLine($"{indexName} = -1;");
+            builder.AppendLine($"foreach(var {tmpElementName} in {GetOrCreatePinName(node.DataCollectionPin.IncomingPin)})");
+            builder.AppendLine("{");
+
+            builder.AppendLine($"{indexName}++;");
+            builder.AppendLine($"{elementName} = {tmpElementName};");
+            TranslateLoopBody(node.LoopPin);
+
+            builder.AppendLine("}");
+        }
+
+        public void TranslateBreakForeachLoopNode(ForeachLoopNode node)
+        {
+            //WriteGotoOutputPinIfNecessary(node.CompletedPin, node.BreakPin);
+        }
+
+        public void TranslateLoopBody(NodeOutputExecPin loopPin)
+        {
+            var node = loopPin.Node;
+            var loopBeginNode = loopPin?.OutgoingPin?.Node;
+            if (loopBeginNode is not null)
+            {
+                //TODO: This is hack af
+                //WriteGotoOutputPinIfNecessary(node.LoopPin, node.ExecutionPin);
+                var nodes = new HashSet<Node>();
+                TranslatorUtil.AddExecNodes(loopBeginNode, nodes);
+                nodes.Remove(node);
+                TranslateNodeChain(nodes);
+            }
         }
 
         public void PureTranslateVariableGetterNode(VariableGetterNode node)

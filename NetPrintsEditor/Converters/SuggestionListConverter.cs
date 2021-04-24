@@ -46,6 +46,11 @@ namespace NetPrintsEditor.Converters
                     text = "For Loop";
                     iconPath = "Loop_16x.png";
                 }
+                else if (t == TypeSpecifier.FromType<ForeachLoopNode>())
+                {
+                    text = "Foreach Loop";
+                    iconPath = "Loop_16x.png";
+                }
                 else if (t == TypeSpecifier.FromType<DelayNode>())
                 {
                     text = "Delay";

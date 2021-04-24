@@ -10,17 +10,17 @@ namespace NetPrints.Graph
     public class ForLoopNode : Node
     {
         /// <summary>
-        /// Execution pin that gets executed for each loop.
-        /// </summary>
-        public NodeOutputExecPin LoopPin
-        {
-            get { return OutputExecPins[0]; }
-        }
-
-        /// <summary>
         /// Execution pin that gets executed when the loop is over.
         /// </summary>
         public NodeOutputExecPin CompletedPin
+        {
+            get { return OutputExecPins[0]; }
+        }
+        
+        /// <summary>
+        /// Execution pin that gets executed for each loop.
+        /// </summary>
+        public NodeOutputExecPin LoopPin
         {
             get { return OutputExecPins[1]; }
         }
@@ -72,10 +72,10 @@ namespace NetPrints.Graph
             : base(graph)
         {
             AddInputExecPin("Exec");
-            AddInputExecPin("Continue");
+            //AddInputExecPin("Continue");
 
-            AddOutputExecPin("Loop");
             AddOutputExecPin("Completed");
+            AddOutputExecPin("Loop");
 
             AddInputDataPin("InitialIndex", TypeSpecifier.FromType<int>());
             AddInputDataPin("MaxIndex", TypeSpecifier.FromType<int>());

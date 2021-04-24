@@ -15,6 +15,7 @@ namespace NetPrints.Graph
     [KnownType(typeof(MethodEntryNode))]
     [KnownType(typeof(ConstructorEntryNode))]
     [KnownType(typeof(ForLoopNode))]
+    [KnownType(typeof(ForeachLoopNode))]
     [KnownType(typeof(DelayNode))]
     [KnownType(typeof(IfElseNode))]
     [KnownType(typeof(LiteralNode))]
