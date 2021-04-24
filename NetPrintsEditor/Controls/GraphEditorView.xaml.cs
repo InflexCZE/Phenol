@@ -219,9 +219,12 @@ namespace NetPrintsEditor.Controls
 
         private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            Graph.SuggestionPin = null;
+            if(this.Graph is null)
+                return;
+
+            this.Graph.SuggestionPin = null;
             var mousePos = Mouse.GetPosition(drawCanvas);
-            Graph.UpdateSuggestions(mousePos.X, mousePos.Y);
+            this.Graph.UpdateSuggestions(mousePos.X, mousePos.Y);
         }
 
         #region DrawCanvas dragging and scaling
