@@ -284,6 +284,21 @@ namespace NetPrints.Graph
             pin.IncomingPins.Clear();
         }
 
+        public static RerouteNode AddRerouteNode(NodePin pin)
+        {
+            return pin switch
+            {
+                NodeInputDataPin  dataPin => AddRerouteNode(dataPin),
+                NodeOutputDataPin dataPin => AddRerouteNode(dataPin),
+                NodeOutputExecPin execPin => AddRerouteNode(execPin),
+                NodeInputExecPin  execPin => AddRerouteNode(execPin),
+                NodeOutputTypePin typePin => AddRerouteNode(typePin),
+                NodeInputTypePin  typePin => AddRerouteNode(typePin),
+                
+                _ => throw new Exception("Can't add reroute node for invalid pin type")
+            };
+        }
+        
         /// <summary>
         /// Adds a data reroute node and does the necessary rewiring.
         /// </summary>
@@ -291,19 +306,30 @@ namespace NetPrints.Graph
         /// <returns>Reroute node created for the data pin.</returns>
         public static RerouteNode AddRerouteNode(NodeInputDataPin pin)
         {
-            if (pin?.IncomingPin == null)
+            var type = pin.PinType.Value;
+            var incomingPin = pin.IncomingPin;
+            var type2 = pin.IncomingPin?.PinType.Value ?? type;
+            
+            var rerouteNode = RerouteNode.MakeData(pin.Node.Graph, new[]{(type, type2)});
+
+            if(incomingPin is not null)
             {
-                throw new ArgumentException("Pin or its connected pin were null");
+                GraphUtil.ConnectDataPins(incomingPin, rerouteNode.InputDataPins[0]);
             }
-
-            var rerouteNode = RerouteNode.MakeData(pin.Node.Graph, new Tuple<BaseType, BaseType>[]
-            {
-                new Tuple<BaseType, BaseType>(pin.PinType, pin.IncomingPin.PinType)
-            });
-
-            GraphUtil.ConnectDataPins(pin.IncomingPin, rerouteNode.InputDataPins[0]);
             GraphUtil.ConnectDataPins(rerouteNode.OutputDataPins[0], pin);
 
+            return rerouteNode;
+        }
+
+        public static RerouteNode AddRerouteNode(NodeOutputDataPin pin)
+        {
+            var rerouteNode = RerouteNode.MakeData(pin.Node.Graph, new[]
+            {
+                (pin.PinType.Value, pin.PinType.Value)
+            });
+
+            GraphUtil.ConnectDataPins(pin, rerouteNode.InputDataPins[0]);
+            
             return rerouteNode;
         }
 
@@ -314,15 +340,22 @@ namespace NetPrints.Graph
         /// <returns>Reroute node created for the execution pin.</returns>
         public static RerouteNode AddRerouteNode(NodeOutputExecPin pin)
         {
-            if (pin?.OutgoingPin == null)
-            {
-                throw new ArgumentException("Pin or its connected pin were null");
-            }
-
             var rerouteNode = RerouteNode.MakeExecution(pin.Node.Graph, 1);
 
-            GraphUtil.ConnectExecPins(rerouteNode.OutputExecPins[0], pin.OutgoingPin);
+            if(pin.OutgoingPin is {} outgoingPin)
+            {
+                GraphUtil.ConnectExecPins(rerouteNode.OutputExecPins[0], outgoingPin);
+            }
             GraphUtil.ConnectExecPins(pin, rerouteNode.InputExecPins[0]);
+
+            return rerouteNode;
+        }
+
+        public static RerouteNode AddRerouteNode(NodeInputExecPin pin)
+        {
+            var rerouteNode = RerouteNode.MakeExecution(pin.Node.Graph, 1);
+
+            GraphUtil.ConnectExecPins(rerouteNode.OutputExecPins[0], pin);
 
             return rerouteNode;
         }
@@ -334,15 +367,22 @@ namespace NetPrints.Graph
         /// <returns>Reroute node created for the type pin.</returns>
         public static RerouteNode AddRerouteNode(NodeInputTypePin pin)
         {
-            if (pin?.IncomingPin == null)
-            {
-                throw new ArgumentException("Pin or its connected pin were null");
-            }
-
             var rerouteNode = RerouteNode.MakeType(pin.Node.Graph, 1);
 
-            GraphUtil.ConnectTypePins(pin.IncomingPin, rerouteNode.InputTypePins[0]);
+            if(pin.IncomingPin is {} incomingPin)
+            {
+                GraphUtil.ConnectTypePins(incomingPin, rerouteNode.InputTypePins[0]);
+            }
             GraphUtil.ConnectTypePins(rerouteNode.OutputTypePins[0], pin);
+
+            return rerouteNode;
+        }
+        
+        public static RerouteNode AddRerouteNode(NodeOutputTypePin pin)
+        {
+            var rerouteNode = RerouteNode.MakeType(pin.Node.Graph, 1);
+
+            GraphUtil.ConnectTypePins(pin, rerouteNode.InputTypePins[0]);
 
             return rerouteNode;
         }

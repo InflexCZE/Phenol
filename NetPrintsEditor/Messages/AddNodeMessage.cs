@@ -26,13 +26,23 @@ namespace NetPrintsEditor.Messages
                 throw new ArgumentException("Invalid type for node");
             }
 
-            var constructorParamTypes = new[] { graph.GetType() }
-                .Concat(constructorParameters.Select(p => p.GetType()))
-                .ToArray();
-
-            if (nodeType.GetConstructor(constructorParamTypes) == null)
+            if(nodeType == typeof(RerouteNode))
             {
-                throw new ArgumentException($"Invalid parameters for constructor of {nodeType.FullName}");
+                if(suggestionPin == null)
+                {
+                    throw new ArgumentException("Reroute needs template pin");
+                }
+            }
+            else
+            {
+                var constructorParamTypes = new[] { graph.GetType() }
+                    .Concat(constructorParameters.Select(p => p.GetType()))
+                    .ToArray();
+
+                if (nodeType.GetConstructor(constructorParamTypes) == null)
+                {
+                    throw new ArgumentException($"Invalid parameters for constructor of {nodeType.FullName}");
+                }
             }
 
             NodeType = nodeType;

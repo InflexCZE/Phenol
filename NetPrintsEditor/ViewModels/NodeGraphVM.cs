@@ -115,6 +115,11 @@ namespace NetPrintsEditor.ViewModels
 
             if (SuggestionPin != null)
             {
+                AddSuggestionsWithCategory("NetPrints", new object[]
+                {
+                    TypeSpecifier.FromType<RerouteNode>(),
+                });
+
                 if (SuggestionPin is NodeOutputDataPin odp)
                 {
                     if (odp.PinType.Value is TypeSpecifier pinTypeSpec)
@@ -840,8 +845,17 @@ namespace NetPrintsEditor.ViewModels
                 if (msg.PositionY < 0)
                     msg.PositionY = 0;
 
-                object[] parameters = new object[] { msg.Graph }.Concat(msg.ConstructorParameters).ToArray();
-                Node node = Activator.CreateInstance(msg.NodeType, parameters) as Node;
+                Node node;
+                if(msg.NodeType == typeof(RerouteNode))
+                {
+                    node = GraphUtil.AddRerouteNode(msg.SuggestionPin);
+                }
+                else
+                {
+                    object[] parameters = new object[] { msg.Graph }.Concat(msg.ConstructorParameters).ToArray();
+                    node = Activator.CreateInstance(msg.NodeType, parameters) as Node;
+                }
+
                 node.PositionX = msg.PositionX;
                 node.PositionY = msg.PositionY;
 

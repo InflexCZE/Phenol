@@ -1,5 +1,6 @@
 ﻿using NetPrints.Core;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -34,7 +35,7 @@ namespace NetPrints.Graph
             return node;
         }
 
-        public static RerouteNode MakeData(NodeGraph graph, IEnumerable<Tuple<BaseType, BaseType>> dataTypes)
+        public static RerouteNode MakeData(NodeGraph graph, IEnumerable<ValueTuple<BaseType, BaseType>> dataTypes)
         {
             if (dataTypes is null)
             {

@@ -56,6 +56,11 @@ namespace NetPrintsEditor.Converters
                     text = "Delay";
                     iconPath = "Time_16x.png";
                 }
+                else if (t == TypeSpecifier.FromType<RerouteNode>())
+                {
+                    text = "Pin";
+                    iconPath = "PinnedItem_16x.png";
+                }
                 else if (t == TypeSpecifier.FromType<IfElseNode>())
                 {
                     text = "If Else";

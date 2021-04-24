@@ -631,23 +631,7 @@ namespace NetPrintsEditor.ViewModels
         /// </summary>
         public void AddRerouteNode(int x, int y)
         {
-            RerouteNode rerouteNode;
-            if (Pin is NodeInputDataPin dataPin)
-            {
-                rerouteNode = GraphUtil.AddRerouteNode(dataPin);
-            }
-            else if (Pin is NodeOutputExecPin execPin)
-            {
-                rerouteNode = GraphUtil.AddRerouteNode(execPin);
-            }
-            else if (Pin is NodeInputTypePin typePin)
-            {
-                rerouteNode = GraphUtil.AddRerouteNode(typePin);
-            }
-            else
-            {
-                throw new Exception("Can't add reroute node for invalid pin type");
-            }
+            var rerouteNode = GraphUtil.AddRerouteNode(this.Pin);
             rerouteNode.PositionX = x;
             rerouteNode.PositionY = y;
         }
