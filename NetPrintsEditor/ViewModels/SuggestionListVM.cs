@@ -133,6 +133,10 @@ namespace NetPrintsEditor.ViewModels
                 {
                     AddNode<ForLoopNode>();
                 }
+                else if (t == TypeSpecifier.FromType<DelayNode>())
+                {
+                    AddNode<DelayNode>();
+                }
                 else if (t == TypeSpecifier.FromType<IfElseNode>())
                 {
                     AddNode<IfElseNode>();

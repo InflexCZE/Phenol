@@ -40,6 +40,7 @@ namespace NetPrints.Translator
         {
             { typeof(CallMethodNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateCallMethodNode(node as CallMethodNode) } },
             { typeof(VariableSetterNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateVariableSetterNode(node as VariableSetterNode) } },
+            { typeof(DelayNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateDelayNode(node as DelayNode) } },
             { typeof(ReturnNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateReturnNode(node as ReturnNode) } },
             { typeof(MethodEntryNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateMethodEntry(node as MethodEntryNode) } },
             { typeof(IfElseNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateIfElseNode(node as IfElseNode) } },
@@ -979,6 +980,12 @@ namespace NetPrints.Translator
 
             // Go to the next state
             WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
+        }
+
+        public void TranslateDelayNode(DelayNode node)
+        {
+            TranslateDependentPureNodes(node);
+            builder.AppendLine("yield return null;");
         }
 
         public void TranslateReturnNode(ReturnNode node)

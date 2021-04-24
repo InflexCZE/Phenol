@@ -27,6 +27,7 @@
     <None Remove="Resources\ListView_16x.png" />
     <None Remove="Resources\Literal_16x.png" />
     <None Remove="Resources\Loop_16x.png" />
+    <None Remove="Resources\Time_16x.png" />
     <None Remove="Resources\Method_16x.png" />
     <None Remove="Resources\None_16x.png" />
     <None Remove="Resources\Operator_16x.png" />
@@ -61,6 +62,7 @@
     <Resource Include="Resources\ListView_16x.png" />
     <Resource Include="Resources\Literal_16x.png" />
     <Resource Include="Resources\Loop_16x.png" />
+    <Resource Include="Resources\Time_16x.png" />
     <Resource Include="Resources\Method_16x.png" />
     <Resource Include="Resources\None_16x.png" />
     <Resource Include="Resources\Operator_16x.png" />
@@ -69,8 +71,6 @@
     <Resource Include="Resources\Task_16x.png" />
     <Resource Include="Resources\Throw_16x.png" />
     <Resource Include="Resources\Type_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Convert_16x.png" />
   </ItemGroup>
   <ItemGroup>
