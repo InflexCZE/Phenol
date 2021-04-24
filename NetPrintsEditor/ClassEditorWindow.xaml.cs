@@ -446,18 +446,21 @@ namespace NetPrintsEditor
             
             var debugTargets = await Request<DebugTargets>.From(Connection);
 
-            var graphVM = this.ViewModel.OpenedGraph;
-            var method = graphVM.Graph;
-            var @class = method.Class;
-            var pinToVM = graphVM.AllPins.ToDictionary(x => x.Pin, x => x);
-
-            var classIndex = @class.Project.Classes.IndexOf(@class);
-            var methodIndex = @class.Methods.Cast<NodeGraph>().Concat(@class.Constructors).IndexOf(method);
-            
             Connection.RegisterMessageHandler<HitPoints>(message =>
             {
                 this.Dispatcher.Invoke(() =>
                 {
+                    var graphVM = this.ViewModel.OpenedGraph;
+                    var method = graphVM.Graph as ExecutionGraph;
+                    if(method is null)
+                        return;
+                    
+                    var @class = method.Class;
+                    var pinToVM = graphVM.AllPins.ToDictionary(x => x.Pin, x => x);
+
+                    var classIndex = @class.Project.Classes.IndexOf(@class);
+                    var methodIndex = @class.Methods.Cast<NodeGraph>().Concat(@class.Constructors).IndexOf(method);
+                    
                     foreach(var hit in message.Ids)
                     {
                         if(hit.Class != classIndex || hit.Method != methodIndex)
