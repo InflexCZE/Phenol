@@ -117,7 +117,10 @@ namespace LiveLink.Connection
             }
             catch
             {
-                this.OnConnectionLost?.Invoke();
+                if(message.IsReliable)
+                {
+                    this.OnConnectionLost?.Invoke();
+                }
             }
         }
 

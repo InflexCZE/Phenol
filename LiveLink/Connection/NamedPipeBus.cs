@@ -40,6 +40,9 @@ namespace LiveLink.Connection
 			_server.BeginWaitForConnection(WaitForConnectionCallBack, null);
 		}
 
+		//TODO: Sending runs in byte-by-byte lockstep with other process.
+		//App lags on one side affect both processes. Think about threaded sending
+		//Note: Sending errors still need to be propagated
 		public void Publish<T>(T msg) where T : Message
 		{
 			if (_ignoreMe.Contains(msg.MsgId))
