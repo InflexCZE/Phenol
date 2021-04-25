@@ -282,7 +282,7 @@ namespace NetPrintsEditor.Reflection
             }
             else
             {
-                return new MethodSpecifier[0];
+                return Array.Empty<MethodSpecifier>();
             }
         }
 
@@ -310,7 +310,7 @@ namespace NetPrintsEditor.Reflection
             }
             else
             {
-                return new MethodSpecifier[0];
+                return Array.Empty<MethodSpecifier>();
             }
         }
 
@@ -323,7 +323,7 @@ namespace NetPrintsEditor.Reflection
                 return symbol.Constructors.Select(c => ReflectionConverter.ConstructorSpecifierFromSymbol(c));
             }
 
-            return new ConstructorSpecifier[0];
+            return Array.Empty<ConstructorSpecifier>();
         }
 
         public IEnumerable<string> GetEnumNames(TypeSpecifier typeSpecifier)
@@ -337,7 +337,7 @@ namespace NetPrintsEditor.Reflection
                     .Select(member => member.Name);
             }
 
-            return new string[0];
+            return Array.Empty<string>();
         }
 
         public bool TypeSpecifierIsSubclassOf(TypeSpecifier a, TypeSpecifier b)
@@ -500,7 +500,7 @@ namespace NetPrintsEditor.Reflection
 
                 if (type == null)
                 {
-                    return new MethodSpecifier[0];
+                    return Array.Empty<MethodSpecifier>();
                 }
 
                 methodSymbols = type.GetMethods();
