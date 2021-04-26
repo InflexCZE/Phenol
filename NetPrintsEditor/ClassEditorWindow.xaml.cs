@@ -358,20 +358,7 @@ namespace NetPrintsEditor
 
         private async void OnDeployButtonClicked(object sender, RoutedEventArgs e)
         {
-            var sources = this.ViewModel.Project.GenerateClassSources();
-            var code = string.Join(Environment.NewLine, sources);
-
-            var externalSources = this.ViewModel.Project.References
-                    .OfType<SourceDirectoryReference>()
-                    .Where(sourceRef => sourceRef.IncludeInCompilation)
-                    .SelectMany(sourceRef => sourceRef.SourceFilePaths)
-                    .Select(sourcePath => File.ReadAllText(sourcePath))
-                    .SelectMany(sourceCode =>
-                    {
-                        return sourceCode.SplitByLines().Where(x => x.StartsWith("using ") == false);
-                    });
-
-            code += Environment.NewLine + string.Join(Environment.NewLine, externalSources);
+            var code = this.ViewModel.Project.GetPBScript();
 
             //TODO: Merge connection code
             bool dispose = false;

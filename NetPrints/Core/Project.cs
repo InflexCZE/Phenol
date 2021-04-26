@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Xml;
 using NetPrints.Serialization;
 using NetPrints.Compilation;
+using NetPrints.Utils;
 using PropertyChanged;
 
 namespace NetPrints.Core
@@ -413,6 +414,12 @@ namespace NetPrints.Core
                     }
                 }
 
+                if(compilationResults.Success && this.CompilationOutput.HasFlag(ProjectCompilationOutput.PBScript))
+                {
+                    var scriptPath = System.IO.Path.Combine(compiledDir, $"{Name}.cs");
+                    File.WriteAllText(scriptPath, GetPBScript());
+                }
+
                 // Write errors to file
                 if (CompilationOutput.HasFlag(ProjectCompilationOutput.Errors))
                 {
@@ -506,6 +513,24 @@ namespace NetPrints.Core
             }
 
             return code;
+        }
+
+        public string GetPBScript()
+        {
+            var sources = GenerateClassSources();
+            var code = string.Join(Environment.NewLine, sources);
+
+            var externalSources = this.References
+                .OfType<SourceDirectoryReference>()
+                .Where(sourceRef => sourceRef.IncludeInCompilation)
+                .SelectMany(sourceRef => sourceRef.SourceFilePaths)
+                .Select(sourcePath => File.ReadAllText(sourcePath))
+                .SelectMany(sourceCode =>
+                {
+                    return sourceCode.SplitByLines().Where(x => x.StartsWith("using ") == false);
+                });
+
+            return code + Environment.NewLine + string.Join(Environment.NewLine, externalSources);
         }
 
         public void RunProject()
