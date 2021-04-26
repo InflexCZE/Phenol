@@ -1,6 +1,7 @@
 ﻿using NetPrints.Core;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Xml;
 
 namespace NetPrints.Serialization
 {
@@ -19,8 +20,9 @@ namespace NetPrints.Serialization
         /// <param name="outputPath">Path to save the class at.</param>
         public static void SaveClass(ClassGraph cls, string outputPath)
         {
-            using FileStream fileStream = File.Open(outputPath, FileMode.Create);
-            classSerializer.WriteObject(fileStream, cls);
+            using var fileStream = File.Open(outputPath, FileMode.Create);
+            using var writer = XmlWriter.Create(fileStream, new XmlWriterSettings { Indent = true });
+            classSerializer.WriteObject(writer, cls);
         }
 
         /// <summary>
@@ -29,12 +31,10 @@ namespace NetPrints.Serialization
         /// <param name="outputPath">Path to load the class from. Throws a FileLoadException if the read object was not a class.</param>
         public static ClassGraph LoadClass(string path)
         {
-            using (FileStream fileStream = File.OpenRead(path))
+            using var fileStream = File.OpenRead(path);
+            if (classSerializer.ReadObject(fileStream) is ClassGraph cls)
             {
-                if (classSerializer.ReadObject(fileStream) is ClassGraph cls)
-                {
-                    return cls;
-                }
+                return cls;
             }
 
             throw new FileLoadException();

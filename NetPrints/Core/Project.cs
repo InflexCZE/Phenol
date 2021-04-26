@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using NetPrints.Translator;
 using System.Diagnostics;
+using System.Xml;
 using NetPrints.Serialization;
 using NetPrints.Compilation;
 using PropertyChanged;
@@ -184,8 +185,9 @@ namespace NetPrints.Core
 
             SaveVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-            using FileStream fileStream = File.Open(Path, FileMode.Create);
-            ProjectSerializer.WriteObject(fileStream, this);
+            using var fileStream = File.Open(Path, FileMode.Create);
+            using var writer = XmlWriter.Create(fileStream, new XmlWriterSettings { Indent = true});
+            ProjectSerializer.WriteObject(writer, this);
         }
 
         /// <summary>
