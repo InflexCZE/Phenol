@@ -41,5 +41,10 @@ namespace NetPrints.Graph
                 InputTypePins.Remove(interfacePin);
             }
         }
+
+        public override string ToString()
+        {
+            return "Class Type";
+        }
     }
 }
