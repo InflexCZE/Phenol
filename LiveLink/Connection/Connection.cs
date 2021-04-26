@@ -39,6 +39,12 @@ namespace LiveLink.Connection
                 }
             }
 
+            RegisterMessageHandler<CloseConnection>(_ =>
+            {
+                this.OnConnectionLost?.Invoke();
+                return true;
+            });
+
             RegisterMessageHandler<HeartBeat>(_ =>
             {
                 this.LastBeatTimestamp = DateTime.Now.Ticks;
@@ -96,6 +102,11 @@ namespace LiveLink.Connection
             public static readonly HeartBeat Instance = new();
         }
 
+        protected class CloseConnection : Message
+        {
+            public override bool IsReliable => false;
+        }
+
         public void RegisterMessageHandler<TMessage>(Func<TMessage, bool> handler) where TMessage : Message
         {
             this.Handlers.Add(m =>
@@ -141,7 +152,17 @@ namespace LiveLink.Connection
         public void Dispose()
         {
             var endpoint = Interlocked.Exchange(ref this.Endpoint, null);
-            endpoint?.Dispose();
+
+            if(endpoint != null)
+            {
+                try
+                {
+                    endpoint.Send(new CloseConnection());
+                }
+                catch
+                { }
+                endpoint.Dispose();
+            }
         }
     }
 }

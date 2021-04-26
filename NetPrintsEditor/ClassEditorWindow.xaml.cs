@@ -38,6 +38,7 @@ namespace NetPrintsEditor
         public ClassEditorWindow()
         {
             InitializeComponent();
+            Closing += OnWindowClosing;
         }
 
         private void OnMethodDoubleClick(object sender, MouseButtonEventArgs e)
@@ -414,6 +415,15 @@ namespace NetPrintsEditor
 
         private Connection Connection;
 
+        private void Disconnect()
+        {
+            this.Connection?.Dispose();
+            this.Connection = null;
+
+            attachButton.Content = "Attach";
+            attachButton.IsEnabled = true;
+        }
+
         private async void OnAttachButtonClicked(object sender, RoutedEventArgs e)
         {
             if(this.Connection != null)
@@ -422,15 +432,6 @@ namespace NetPrintsEditor
                 return;
             }
             
-            void Disconnect()
-            {
-                this.Connection?.Dispose();
-                this.Connection = null;
-
-                attachButton.Content = "Attach";
-                attachButton.IsEnabled = true;
-            }
-
             attachButton.IsEnabled = false;
 
             try
@@ -502,6 +503,11 @@ namespace NetPrintsEditor
             {
                 Disconnect();
             }
+        }
+
+        private void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            Disconnect();
         }
     }
 }
