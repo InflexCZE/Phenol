@@ -12,6 +12,7 @@ namespace NetPrints.Translator
         private const string CLASS_TEMPLATE =
             @"namespace %Namespace%
             {
+                %ClassAttributes%
                 %ClassModifiers%class %ClassName%%GenericArguments% : %BaseTypes%
                 {
                     %Content%
@@ -19,7 +20,8 @@ namespace NetPrints.Translator
             }";
 
         private const string CLASS_TEMPLATE_NO_NAMESPACE =
-            @"%ClassModifiers%class %ClassName%%GenericArguments% : %BaseTypes%
+            @"%ClassAttributes%
+            %ClassModifiers%class %ClassName%%GenericArguments% : %BaseTypes%
             {
                 %Content%
             }";
@@ -89,6 +91,7 @@ namespace NetPrints.Translator
             }
 
             string baseTypes = string.Join(", ", c.AllBaseTypes);
+            var attributes = TranslatorUtil.TranslateAttributes(c.DefinedAttributes);
 
             string generatedCode = (string.IsNullOrWhiteSpace(c.Namespace) ? CLASS_TEMPLATE_NO_NAMESPACE : CLASS_TEMPLATE)
                 .Replace("%Namespace%", c.Namespace)
@@ -96,6 +99,7 @@ namespace NetPrints.Translator
                 .Replace("%ClassName%", c.Name)
                 .Replace("%GenericArguments%", genericArguments)
                 .Replace("%BaseTypes%", baseTypes)
+                .Replace("%ClassAttributes%", attributes)
                 .Replace("%Content%", content.ToString());
 
             return TranslatorUtil.FormatCode(generatedCode);

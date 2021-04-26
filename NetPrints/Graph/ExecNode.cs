@@ -14,7 +14,10 @@ namespace NetPrints.Graph
         protected ExecNode(NodeGraph graph)
             : base(graph)
         {
-            AddExecPins();
+            if (graph is ExecutionGraph || this.CanSetPure == false)
+            {
+                AddExecPins();
+            }
         }
 
         private void AddExecPins()

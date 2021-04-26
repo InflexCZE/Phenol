@@ -1,4 +1,8 @@
-﻿using NetPrints.Graph;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using NetPrints.Graph;
 using System.Runtime.Serialization;
 
 namespace NetPrints.Core
@@ -37,6 +41,31 @@ namespace NetPrints.Core
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Return node of this class that receives the metadata for it.
+        /// </summary>
+        public AttributesNode AttributesNode
+        {
+            get => this.Nodes.OfType<AttributesNode>().SingleOrDefault();
+        }
+
+        public IEnumerable<ConstructorNode> DefinedAttributes
+        {
+            get
+            {
+                if(this.AttributesNode?.InputDataPins is { } attributePins)
+                {
+                    foreach(var attributePin in attributePins)
+                    {
+                        if(attributePin.IncomingPin is { } pin)
+                        {
+                            yield return (ConstructorNode) pin.Node;
+                        }
+                    }
+                }
+            }
         }
     }
 }

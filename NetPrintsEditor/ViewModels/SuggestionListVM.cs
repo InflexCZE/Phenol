@@ -141,6 +141,10 @@ namespace NetPrintsEditor.ViewModels
                 {
                     AddNode<DelayNode>();
                 }
+                else if (t == TypeSpecifier.FromType<AttributesNode>())
+                {
+                    AddNode<AttributesNode>();
+                }
                 else if (t == TypeSpecifier.FromType<RerouteNode>())
                 {
                     AddNode<RerouteNode>();

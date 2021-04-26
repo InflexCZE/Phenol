@@ -36,6 +36,7 @@
     <None Remove="Resources\Task_16x.png" />
     <None Remove="Resources\Throw_16x.png" />
     <None Remove="Resources\Type_16x.png" />
+    <None Remove="Resources\Schema_16x.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0262" />
@@ -74,6 +75,7 @@
     <Resource Include="Resources\Throw_16x.png" />
     <Resource Include="Resources\Type_16x.png" />
     <Resource Include="Resources\Convert_16x.png" />
+    <Resource Include="Resources\Schema_16x.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ClassEditorWindow.xaml.cs">

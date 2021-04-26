@@ -50,6 +50,7 @@ namespace NetPrintsEditor.ViewModels
                 TypeSpecifier.FromType<AwaitNode>(),
                 TypeSpecifier.FromType<TernaryNode>(),
                 TypeSpecifier.FromType<DefaultNode>(),
+                TypeSpecifier.FromType<AttributesNode>(),
             },
             [typeof(ConstructorGraph)] = new List<object>()
             {
@@ -67,11 +68,16 @@ namespace NetPrintsEditor.ViewModels
                 TypeSpecifier.FromType<ThrowNode>(),
                 TypeSpecifier.FromType<TernaryNode>(),
                 TypeSpecifier.FromType<DefaultNode>(),
+                TypeSpecifier.FromType<AttributesNode>(),
             },
             [typeof(ClassGraph)] = new List<object>()
             {
                 TypeSpecifier.FromType<TypeNode>(),
                 TypeSpecifier.FromType<MakeArrayTypeNode>(),
+                TypeSpecifier.FromType<AttributesNode>(),
+                TypeSpecifier.FromType<ConstructorNode>(),
+                TypeSpecifier.FromType<TypeOfNode>(),
+                TypeSpecifier.FromType<MakeArrayNode>(),
             },
         };
 
@@ -113,9 +119,11 @@ namespace NetPrintsEditor.ViewModels
                 suggestions = suggestions.Concat(newSuggestions.Select(suggestion => (category, suggestion)));
             }
 
+            const string NetprintsCategory = "NetPrints";
+            
             if (SuggestionPin != null)
             {
-                AddSuggestionsWithCategory("NetPrints", new object[]
+                AddSuggestionsWithCategory(NetprintsCategory, new object[]
                 {
                     TypeSpecifier.FromType<RerouteNode>(),
                 });
@@ -124,73 +132,86 @@ namespace NetPrintsEditor.ViewModels
                 {
                     if (odp.PinType.Value is TypeSpecifier pinTypeSpec)
                     {
-                        // Add make delegate
-                        AddSuggestionsWithCategory("NetPrints", new object[]
+                        if(this.Graph is ExecutionGraph)
                         {
-                            new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type),
-                            TypeSpecifier.FromType<ExplicitCastNode>()
-                        });
+                            // Add make delegate
+                            AddSuggestionsWithCategory(NetprintsCategory, new object[]
+                            {
+                                new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type),
+                                TypeSpecifier.FromType<ExplicitCastNode>()
+                            });
 
-                        // Add variables and methods of the pin type
-                        AddSuggestionsWithCategory("Pin Variables",
-                            App.ReflectionProvider.GetVariables(
-                                new ReflectionProviderVariableQuery()
-                                    .WithType(pinTypeSpec)
-                                    .WithVisibleFrom(Graph.Class.Type)
-                                    .WithStatic(false)));
+                            // Add variables and methods of the pin type
+                            AddSuggestionsWithCategory("Pin Variables",
+                                App.ReflectionProvider.GetVariables(
+                                    new ReflectionProviderVariableQuery()
+                                        .WithType(pinTypeSpec)
+                                        .WithVisibleFrom(Graph.Class.Type)
+                                        .WithStatic(false)));
 
-                        AddSuggestionsWithCategory("Pin Methods", App.ReflectionProvider.GetMethods(
-                            new ReflectionProviderMethodQuery()
-                                .WithVisibleFrom(Graph.Class.Type)
-                                .WithStatic(false)
-                                .WithType(pinTypeSpec)));
-
-                        // Add methods of the base types that can accept the pin type as argument
-                        foreach (var baseType in Graph.Class.AllBaseTypes)
-                        {
-                            AddSuggestionsWithCategory("This Methods", App.ReflectionProvider.GetMethods(
+                            AddSuggestionsWithCategory("Pin Methods", App.ReflectionProvider.GetMethods(
                                 new ReflectionProviderMethodQuery()
                                     .WithVisibleFrom(Graph.Class.Type)
                                     .WithStatic(false)
-                                    .WithArgumentType(pinTypeSpec)
-                                    .WithType(baseType)));
-                        }
+                                    .WithType(pinTypeSpec)));
 
-                        // Add static functions taking the type of the pin
-                        AddSuggestionsWithCategory("Static Methods", App.ReflectionProvider.GetMethods(
-                            new ReflectionProviderMethodQuery()
-                                .WithArgumentType(pinTypeSpec)
-                                .WithVisibleFrom(Graph.Class.Type)
-                                .WithStatic(true)));
+                            // Add methods of the base types that can accept the pin type as argument
+                            foreach (var baseType in Graph.Class.AllBaseTypes)
+                            {
+                                AddSuggestionsWithCategory("This Methods", App.ReflectionProvider.GetMethods(
+                                    new ReflectionProviderMethodQuery()
+                                        .WithVisibleFrom(Graph.Class.Type)
+                                        .WithStatic(false)
+                                        .WithArgumentType(pinTypeSpec)
+                                        .WithType(baseType)));
+                            }
+
+                            // Add static functions taking the type of the pin
+                            AddSuggestionsWithCategory("Static Methods", App.ReflectionProvider.GetMethods(
+                                new ReflectionProviderMethodQuery()
+                                    .WithArgumentType(pinTypeSpec)
+                                    .WithVisibleFrom(Graph.Class.Type)
+                                    .WithStatic(true)));
+                        }
                     }
                 }
                 else if (SuggestionPin is NodeInputDataPin idp)
                 {
                     if (idp.PinType.Value is TypeSpecifier pinTypeSpec)
                     {
-                        // Variables of base classes that inherit from needed type
-                        foreach (var baseType in Graph.Class.AllBaseTypes)
+                        if(this.Graph is ExecutionGraph)
                         {
-                            AddSuggestionsWithCategory("This Variables", App.ReflectionProvider.GetVariables(
-                                new ReflectionProviderVariableQuery()
-                                    .WithType(baseType)
-                                    .WithVisibleFrom(Graph.Class.Type)
-                                    .WithVariableType(pinTypeSpec, true)));
-                        }
+                            // Variables of base classes that inherit from needed type
+                            foreach (var baseType in this.Graph.Class.AllBaseTypes)
+                            {
+                                AddSuggestionsWithCategory("This Variables", App.ReflectionProvider.GetVariables(
+                                    new ReflectionProviderVariableQuery()
+                                        .WithType(baseType)
+                                        .WithVisibleFrom(Graph.Class.Type)
+                                        .WithVariableType(pinTypeSpec, true)));
+                            }
 
-                        // Add static functions returning the type of the pin
-                        AddSuggestionsWithCategory("Static Methods", App.ReflectionProvider.GetMethods(
-                            new ReflectionProviderMethodQuery()
-                                .WithStatic(true)
-                                .WithVisibleFrom(Graph.Class.Type)
-                                .WithReturnType(pinTypeSpec)));
+                            // Add static functions returning the type of the pin
+                            AddSuggestionsWithCategory("Static Methods", App.ReflectionProvider.GetMethods(
+                                new ReflectionProviderMethodQuery()
+                                    .WithStatic(true)
+                                    .WithVisibleFrom(Graph.Class.Type)
+                                    .WithReturnType(pinTypeSpec)));
+                        }
+                        else
+                        {
+                            AddSuggestionsWithCategory(NetprintsCategory, new []
+                            {
+                                TypeSpecifier.FromType<ConstructorNode>()
+                            });
+                        }
                     }
                 }
                 else if (SuggestionPin is NodeOutputExecPin oxp)
                 {
                     GraphUtil.DisconnectOutputExecPin(oxp);
 
-                    AddSuggestionsWithCategory("NetPrints", GetBuiltInNodes(Graph));
+                    AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
 
                     foreach (var baseType in Graph.Class.AllBaseTypes)
                     {
@@ -208,7 +229,7 @@ namespace NetPrintsEditor.ViewModels
                 }
                 else if (SuggestionPin is NodeInputExecPin ixp)
                 {
-                    AddSuggestionsWithCategory("NetPrints", GetBuiltInNodes(Graph));
+                    AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
 
                     foreach (var baseType in Graph.Class.AllBaseTypes)
                     {
@@ -257,7 +278,7 @@ namespace NetPrintsEditor.ViewModels
             }
             else
             {
-                AddSuggestionsWithCategory("NetPrints", GetBuiltInNodes(Graph));
+                AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
 
                 if (Graph is ExecutionGraph)
                 {

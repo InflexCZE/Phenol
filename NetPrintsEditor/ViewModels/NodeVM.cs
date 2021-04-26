@@ -138,24 +138,15 @@ namespace NetPrintsEditor.ViewModels
         {
             get
             {
-                if (node is MakeArrayNode)
+                return node switch
                 {
-                    return "Add array element";
-                }
-                else if (node is MethodEntryNode)
-                {
-                    return "Add method parameter";
-                }
-                else if (node is ReturnNode)
-                {
-                    return "Add method return value";
-                }
-                else if (node is ClassReturnNode)
-                {
-                    return "Add interface";
-                }
-
-                return "";
+                    MakeArrayNode   => "Add array element",
+                    MethodEntryNode => "Add method parameter",
+                    ReturnNode      => "Add method return value",
+                    ClassReturnNode => "Add interface",
+                    AttributesNode  => "Add attribute",
+                    _               => ""
+                };
             }
         }
 
@@ -163,24 +154,15 @@ namespace NetPrintsEditor.ViewModels
         {
             get
             {
-                if (node is MakeArrayNode)
+                return node switch
                 {
-                    return "Remove array element";
-                }
-                else if (node is MethodEntryNode)
-                {
-                    return "Remove method parameter";
-                }
-                else if (node is ReturnNode)
-                {
-                    return "Remove method return value";
-                }
-                else if (node is ClassReturnNode)
-                {
-                    return "Remove interface";
-                }
-
-                return "";
+                    MakeArrayNode   => "Remove array element",
+                    MethodEntryNode => "Remove method parameter",
+                    ReturnNode      => "Remove method return value",
+                    ClassReturnNode => "Remove interface",
+                    AttributesNode  => "Remove attribute",
+                    _               => ""
+                };
             }
         }
 
@@ -597,7 +579,11 @@ namespace NetPrintsEditor.ViewModels
         /// </summary>
         public bool ShowLeftPinButtons
         {
-            get => node is MakeArrayNode || node is MethodEntryNode || (node is ReturnNode && node == Method.MainReturnNode) || node is ClassReturnNode;
+            get => node is MakeArrayNode || 
+                   node is AttributesNode || 
+                   node is ClassReturnNode ||
+                   node is MethodEntryNode || 
+                   node is ReturnNode && node == this.Method.MainReturnNode;
         }
 
         /// <summary>
@@ -630,6 +616,10 @@ namespace NetPrintsEditor.ViewModels
             {
                 classReturnNode.AddInterfacePin();
             }
+            else if(node is AttributesNode attributes)
+            {
+                attributes.AddAttributeNode();
+            }
         }
 
         /// <summary>
@@ -652,6 +642,10 @@ namespace NetPrintsEditor.ViewModels
             else if (node is ClassReturnNode classReturnNode)
             {
                 classReturnNode.RemoveInterfacePin();
+            }
+            else if (node is AttributesNode attributes)
+            {
+                attributes.RemoveAttributeNode();
             }
         }
 

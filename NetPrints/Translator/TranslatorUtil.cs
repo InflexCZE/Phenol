@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace NetPrints.Translator
 {
@@ -285,6 +286,60 @@ namespace NetPrints.Translator
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code);
             SyntaxNode formatted = Formatter.Format(syntaxTree.GetCompilationUnitRoot(), new AdhocWorkspace()).NormalizeWhitespace();
             return formatted.ToFullString();
+        }
+
+        public static string GetUnconnectedValue(NodeInputDataPin pin)
+        {
+            var valueType = (TypeSpecifier)pin.PinType.Value;
+
+            if (pin.UsesUnconnectedValue && pin.UnconnectedValue != null)
+            {
+                return ObjectToLiteral(pin.UnconnectedValue, valueType);
+            }
+
+            if (pin.UsesExplicitDefaultValue)
+            {
+                return ObjectToLiteral(pin.ExplicitDefaultValue, valueType);
+            }
+
+            throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+        }
+
+        public static string TranslateAttributes(IEnumerable<ConstructorNode> attributes)
+        {
+            var sb = new StringBuilder();
+            foreach (var attribute in attributes)
+            {
+                sb.Append('[');
+                {
+                    sb.Append(attribute.ClassType.FullCodeName);
+                    sb.Append('(');
+                    sb.Append(string.Join(",", attribute.ArgumentPins.Select(HackyTranslate)));
+                    sb.Append(')');
+                }
+                sb.Append(']');
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+
+            //TODO: Merge implementation with ExecutionGraphTranslator
+            static string HackyTranslate(NodeInputDataPin pin)
+            {
+                if(pin.IncomingPin is { } incomingPin)
+                {
+                    switch(incomingPin.Node)
+                    {
+                        case TypeOfNode type:
+                            return $"typeof({type.InputTypePin.InferredType?.Value?.FullCodeNameUnbound ?? "System.Object"})";
+
+                        case MakeArrayNode array:
+                            return $"new {array.ElementType.FullCodeName}[{HackyTranslate(array.SizePin)}]";
+                    }
+                }
+
+                return GetUnconnectedValue(pin);
+            }
         }
     }
 }

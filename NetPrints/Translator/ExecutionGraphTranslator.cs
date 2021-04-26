@@ -32,7 +32,6 @@ namespace NetPrints.Translator
 
         private ExecutionGraph graph;
 
-        //TODO: Produce stable code
         private Random random;
 
         private delegate void NodeTypeHandler(ExecutionGraphTranslator translator, Node node);
@@ -120,20 +119,7 @@ namespace NetPrints.Translator
         {
             if (pin.IncomingPin == null)
             {
-                var valueType = (TypeSpecifier)pin.PinType.Value;
-                
-                if (pin.UsesUnconnectedValue && pin.UnconnectedValue != null)
-                {
-                    return TranslatorUtil.ObjectToLiteral(pin.UnconnectedValue, valueType);
-                }
-                
-                if (pin.UsesExplicitDefaultValue)
-                {
-                    return TranslatorUtil.ObjectToLiteral(pin.ExplicitDefaultValue, valueType);
-                }
-
-                throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
-                //return $"default({pin.PinType.Value.FullCodeName})";
+                return TranslatorUtil.GetUnconnectedValue(pin);
             }
 
             return GetOrCreatePinName(pin.IncomingPin);
@@ -203,6 +189,8 @@ namespace NetPrints.Translator
         private void TranslateSignature()
         {
             builder.AppendLine($"// {graph}");
+
+            builder.AppendLine(TranslatorUtil.TranslateAttributes(graph.DefinedAttributes));
 
             // Write visibility
             builder.Append($"{TranslatorUtil.VisibilityTokens[graph.Visibility]} ");
