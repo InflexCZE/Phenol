@@ -119,11 +119,11 @@ namespace NetPrintsEditor.ViewModels
                 suggestions = suggestions.Concat(newSuggestions.Select(suggestion => (category, suggestion)));
             }
 
-            const string NetprintsCategory = "NetPrints";
+            const string NodesCategory = "Nodes";
             
             if (SuggestionPin != null)
             {
-                AddSuggestionsWithCategory(NetprintsCategory, new object[]
+                AddSuggestionsWithCategory(NodesCategory, new object[]
                 {
                     TypeSpecifier.FromType<RerouteNode>(),
                 });
@@ -135,7 +135,7 @@ namespace NetPrintsEditor.ViewModels
                         if(this.Graph is ExecutionGraph)
                         {
                             // Add make delegate
-                            AddSuggestionsWithCategory(NetprintsCategory, new object[]
+                            AddSuggestionsWithCategory(NodesCategory, new object[]
                             {
                                 new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type),
                                 TypeSpecifier.FromType<ExplicitCastNode>()
@@ -200,7 +200,7 @@ namespace NetPrintsEditor.ViewModels
                         }
                         else
                         {
-                            AddSuggestionsWithCategory(NetprintsCategory, new []
+                            AddSuggestionsWithCategory(NodesCategory, new []
                             {
                                 TypeSpecifier.FromType<ConstructorNode>()
                             });
@@ -211,7 +211,7 @@ namespace NetPrintsEditor.ViewModels
                 {
                     GraphUtil.DisconnectOutputExecPin(oxp);
 
-                    AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
+                    AddSuggestionsWithCategory(NodesCategory, GetBuiltInNodes(Graph));
 
                     foreach (var baseType in Graph.Class.AllBaseTypes)
                     {
@@ -229,7 +229,7 @@ namespace NetPrintsEditor.ViewModels
                 }
                 else if (SuggestionPin is NodeInputExecPin ixp)
                 {
-                    AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
+                    AddSuggestionsWithCategory(NodesCategory, GetBuiltInNodes(Graph));
 
                     foreach (var baseType in Graph.Class.AllBaseTypes)
                     {
@@ -278,7 +278,7 @@ namespace NetPrintsEditor.ViewModels
             }
             else
             {
-                AddSuggestionsWithCategory(NetprintsCategory, GetBuiltInNodes(Graph));
+                AddSuggestionsWithCategory(NodesCategory, GetBuiltInNodes(Graph));
 
                 if (Graph is ExecutionGraph)
                 {

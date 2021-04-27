@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>NetPrintsEditor</AssemblyName>
+    <AssemblyName>PhenolEditor</AssemblyName>
     <UseWPF>True</UseWPF>
     <StartupObject>NetPrintsEditor.App</StartupObject>
     <Version>0.0.7</Version>
