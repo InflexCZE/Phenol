@@ -36,7 +36,7 @@ namespace NetPrints.Core
         public string SourceDirectory
         {
             get;
-            private set;
+            set;
         }
 
         public SourceDirectoryReference(string directory, bool includeInCompilation = false)

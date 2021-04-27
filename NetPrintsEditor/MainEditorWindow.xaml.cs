@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -150,22 +151,97 @@ namespace NetPrintsEditor
         }
         #endregion
 
-        private async Task LoadProject(string path)
+        private async Task LoadProject(string projectPath)
         {
-            var overlay = await this.ShowProgressAsync("Loading project", path);
+            var overlay = await this.ShowProgressAsync("Loading project", projectPath);
             overlay.SetIndeterminate();
 
             try
             {
-                ViewModel = await Task.Run(() => new MainEditorVM(Project.LoadFromPath(path)));
+                var project = await Task.Run(() => Project.LoadFromPath(projectPath));
+
+                PatchSEReferences(project);
+                PatchRelativeReferences(project);
+
+                this.ViewModel = await Task.Run(() => new MainEditorVM(project));
                 await overlay.CloseAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 await overlay.CloseAsync();
                 Clipboard.SetText(ex.ToString());
-                var result = await this.ShowMessageAsync("Failed to load project", $"Failed to load project at path {path}. The exception has been copied to your clipboard.\n\n{ex}",
+                var result = await this.ShowMessageAsync("Failed to load project", $"Failed to load project at path {projectPath}. The exception has been copied to your clipboard.\n\n{ex}",
                     MessageDialogStyle.Affirmative, new MetroDialogSettings()).ConfigureAwait(false);
+            }
+
+            void PatchSEReferences(Project project)
+            {
+                string SEPath = null;
+
+                foreach (var reference in project.References.OfType<AssemblyReference>())
+                {
+                    const string SEsearchPattern = @"SpaceEngineers\Bin64\";
+
+                    var refPath = reference.AssemblyPath;
+                    int i = refPath.IndexOf(SEsearchPattern, StringComparison.InvariantCultureIgnoreCase);
+                    if (i < 0 || File.Exists(refPath))
+                        continue;
+                    
+                    if (SEPath is null)
+                    {
+                        //TODO: Read Steam installation from registry, then probe libraryfolders.vdf
+                        var hintPaths = new[]
+                        {
+                                @"D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\",
+                                @"C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers\Bin64\",
+                            };
+
+                        foreach (var hint in hintPaths)
+                        {
+                            if (File.Exists(hint + "SpaceEngineers.exe"))
+                            {
+                                SEPath = hint;
+                                goto Found;
+                            }
+                        }
+
+                        //Not found, prompt user
+                        var fileDialog = new OpenFileDialog();
+                        fileDialog.Filter = "SpaceEngineers.exe | SpaceEngineers.exe";
+                        if (fileDialog.ShowDialog(this) == true)
+                        {
+                            SEPath = Path.GetDirectoryName(fileDialog.FileName);
+                            goto Found;
+                        }
+
+                        //Not found, no fix
+                        return;
+                    }
+
+                    Found:
+                    var toReplace = i + SEsearchPattern.Length;
+                    var newPath = Path.Combine(SEPath, refPath.Substring(toReplace));
+                    reference.AssemblyPath = newPath;
+                }
+            }
+
+            void PatchRelativeReferences(Project project)
+            {
+                var projectDir = Path.GetDirectoryName(projectPath);
+                if(projectDir is null)
+                    return;
+                
+                foreach(var sourceDir in project.References.OfType<SourceDirectoryReference>())
+                {
+                    if(Path.IsPathRooted(sourceDir.SourceDirectory))
+                        continue;
+
+                    var newDir = Path.Combine(projectDir, sourceDir.SourceDirectory);
+                    if(Directory.Exists(newDir))
+                    {
+                        sourceDir.SourceDirectory = newDir;
+                    }
+                }
             }
         }
 

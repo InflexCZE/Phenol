@@ -23,7 +23,7 @@
     </CompilationReference>
     <CompilationReference i:type="SourceDirectoryReference">
       <IncludeInCompilation>true</IncludeInCompilation>
-      <SourceDirectory>C:\Codes\NetprintsProject\Backup\Mod\Cs</SourceDirectory>
+      <SourceDirectory>Cs</SourceDirectory>
     </CompilationReference>
     <CompilationReference i:type="AssemblyReference">
       <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\VRage.Math.dll</AssemblyPath>
