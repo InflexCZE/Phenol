@@ -188,6 +188,7 @@ namespace SpaceLink
             var whitelistT = typeof(MyScriptWhitelist);
             var whitelistTargetT = typeof(MyWhitelistTarget);
             var symbolT = AccessTools.TypeByName("Microsoft.CodeAnalysis.ISymbol");
+            MyScriptCompiler.Static.AddConditionalCompilationSymbols("__SPACE_LINK__");
             
             var original = AccessTools.Method(whitelistT, "IsWhitelisted", new[] { symbolT, whitelistTargetT });
             var redirectionTarget = ((Func<object, int, bool>) IsWhitelisted).Method;
