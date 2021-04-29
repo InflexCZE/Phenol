@@ -508,11 +508,17 @@ namespace NetPrints.Graph
         {
             if (pin is NodeInputExecPin ixp)
             {
-                GraphUtil.ConnectExecPins(node.OutputExecPins[0], ixp);
+                if(node.OutputExecPins.Count > 0)
+                {
+                    GraphUtil.ConnectExecPins(node.OutputExecPins[0], ixp);
+                }
             }
             else if (pin is NodeOutputExecPin oxp)
             {
-                GraphUtil.ConnectExecPins(oxp, node.InputExecPins[0]);
+                if(node.InputExecPins.Count > 0)
+                {
+                    GraphUtil.ConnectExecPins(oxp, node.InputExecPins[0]);
+                }
             }
             else if (pin is NodeInputDataPin idp)
             {
