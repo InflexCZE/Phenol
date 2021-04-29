@@ -29,6 +29,7 @@ namespace NetPrintsEditor.Utils
             targetComboBox.StaysOpenOnEdit = true;
             targetComboBox.IsEditable = true;
             targetComboBox.IsTextSearchEnabled = false;
+            targetComboBox.Items.Filter = _ => true;
 
             targetTextBox.TextChanged += (o, args) =>
             {
