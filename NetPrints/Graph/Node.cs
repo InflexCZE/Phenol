@@ -201,9 +201,11 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinType">Specifier for the type of this pin.</param>
-        protected void AddInputDataPin(string pinName, ObservableValue<BaseType> pinType)
+        protected NodeInputDataPin AddInputDataPin(string pinName, ObservableValue<BaseType> pinType)
         {
-            InputDataPins.Add(new NodeInputDataPin(this, pinName, pinType));
+            var pin = new NodeInputDataPin(this, pinName, pinType);
+            this.InputDataPins.Add(pin);
+            return pin;
         }
 
         /// <summary>
@@ -211,38 +213,45 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinType">Specifier for the type of this pin.</param>
-        protected void AddOutputDataPin(string pinName, ObservableValue<BaseType> pinType)
+        protected NodeOutputDataPin AddOutputDataPin(string pinName, ObservableValue<BaseType> pinType)
         {
-            OutputDataPins.Add(new NodeOutputDataPin(this, pinName, pinType));
+            var pin = new NodeOutputDataPin(this, pinName, pinType);
+            this.OutputDataPins.Add(pin);
+            return pin;
         }
 
         /// <summary>
         /// Adds an input execution pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected void AddInputExecPin(string pinName)
+        protected NodeInputExecPin AddInputExecPin(string pinName)
         {
-            InputExecPins.Add(new NodeInputExecPin(this, pinName));
+            var pin = new NodeInputExecPin(this, pinName);
+            this.InputExecPins.Add(pin);
+            return pin;
         }
 
         /// <summary>
         /// Adds an output execution pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected void AddOutputExecPin(string pinName)
+        protected NodeOutputExecPin AddOutputExecPin(string pinName)
         {
-            OutputExecPins.Add(new NodeOutputExecPin(this, pinName));
+            var pin = new NodeOutputExecPin(this, pinName);
+            this.OutputExecPins.Add(pin);
+            return pin;
         }
 
         /// <summary>
         /// Adds an input data pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected void AddInputTypePin(string pinName)
+        protected NodeInputTypePin AddInputTypePin(string pinName)
         {
             var typePin = new NodeInputTypePin(this, pinName);
             typePin.IncomingPinChanged += OnIncomingTypePinChanged;
-            InputTypePins.Add(typePin);
+            this.InputTypePins.Add(typePin);
+            return typePin;
         }
 
         /// <summary>
@@ -250,9 +259,11 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="getOutputTypeFunc">Function that generates the output type.</param>
-        protected void AddOutputTypePin(string pinName, ObservableValue<BaseType> outputType)
+        protected NodeOutputTypePin AddOutputTypePin(string pinName, ObservableValue<BaseType> outputType)
         {
-            OutputTypePins.Add(new NodeOutputTypePin(this, pinName, outputType));
+            var pin = new NodeOutputTypePin(this, pinName, outputType);
+            this.OutputTypePins.Add(pin);
+            return pin;
         }
 
         private void OnIncomingTypePinChanged(NodeInputTypePin pin, NodeOutputTypePin oldPin, NodeOutputTypePin newPin)
