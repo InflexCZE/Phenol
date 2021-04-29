@@ -65,7 +65,7 @@ namespace NetPrints.Translator
             },
 
             { typeof(RerouteNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateRerouteNode(node as RerouteNode) } },
-
+            { typeof(SequenceNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateSequenceNode(node as SequenceNode) } },
             { typeof(VariableGetterNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateVariableGetterNode(node as VariableGetterNode) } },
             { typeof(LiteralNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateLiteralNode(node as LiteralNode) } },
             { typeof(MakeDelegateNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateMakeDelegateNode(node as MakeDelegateNode) } },
@@ -448,9 +448,9 @@ namespace NetPrints.Translator
                 builder.AppendLine($"// {node}");
             }
 
-            if (nodeTypeHandlers.ContainsKey(node.GetType()))
+            if (nodeTypeHandlers.TryGetValue(node.GetType(), out var handlers))
             {
-                nodeTypeHandlers[node.GetType()][pinIndex](this, node);
+                handlers[pinIndex](this, node);
             }
             else
             {
@@ -1268,6 +1268,25 @@ namespace NetPrints.Translator
             else if (node.ExecRerouteCount == 1)
             {
                 WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
+            }
+        }
+
+        public void TranslateSequenceNode(SequenceNode node)
+        {
+            foreach(var (branch, condition) in node.Branches.Zip(node.Conditions))
+            {
+                var conditionExpression = GetPinIncomingValue(condition);
+                if(conditionExpression != "false")
+                {
+                    if(conditionExpression != "true")
+                    {
+                        builder.AppendLine($"if({conditionExpression})");
+                    }
+
+                    builder.AppendLine("{");
+                    TranslateLoopBody(branch);
+                    builder.AppendLine("}");
+                }
             }
         }
 

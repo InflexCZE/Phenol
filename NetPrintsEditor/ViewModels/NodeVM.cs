@@ -170,12 +170,12 @@ namespace NetPrintsEditor.ViewModels
         {
             get
             {
-                if (node is MethodEntryNode)
+                return node switch
                 {
-                    return "Add method generic type parameter";
-                }
-
-                return "";
+                    MethodEntryNode => "Add method generic type parameter",
+                    SequenceNode    => "Add new branch",
+                    _               => ""
+                };
             }
         }
 
@@ -183,12 +183,12 @@ namespace NetPrintsEditor.ViewModels
         {
             get
             {
-                if (node is MethodEntryNode)
+                return node switch
                 {
-                    return "Remove method generic type parameter";
-                }
-
-                return "";
+                    MethodEntryNode => "Remove method generic type parameter",
+                    SequenceNode    => "Remove branch",
+                    _               => ""
+                };
             }
         }
 
@@ -592,7 +592,8 @@ namespace NetPrintsEditor.ViewModels
         /// </summary>
         public bool ShowRightPinButtons
         {
-            get => node is MethodEntryNode;
+            get => node is MethodEntryNode ||
+                   node is SequenceNode;
         }
 
         /// <summary>
@@ -658,6 +659,10 @@ namespace NetPrintsEditor.ViewModels
             {
                 entryNode.AddGenericArgument();
             }
+            else if(node is SequenceNode sequenceNode)
+            {
+                sequenceNode.AddBranch();
+            }
         }
 
         /// <summary>
@@ -668,6 +673,10 @@ namespace NetPrintsEditor.ViewModels
             if (node is MethodEntryNode entryNode)
             {
                 entryNode.RemoveGenericArgument();
+            }
+            else if(node is SequenceNode sequenceNode)
+            {
+                sequenceNode.RemoveBranch();
             }
         }
 
