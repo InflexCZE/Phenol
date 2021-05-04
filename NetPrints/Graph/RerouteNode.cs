@@ -13,14 +13,13 @@ namespace NetPrints.Graph
     [DataContract]
     public class RerouteNode : Node
     {
-        public int ExecRerouteCount { get => InputExecPins.Count; }
-        public int DataRerouteCount { get => InputDataPins.Count; }
-        public int TypeRerouteCount { get => InputTypePins.Count; }
+        public int ExecRerouteCount => this.InputExecPins.Count;
+        public int DataRerouteCount => this.InputDataPins.Count;
+        public int TypeRerouteCount => this.InputTypePins.Count;
 
         private RerouteNode(NodeGraph graph)
             : base(graph)
-        {
-        }
+        { }
 
         public static RerouteNode MakeExecution(NodeGraph graph, int numExecs)
         {
