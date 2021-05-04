@@ -24,6 +24,17 @@ namespace NetPrints.Utils
             return -1;
         }
 
+        public static void Add<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, KeyValuePair<TKey, TValue> pair)
+        {
+            dictionary.Add(pair.Key, pair.Value);
+        }
+        
+        public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
+        {
+            key = pair.Key;
+            value = pair.Value;
+        }
+
         private static readonly string[] LineSeparator = { Environment.NewLine };
         public static IEnumerable<string> SplitByLines(this string str)
         {

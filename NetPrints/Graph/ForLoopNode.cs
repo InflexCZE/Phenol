@@ -34,15 +34,6 @@ namespace NetPrints.Graph
         }
 
         /// <summary>
-        /// Input execution pin that skips the current loop step.
-        /// Should only be executed from within this loop.
-        /// </summary>
-        public NodeInputExecPin ContinuePin
-        {
-            get { return InputExecPins[1]; }
-        }
-
-        /// <summary>
         /// Input data pin for the initial inclusive index value of the loop.
         /// </summary>
         public NodeInputDataPin InitialIndexPin
@@ -72,7 +63,6 @@ namespace NetPrints.Graph
             : base(graph)
         {
             AddInputExecPin("Exec");
-            //AddInputExecPin("Continue");
 
             AddOutputExecPin("Completed");
             AddOutputExecPin("Loop");

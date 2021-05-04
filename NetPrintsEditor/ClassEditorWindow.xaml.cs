@@ -454,15 +454,20 @@ namespace NetPrintsEditor
                         if(hit.Class != classIndex || hit.Method != methodIndex)
                             continue;
 
-                        var pinIndex = hit.PinIndex;
                         var nodeIndex = hit.NodeIndex;
-
+                        if(method.Nodes.Count <= nodeIndex)
+                            continue;
+                        
                         var node = method.Nodes[nodeIndex];
-                        var pin = node.InputExecPins[pinIndex];
-                        if(pin.IncomingPins.Count > 0)
+                        
+                        var pinIndex = hit.PinIndex;
+                        if(node.OutputExecPins.Count <= pinIndex)
+                            continue;
+
+                        var pin = node.OutputExecPins[pinIndex];
+                        if(pin.OutgoingPin != null)
                         {
-                            var pinToPing = pin.IncomingPins.Last();
-                            pinToVM[pinToPing].Ping();
+                            pinToVM[pin].Ping();
                         }
                     }
 

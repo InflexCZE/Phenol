@@ -16,19 +16,12 @@ namespace NetPrints.Translator
     /// </summary>
     public class ExecutionGraphTranslator
     {
-        private const string JumpStackVarName = "jumpStack";
-        private const string JumpStackType = "System.Collections.Generic.Stack<int>";
+        private readonly Dictionary<NodeOutputDataPin, string> variableNames = new();
+        private readonly Dictionary<Node, int[]> emittedNodes = new();
+        
+        private int LabelCounter = 0;
 
-        private readonly Dictionary<NodeOutputDataPin, string> variableNames = new Dictionary<NodeOutputDataPin, string>();
-        private readonly Dictionary<Node, List<int>> nodeStateIds = new Dictionary<Node, List<int>>();
-        private int nextStateId = 0;
-        private IEnumerable<Node> execNodes = new List<Node>();
-        private IEnumerable<Node> nodes = new List<Node>();
-        private readonly HashSet<NodeInputExecPin> pinsJumpedTo = new HashSet<NodeInputExecPin>();
-
-        private int jumpStackStateId;
-
-        private readonly StringBuilder builder = new StringBuilder();
+        private readonly StringBuilder builder = new();
 
         private ExecutionGraph graph;
 
@@ -36,52 +29,44 @@ namespace NetPrints.Translator
 
         private delegate void NodeTypeHandler(ExecutionGraphTranslator translator, Node node);
 
-        private readonly Dictionary<Type, List<NodeTypeHandler>> nodeTypeHandlers = new Dictionary<Type, List<NodeTypeHandler>>()
+        private static readonly Dictionary<Type, NodeTypeHandler> nodeTypeHandlers = new()
         {
-            { typeof(CallMethodNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateCallMethodNode(node as CallMethodNode) } },
-            { typeof(VariableSetterNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateVariableSetterNode(node as VariableSetterNode) } },
-            { typeof(DelayNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateDelayNode(node as DelayNode) } },
-            { typeof(ReturnNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateReturnNode(node as ReturnNode) } },
-            { typeof(MethodEntryNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateMethodEntry(node as MethodEntryNode) } },
-            { typeof(IfElseNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateIfElseNode(node as IfElseNode) } },
-            { typeof(ConstructorNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateConstructorNode(node as ConstructorNode) } },
-            { typeof(ExplicitCastNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateExplicitCastNode(node as ExplicitCastNode) } },
-            { typeof(ThrowNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateThrowNode(node as ThrowNode) } },
-            { typeof(AwaitNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateAwaitNode(node as AwaitNode) } },
-            { typeof(TernaryNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateTernaryNode(node as TernaryNode) } },
+            SimpleNode<ReturnNode>((x, y) => x.TranslateReturnNode(y)),
+            RawNode<MethodEntryNode>((x, y) => x.TranslateExecutionEntry(y)),
+            RawNode<ConstructorEntryNode>((x, y) => x.TranslateExecutionEntry(y)),
+            
+            NodeWithInputs<IfElseNode>((x, y) => x.TranslateIfElseNode(y)),
+            RawNode<CallMethodNode>((x, y) => x.TranslateCallMethodNode(y)),
+            NodeWithInputs<ForLoopNode>((x, y) => x.TranslateForLoopNode(y)),
+            NodeWithInputs<SequenceNode>((x, y) => x.TranslateSequenceNode(y)),
+            SimpleNode<ConstructorNode>((x, y) => x.TranslateConstructorNode(y)),
+            NodeWithInputs<ForeachLoopNode>((x, y) => x.TranslateForeachLoopNode(y)),
 
-            { typeof(ForLoopNode), new List<NodeTypeHandler>
-              {
-                (translator, node) => translator.TranslateStartForLoopNode(node as ForLoopNode),
-                (translator, node) => translator.TranslateContinueForLoopNode(node as ForLoopNode)
-              }
-            },
-
-            { typeof(ForeachLoopNode), new List<NodeTypeHandler> 
-              {
-                (translator, node) => translator.TranslateForeachLoopNode(node as ForeachLoopNode),
-                (translator, node) => translator.TranslateBreakForeachLoopNode(node as ForeachLoopNode),
-              }
-            },
-
-            { typeof(RerouteNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateRerouteNode(node as RerouteNode) } },
-            { typeof(SequenceNode), new List<NodeTypeHandler> { (translator, node) => translator.TranslateSequenceNode(node as SequenceNode) } },
-            { typeof(VariableGetterNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateVariableGetterNode(node as VariableGetterNode) } },
-            { typeof(LiteralNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateLiteralNode(node as LiteralNode) } },
-            { typeof(MakeDelegateNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateMakeDelegateNode(node as MakeDelegateNode) } },
-            { typeof(TypeOfNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateTypeOfNode(node as TypeOfNode) } },
-            { typeof(MakeArrayNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateMakeArrayNode(node as MakeArrayNode) } },
-            { typeof(DefaultNode), new List<NodeTypeHandler> { (translator, node) => translator.PureTranslateDefaultNode(node as DefaultNode) } },
+            SimpleNode<RerouteNode>((x, y) => x.TranslateRerouteNode(y)),
+            SimpleNode<VariableSetterNode>((x, y) => x.TranslateVariableSetterNode(y)),
+            SimpleNode<VariableGetterNode>((x, y) => x.TranslateVariableGetterNode(y)),
+            
+            SimpleNode<TypeOfNode>((x, y) => x.TranslateTypeOfNode(y)),
+            SimpleNode<TernaryNode>((x, y) => x.TranslateTernaryNode(y)),
+            SimpleNode<LiteralNode>((x, y) => x.TranslateLiteralNode(y)),
+            SimpleNode<DefaultNode>((x, y) => x.TranslateDefaultNode(y)),
+            SimpleNode<MakeArrayNode>((x, y) => x.TranslateMakeArrayNode(y)),
+            SimpleNode<MakeDelegateNode>((x, y) => x.TranslateMakeDelegateNode(y)),
+            NodeWithInputs<ExplicitCastNode>((x, y) => x.TranslateExplicitCastNode(y)),
+            
+            SimpleNode<ThrowNode>((x, y) => x.TranslateThrowNode(y)),
+            SimpleNode<DelayNode>((x, y) => x.TranslateDelayNode(y)),
+            SimpleNode<AwaitNode>((x, y) => x.TranslateAwaitNode(y)),
         };
 
-        private int GetNextStateId()
+        private int GetNextLabelId()
         {
-            return nextStateId++;
+            return LabelCounter++;
         }
 
         private int GetExecPinStateId(NodeInputExecPin pin)
         {
-            return nodeStateIds[pin.Node][pin.Node.InputExecPins.IndexOf(pin)];
+            return emittedNodes[pin.Node][pin.Node.InputExecPins.IndexOf(pin)];
         }
 
         private string GetOrCreatePinName(NodeOutputDataPin pin)
@@ -146,27 +131,11 @@ namespace NetPrints.Translator
             return pins.Select(pin => GetOrCreateTypedPinName(pin));
         }
 
-        private void CreateStates()
-        {
-            foreach(Node node in execNodes)
-            {
-                if (!(node is MethodEntryNode))
-                {
-                    nodeStateIds.Add(node, new List<int>());
-
-                    foreach (NodeInputExecPin execPin in node.InputExecPins)
-                    {
-                        nodeStateIds[node].Add(GetNextStateId());
-                    }
-                }
-            }
-        }
-
         private void CreateVariables()
         {
-            foreach(Node node in nodes)
+            foreach(var node in TranslatorUtil.GetAllNodesInExecGraph(graph))
             {
-                var v = GetOrCreatePinNames(node.OutputDataPins);
+                GetOrCreatePinNames(node.OutputDataPins);
             }
         }
 
@@ -280,27 +249,6 @@ namespace NetPrints.Translator
             builder.AppendLine($"({string.Join(", ", args)})");
         }
 
-        private void TranslateJumpStack()
-        {
-            builder.AppendLine("// Jump stack");
-
-            builder.AppendLine($"State{jumpStackStateId}:");
-            builder.AppendLine($"if ({JumpStackVarName}.Count == 0) throw new System.Exception();");
-            builder.AppendLine($"switch ({JumpStackVarName}.Pop())");
-            builder.AppendLine("{");
-
-            foreach (NodeInputExecPin pin in pinsJumpedTo)
-            {
-                builder.AppendLine($"case {GetExecPinStateId(pin)}:");
-                WriteGotoInputPin(pin);
-            }
-
-            builder.AppendLine("default:");
-            builder.AppendLine("throw new System.Exception();");
-
-            builder.AppendLine("}"); // End switch
-        }
-
         /// <summary>
         /// Translates a method to C#.
         /// </summary>
@@ -312,22 +260,12 @@ namespace NetPrints.Translator
             this.graph = graph;
 
             // Reset state
+            this.ControlFlowEndStack.Clear();
             variableNames.Clear();
-            nodeStateIds.Clear();
-            pinsJumpedTo.Clear();
-            nextStateId = 0;
+            emittedNodes.Clear();
+            LabelCounter = 0;
             builder.Clear();
             random = new Random(0);
-
-            nodes = TranslatorUtil.GetAllNodesInExecGraph(graph);
-            execNodes = TranslatorUtil.GetExecNodesInExecGraph(graph);
-
-            // Assign a state id to every non-pure node
-            CreateStates();
-
-            // Assign jump stack state id
-            // Write it later once we know which states get jumped to
-            jumpStackStateId = GetNextStateId();
 
             // Create variables for all output pins for every node
             CreateVariables();
@@ -340,34 +278,12 @@ namespace NetPrints.Translator
 
             builder.AppendLine("{"); // Method start
 
-            // Write a placeholder for the jump stack declaration
-            // Replaced later
-            builder.Append("%JUMPSTACKPLACEHOLDER%");
-
             // Write the variable declarations
             TranslateVariables();
             builder.AppendLine();
 
-            // Start at node after method entry if necessary (id!=0)
-            if (graph.EntryNode.OutputExecPins[0].OutgoingPin != null && GetExecPinStateId(graph.EntryNode.OutputExecPins[0].OutgoingPin) != 0)
-            {
-                WriteGotoOutputPin(graph.EntryNode.OutputExecPins[0]);
-            }
-
             // Translate every exec node
-            TranslateNodeChain(execNodes);
-
-            // Write the jump stack if it was ever used
-            if (pinsJumpedTo.Count > 0)
-            {
-                TranslateJumpStack();
-
-                builder.Replace("%JUMPSTACKPLACEHOLDER%", $"{JumpStackType} {JumpStackVarName} = new {JumpStackType}();{Environment.NewLine}");
-            }
-            else
-            {
-                builder.Replace("%JUMPSTACKPLACEHOLDER%", "");
-            }
+            TranslateNode(graph.EntryNode);
 
             builder.AppendLine("}"); // Method end
 
@@ -377,8 +293,15 @@ namespace NetPrints.Translator
             return RemoveUnnecessaryLabels(code);
         }
 
-        private void TranslateNodeChain(IEnumerable<Node> nodesToTranslate)
+        private void TranslateNode(NodeOutputExecPin source)
         {
+            if(source.OutgoingPin is null)
+                return;
+
+            var targetPin = source.OutgoingPin;
+            var targetNode = targetPin.Node;
+            var sourceNode = source.Node;
+
             var method = this.graph;
             var @class = graph.Class;
             var project = @class.Project;
@@ -405,32 +328,34 @@ namespace NetPrints.Translator
                         goto case Project.LiveLinkTypeNone;
                 }
             }
-
-            foreach (var node in nodesToTranslate)
+            
+            var nodeIndex = method.Nodes.IndexOf(sourceNode);
+            if(nodeIndex >= 0 && lifeLinkFormat is not null)
             {
-                if (!(node is MethodEntryNode))
-                {
-                    var nodeIndex = method.Nodes.IndexOf(node);
+                var pinIndex = sourceNode.OutputExecPins.IndexOf(source);
+                builder.AppendLine(string.Format(lifeLinkFormat, classIndex, methodIndex, nodeIndex, pinIndex));
+            }
 
-                    for (int pinIndex = 0; pinIndex < node.InputExecPins.Count; pinIndex++)
-                    {
-                        builder.AppendLine($"State{nodeStateIds[node][pinIndex]}:");
+            if(emittedNodes.ContainsKey(targetNode))
+            {
+                WriteGotoInputPin(targetPin);
+            }
+            else
+            {
+                var jumpTable = Enumerable.Range(0, targetNode.InputExecPins.Count).Select(_ => GetNextLabelId()).ToArray();
+                emittedNodes.Add(targetNode, jumpTable);
 
-                        if(nodeIndex >= 0 && lifeLinkFormat is not null)
-                        {
-                            builder.AppendLine(string.Format(lifeLinkFormat, classIndex, methodIndex, nodeIndex, pinIndex));
-                        }
-                        
-                        TranslateNode(node, pinIndex);
-                        builder.AppendLine();
-                    }
-                }
+                builder.AppendLine($"State{emittedNodes[targetNode][0]}:");
+                TranslateNode(targetNode);
+                builder.AppendLine();
+
+                emittedNodes.Remove(targetNode);
             }
         }
 
         private string RemoveUnnecessaryLabels(string code)
         {
-            foreach (int stateId in nodeStateIds.Values.SelectMany(i => i))
+            foreach (int stateId in Enumerable.Range(0, LabelCounter))
             {
                 if (!code.Contains($"goto State{stateId};"))
                 {
@@ -441,7 +366,7 @@ namespace NetPrints.Translator
             return code;
         }
 
-        public void TranslateNode(Node node, int pinIndex)
+        public void TranslateNode(Node node)
         {
             if (!(node is RerouteNode))
             {
@@ -450,7 +375,7 @@ namespace NetPrints.Translator
 
             if (nodeTypeHandlers.TryGetValue(node.GetType(), out var handlers))
             {
-                handlers[pinIndex](this, node);
+                handlers(this, node);
             }
             else
             {
@@ -458,80 +383,52 @@ namespace NetPrints.Translator
             }
         }
 
-        private void WriteGotoJumpStack()
-        {
-            builder.AppendLine($"goto State{jumpStackStateId};");
-        }
-
-        private void WritePushJumpStack(NodeInputExecPin pin)
-        {
-            if (!pinsJumpedTo.Contains(pin))
-            {
-                pinsJumpedTo.Add(pin);
-            }
-
-            builder.AppendLine($"{JumpStackVarName}.Push({GetExecPinStateId(pin)});");
-        }
-
         private void WriteGotoInputPin(NodeInputExecPin pin)
         {
             builder.AppendLine($"goto State{GetExecPinStateId(pin)};");
         }
-
-        private void WriteGotoOutputPin(NodeOutputExecPin pin)
-        {
-            if (pin.OutgoingPin == null)
-            {
-                WriteGotoJumpStack();
-            }
-            else
-            {
-                WriteGotoInputPin(pin.OutgoingPin);
-            }
-        }
-
-        private void WriteGotoOutputPinIfNecessary(NodeOutputExecPin pin, NodeInputExecPin fromPin)
-        {
-            int fromId = GetExecPinStateId(fromPin);
-            int nextId = fromId + 1;
-
-            if (pin.OutgoingPin == null)
-            {
-                if (nextId != jumpStackStateId)
-                {
-                    WriteGotoJumpStack();
-                }
-            }
-            else
-            {
-                int toId = GetExecPinStateId(pin.OutgoingPin);
-
-                // Only write the goto if the next state is not
-                // the state we want to go to.
-                if (nextId != toId)
-                {
-                    WriteGotoInputPin(pin.OutgoingPin);
-                }
-            }
-        }
-
+        
         public void TranslateDependentPureNodes(Node node)
         {
             var sortedPureNodes = TranslatorUtil.GetSortedPureNodes(node);
             foreach(Node depNode in sortedPureNodes)
             {
-                TranslateNode(depNode, 0);
+                TranslateNode(depNode);
             }
         }
 
-        public void TranslateMethodEntry(MethodEntryNode node)
+        public void FollowExecutionChain(NodeOutputExecPin pin, string flowEnd = null)
         {
-            /*// Go to the next state.
-            // Only write if it's not the initial state (id==0) anyway.
-            if (node.OutputExecPins[0].OutgoingPin != null && GetExecPinStateId(node.OutputExecPins[0].OutgoingPin) != 0)
+            var hasFlowEnd = flowEnd is not null;
+            
+            FlowToken flowToken = default;
+            if(hasFlowEnd)
             {
-                WriteGotoOutputPin(node.OutputExecPins[0]);
-            }*/
+                flowToken = PushControlFlowEnd(flowEnd);
+            }
+
+            if(pin.OutgoingPin != null)
+            {
+                TranslateNode(pin);
+            }
+            else
+            {
+                EmitControlFlowEnd(pin.Node.InputExecPins.FirstOrDefault());
+            }
+
+            if(hasFlowEnd)
+            {
+                flowToken.Dispose();
+            }
+        }
+
+        public void TranslateExecutionEntry(ExecutionEntryNode node)
+        {
+            var isCoroutine = this.graph is MethodGraph { IsCoroutine: true };
+            var returnStatement = isCoroutine ? "yield break" : "return";
+            FollowExecutionChain(node.OutputExecPins[0], returnStatement);
+
+            Debug.Assert(ControlFlowEndStack.Count == 0);
         }
 
         public void TranslateCallMethodNode(CallMethodNode node)
@@ -547,8 +444,6 @@ namespace NetPrints.Translator
 
             if (!node.IsPure)
             {
-                // Translate all the pure nodes this node depends on in
-                // the correct order
                 TranslateDependentPureNodes(node);
             }
 
@@ -744,7 +639,7 @@ namespace NetPrints.Translator
             // Go to the next state
             if (!node.IsPure)
             {
-                WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
+                FollowExecutionChain(node.OutputExecPins[0]);
             }
 
             // Catch exceptions if catch pin is connected
@@ -765,7 +660,7 @@ namespace NetPrints.Translator
 
                 if (!node.IsPure)
                 {
-                    WriteGotoOutputPinIfNecessary(node.CatchPin, node.InputExecPins[0]);
+                    FollowExecutionChain(node.CatchPin);
                 }
 
                 builder.AppendLine("}");
@@ -774,13 +669,6 @@ namespace NetPrints.Translator
 
         public void TranslateConstructorNode(ConstructorNode node)
         {
-            if (!node.IsPure)
-            {
-                // Translate all the pure nodes this node depends on in
-                // the correct order
-                TranslateDependentPureNodes(node);
-            }
-
             // Write assignment and constructor
             string returnName = GetOrCreatePinName(node.OutputDataPins[0]);
             builder.Append($"{returnName} = new {node.ClassType}");
@@ -831,75 +719,48 @@ namespace NetPrints.Translator
 
             // Write the method call
             builder.AppendLine($"({string.Join(", ", arguments)});");
-
-            if (!node.IsPure)
-            {
-                // Go to the next state
-                WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
-            }
         }
 
         public void TranslateExplicitCastNode(ExplicitCastNode node)
         {
-            if (!node.IsPure)
+            var inputValue = GetPinIncomingValue(node.ObjectToCast);
+            var castTypeName = node.CastType.FullCodeNameUnbound;
+            var outputValue = GetOrCreatePinName(node.CastPin);
+
+
+            // If failure pin is not connected just throw, don't check.
+            // Otherwise check if cast can be performed and choose appropriate path
+            bool safeCast = node.IsPure == false && node.CastFailedPin.OutgoingPin != null;
+            if (safeCast)
             {
-                // Translate all the pure nodes this node depends on in
-                // the correct order
-                TranslateDependentPureNodes(node);
+                builder.AppendLine($"if(!({inputValue} is {castTypeName}))");
+                builder.AppendLine("{");
+                FollowExecutionChain(node.CastFailedPin);
+                builder.AppendLine("}");
+                builder.AppendLine("else");
+                builder.AppendLine("{");
             }
 
-            // Try to cast the incoming object and go to next states.
-            if (node.ObjectToCast.IncomingPin != null)
+            builder.AppendLine($"{outputValue} = ({castTypeName}){inputValue};");
+
+            if(node.IsPure == false)
             {
-                string pinToCastName = GetPinIncomingValue(node.ObjectToCast);
-                string outputName = GetOrCreatePinName(node.CastPin);
+                FollowExecutionChain(node.CastSuccessPin);
+            }
 
-                // If failure pin is not connected write explicit cast that throws.
-                // Otherwise check if cast object is null and execute failure
-                // path if it is.
-                if (node.IsPure || node.CastFailedPin.OutgoingPin == null)
-                {
-                    builder.AppendLine($"{outputName} = ({node.CastType.FullCodeNameUnbound}){pinToCastName};");
-
-                    if (!node.IsPure)
-                    {
-                        WriteGotoOutputPinIfNecessary(node.CastSuccessPin, node.InputExecPins[0]);
-                    }
-                }
-                else
-                {
-                    builder.AppendLine($"{outputName} = {pinToCastName} as {node.CastType.FullCodeNameUnbound};");
-
-                    if (!node.IsPure)
-                    {
-                        builder.AppendLine($"if ({outputName} is null)");
-                        builder.AppendLine("{");
-                        WriteGotoOutputPinIfNecessary(node.CastFailedPin, node.InputExecPins[0]);
-                        builder.AppendLine("}");
-                        builder.AppendLine("else");
-                        builder.AppendLine("{");
-                        WriteGotoOutputPinIfNecessary(node.CastSuccessPin, node.InputExecPins[0]);
-                        builder.AppendLine("}");
-                    }
-                }
+            if(safeCast)
+            {
+                builder.AppendLine("}");
             }
         }
 
         public void TranslateThrowNode(ThrowNode node)
         {
-            TranslateDependentPureNodes(node);
             builder.AppendLine($"throw {GetPinIncomingValue(node.ExceptionPin)};");
         }
 
         public void TranslateAwaitNode(AwaitNode node)
         {
-            if (!node.IsPure)
-            {
-                // Translate all the pure nodes this node depends on in
-                // the correct order
-                TranslateDependentPureNodes(node);
-            }
-
             // Store result if task has a return value.
             if (node.ResultPin != null)
             {
@@ -911,30 +772,14 @@ namespace NetPrints.Translator
 
         public void TranslateTernaryNode(TernaryNode node)
         {
-            if (!node.IsPure)
-            {
-                // Translate all the pure nodes this node depends on in
-                // the correct order
-                TranslateDependentPureNodes(node);
-            }
-
             builder.Append($"{GetOrCreatePinName(node.OutputObjectPin)} = ");
             builder.Append($"{GetPinIncomingValue(node.ConditionPin)} ? ");
             builder.Append($"{GetPinIncomingValue(node.TrueObjectPin)} : ");
             builder.AppendLine($"{GetPinIncomingValue(node.FalseObjectPin)};");
-
-            if (!node.IsPure)
-            {
-                WriteGotoOutputPinIfNecessary(node.OutputExecPins.Single(), node.InputExecPins.Single());
-            }
         }
 
         public void TranslateVariableSetterNode(VariableSetterNode node)
         {
-            // Translate all the pure nodes this node depends on in
-            // the correct order
-            TranslateDependentPureNodes(node);
-
             string valueName = GetPinIncomingValue(node.NewValuePin);
 
             // Add target name if there is a target (null for local and static variables)
@@ -976,21 +821,15 @@ namespace NetPrints.Translator
 
             // Set output pin of this node to the same value
             builder.AppendLine($"{GetOrCreatePinName(node.OutputDataPins[0])} = {valueName};");
-
-            // Go to the next state
-            WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
         }
 
         public void TranslateDelayNode(DelayNode node)
         {
-            TranslateDependentPureNodes(node);
             builder.AppendLine("yield return null;");
         }
 
         public void TranslateReturnNode(ReturnNode node)
         {
-            TranslateDependentPureNodes(node);
-
             string value = null;
             var returnPins = node.InputDataPins;
             var returnValues = returnPins.Select(pin => GetPinIncomingValue(pin));
@@ -1012,7 +851,7 @@ namespace NetPrints.Translator
 
             if (returnPins.Count == 0 || node.IsInCoroutine)
             {
-                EmitControlFlowEnd(node.InputExecPins[0]);
+                EmitControlFlowEnd(node.InputExecPins[0], fullReturn: true);
             }
             else
             {
@@ -1030,81 +869,34 @@ namespace NetPrints.Translator
 
         public void TranslateIfElseNode(IfElseNode node)
         {
-            // Translate all the pure nodes this node depends on in
-            // the correct order
-            TranslateDependentPureNodes(node);
-
             string conditionVar = GetPinIncomingValue(node.ConditionPin);
 
             builder.AppendLine($"if ({conditionVar})");
             builder.AppendLine("{");
-
-            if (node.TruePin.OutgoingPin != null)
-            {
-                WriteGotoOutputPinIfNecessary(node.TruePin, node.InputExecPins[0]);
-            }
-            else
-            {
-                EmitControlFlowEnd(node.ExecutionPin);
-            }
-
+            FollowExecutionChain(node.TruePin);
             builder.AppendLine("}");
 
             builder.AppendLine("else");
             builder.AppendLine("{");
-
-            if (node.FalsePin.OutgoingPin != null)
-            {
-                WriteGotoOutputPinIfNecessary(node.FalsePin, node.InputExecPins[0]);
-            }
-            else
-            {
-                EmitControlFlowEnd(node.ExecutionPin);
-            }
-
+            FollowExecutionChain(node.FalsePin);
             builder.AppendLine("}");
         }
 
-        public void TranslateStartForLoopNode(ForLoopNode node)
+        public void TranslateForLoopNode(ForLoopNode node)
         {
-            // Translate all the pure nodes this node depends on in
-            // the correct order
-            TranslateDependentPureNodes(node);
-
-            //builder.AppendLine($"{GetOrCreatePinName(node.IndexPin)} = {GetPinIncomingValue(node.InitialIndexPin)};");
-            //builder.AppendLine($"if ({GetOrCreatePinName(node.IndexPin)} < {GetPinIncomingValue(node.MaxIndexPin)})");
-            //builder.AppendLine("{");
-            //WritePushJumpStack(node.ContinuePin);
-            //WriteGotoOutputPinIfNecessary(node.LoopPin, node.ExecutionPin);
-            //builder.AppendLine("}");
-
             var index = GetOrCreatePinName(node.IndexPin);
             builder.AppendLine($"for({index} = {GetPinIncomingValue(node.InitialIndexPin)}; {index} < {GetPinIncomingValue(node.MaxIndexPin)}; {index}++)");
             builder.AppendLine("{");
-            TranslateLoopBody(node.LoopPin);
-            builder.AppendLine("}");
-        }
-
-        public void TranslateContinueForLoopNode(ForLoopNode node)
-        {
-            // Translate all the pure nodes this node depends on in
-            // the correct order
-            TranslateDependentPureNodes(node);
-
-            builder.AppendLine($"{GetOrCreatePinName(node.IndexPin)}++;");
-            builder.AppendLine($"if ({GetOrCreatePinName(node.IndexPin)} < {GetPinIncomingValue(node.MaxIndexPin)})");
-            builder.AppendLine("{");
-            WritePushJumpStack(node.ContinuePin);
-            WriteGotoOutputPinIfNecessary(node.LoopPin, node.ContinuePin);
+            {
+                FollowExecutionChain(node.LoopPin, "continue");
+            }
             builder.AppendLine("}");
 
-            WriteGotoOutputPinIfNecessary(node.CompletedPin, node.ContinuePin);
+            FollowExecutionChain(node.CompletedPin);
         }
 
         public void TranslateForeachLoopNode(ForeachLoopNode node)
         {
-            TranslateDependentPureNodes(node);
-            
             var elementName = GetOrCreatePinName(node.DataPin);
             var indexName = GetOrCreatePinName(node.IndexPin);
             var tmpElementName = $"__{elementName}_tmp__";
@@ -1115,32 +907,15 @@ namespace NetPrints.Translator
 
             builder.AppendLine($"{indexName}++;");
             builder.AppendLine($"{elementName} = {tmpElementName};");
-            TranslateLoopBody(node.LoopPin);
-
-            builder.AppendLine("}");
-        }
-
-        public void TranslateBreakForeachLoopNode(ForeachLoopNode node)
-        {
-            //WriteGotoOutputPinIfNecessary(node.CompletedPin, node.BreakPin);
-        }
-
-        public void TranslateLoopBody(NodeOutputExecPin loopPin)
-        {
-            var node = loopPin.Node;
-            var loopBeginNode = loopPin?.OutgoingPin?.Node;
-            if (loopBeginNode is not null)
             {
-                //TODO: This is hack af
-                //WriteGotoOutputPinIfNecessary(node.LoopPin, node.ExecutionPin);
-                var nodes = new HashSet<Node>();
-                TranslatorUtil.AddExecNodes(loopBeginNode, nodes);
-                nodes.Remove(node);
-                TranslateNodeChain(nodes);
+                FollowExecutionChain(node.LoopPin, "continue");
             }
+            builder.AppendLine("}");
+            
+            FollowExecutionChain(node.CompletedPin);
         }
 
-        public void PureTranslateVariableGetterNode(VariableGetterNode node)
+        public void TranslateVariableGetterNode(VariableGetterNode node)
         {
             string valueName = GetOrCreatePinName(node.OutputDataPins[0]);
 
@@ -1184,12 +959,12 @@ namespace NetPrints.Translator
             builder.AppendLine(";");
         }
 
-        public void PureTranslateLiteralNode(LiteralNode node)
+        public void TranslateLiteralNode(LiteralNode node)
         {
             builder.AppendLine($"{GetOrCreatePinName(node.ValuePin)} = {GetPinIncomingValue(node.InputDataPins[0])};");
         }
 
-        public void PureTranslateMakeDelegateNode(MakeDelegateNode node)
+        public void TranslateMakeDelegateNode(MakeDelegateNode node)
         {
             // Write assignment of return value
             string returnName = GetOrCreatePinName(node.OutputDataPins[0]);
@@ -1220,12 +995,12 @@ namespace NetPrints.Translator
             builder.AppendLine($"{node.MethodSpecifier.Name};");
         }
 
-        public void PureTranslateTypeOfNode(TypeOfNode node)
+        public void TranslateTypeOfNode(TypeOfNode node)
         {
             builder.AppendLine($"{GetOrCreatePinName(node.TypePin)} = typeof({node.InputTypePin.InferredType?.Value?.FullCodeNameUnbound ?? "System.Object"});");
         }
 
-        public void PureTranslateMakeArrayNode(MakeArrayNode node)
+        public void TranslateMakeArrayNode(MakeArrayNode node)
         {
             builder.Append($"{GetOrCreatePinName(node.OutputDataPins[0])} = new {node.ArrayType.FullCodeName}");
 
@@ -1249,7 +1024,7 @@ namespace NetPrints.Translator
                 builder.AppendLine("};");
             }
         }
-        public void PureTranslateDefaultNode(DefaultNode node)
+        public void TranslateDefaultNode(DefaultNode node)
         {
             builder.AppendLine($"{GetOrCreatePinName(node.DefaultValuePin)} = default({node.Type.FullCodeName});");
         }
@@ -1265,46 +1040,103 @@ namespace NetPrints.Translator
             {
                 builder.AppendLine($"{GetOrCreatePinName(node.OutputDataPins[0])} = {GetPinIncomingValue(node.InputDataPins[0])};");
             }
-            else if (node.ExecRerouteCount == 1)
-            {
-                WriteGotoOutputPinIfNecessary(node.OutputExecPins[0], node.InputExecPins[0]);
-            }
         }
 
         public void TranslateSequenceNode(SequenceNode node)
         {
             foreach(var (branch, condition) in node.Branches.Zip(node.Conditions))
             {
-                var conditionExpression = GetPinIncomingValue(condition);
-                if(conditionExpression != "false")
-                {
-                    if(conditionExpression != "true")
-                    {
-                        builder.AppendLine($"if({conditionExpression})");
-                    }
+                if(branch.OutgoingPin == null)
+                    continue;
 
-                    builder.AppendLine("{");
-                    TranslateLoopBody(branch);
-                    builder.AppendLine("}");
-                }
+                builder.AppendLine($"while({GetPinIncomingValue(condition)})");
+                builder.AppendLine("{");
+                FollowExecutionChain(branch, "break");
+                builder.AppendLine("}");
             }
+            
+            FollowExecutionChain(node.AlwaysPin);
         }
 
-        public void EmitControlFlowEnd(NodeInputExecPin nodeInputExecPin)
+        private static KeyValuePair<Type, NodeTypeHandler> RawNode<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
         {
-            if (this.graph is MethodGraph {IsCoroutine: true})
+            return new (typeof(TNode), (translator, node) => nodeHandler(translator, (TNode) node));
+        }
+        
+        private static KeyValuePair<Type, NodeTypeHandler> SimpleNode<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
+        {
+            return NodeWithInputs<TNode>((translator, node) =>
             {
-                builder.AppendLine("yield break;");
-            }
-            else
-            {
-                // Only write return if the return node is not the last node
-                if (GetExecPinStateId(nodeInputExecPin) != nodeStateIds.Count - 1)
+                nodeHandler(translator, node);
+                
+                if(node.IsPure == false)
                 {
-                    builder.AppendLine("return;");
-
+                    Debug.Assert(node.OutputExecPins.Count <= 1, "Multi-output node is not expected");
+                    foreach(var outputPin in node.OutputExecPins)
+                    {
+                        translator.FollowExecutionChain(outputPin);
+                    }
                 }
+            });
+        }
+        
+        private static KeyValuePair<Type, NodeTypeHandler> NodeWithInputs<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
+        {
+            return new(typeof(TNode), (translator, node) =>
+            {
+                if(node.IsPure == false)
+                {
+                    translator.TranslateDependentPureNodes(node);
+                }
+                
+                nodeHandler(translator, (TNode) node);
+            });
+        }
+
+        private List<string> ControlFlowEndStack = new ();
+
+        private struct FlowToken : IDisposable
+        {
+            private List<string> ControlFlowEndStack;
+
+            public FlowToken(List<string> controlFlowEndStack)
+            {
+                //this.Builder = builder;
+                //controlFlowEndStack.Add(flowEnd + ';' + Environment.NewLine);
+                this.ControlFlowEndStack = controlFlowEndStack;
             }
+
+            public void Dispose()
+            {
+                //var builderLength = this.Builder.Length;
+                //var flowEnd = this.ControlFlowEndStack.Last();
+                //
+                ////If flow end is the last thing in the function, we can safely remove it to suppress warning
+                //if(builderLength >= flowEnd.Length)
+                //{
+                //    int begin = builderLength - flowEnd.Length;
+                //    var ending = this.Builder.ToString(begin, flowEnd.Length);
+                //    if(ending == flowEnd)
+                //    {
+                //        this.Builder.Remove()
+                //    }
+                //}
+
+                this.ControlFlowEndStack.RemoveAt(this.ControlFlowEndStack.Count - 1);
+            }
+
+        }
+
+        private FlowToken PushControlFlowEnd(string controlFlowEnd)
+        {
+            this.ControlFlowEndStack.Add(controlFlowEnd);
+            return new FlowToken(this.ControlFlowEndStack);
+        }
+
+        public void EmitControlFlowEnd(NodeInputExecPin nodeInputExecPin, bool fullReturn = false)
+        {
+            var controlFlowEnd = fullReturn ? this.ControlFlowEndStack[0] : this.ControlFlowEndStack.Last();
+            builder.Append(controlFlowEnd).Append(';').AppendLine();
         }
     }
 }
