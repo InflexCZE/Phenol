@@ -21,8 +21,8 @@ using VRage.Scripting;
 
 public class __HIT__
 {
-    public static long ActivePB;
-    public static long CurrentlyRunningPB;
+    public static long ActivePB = -1;
+    public static long CurrentlyRunningPB = long.MaxValue;
 
     public static void Hit(int @class, int method, int nodeIndex, int pinIndex)
     {
@@ -222,6 +222,11 @@ namespace SpaceLink
             public static void Prefix(MyProgrammableBlock __instance)
             {
                 __HIT__.CurrentlyRunningPB = __instance.EntityId;
+            }
+
+            public static void Postfix(MyProgrammableBlock __instance)
+            {
+                __HIT__.CurrentlyRunningPB = long.MaxValue;
             }
         }
 
