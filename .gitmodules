@@ -1,0 +1,3 @@
+[submodule "External/NamedPipeWrapper/named-pipe-wrapper"]
+	path = External/NamedPipeWrapper/named-pipe-wrapper
+	url = https://github.com/InflexCZE/named-pipe-wrapper.git

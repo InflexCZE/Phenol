@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using ExposedObject;
 using HarmonyLib;
-using LiveLink.Connection;
+using LiveLink;
 using LiveLink.Messages;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Blocks;
@@ -59,7 +59,7 @@ namespace SpaceLink
 
         public void OpenConnection()
         {
-            var connection = this.Connection = new Connection(Side.In);
+            var connection = this.Connection = new Connection(true);
             this.Connection.RegisterMessageHandler<ListDebugTargets>(request =>
             {
                 Invoke(() =>
@@ -76,7 +76,7 @@ namespace SpaceLink
                         };
                     }).ToList();
 
-                    this.Connection.Send(new DebugTargets
+                    this.Connection?.Send(new DebugTargets
                     {
                         Targets = blocks,
                         Request = request.MsgId

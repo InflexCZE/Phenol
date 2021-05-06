@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using LiveLink.Connection;
 
 namespace LiveLink.Messages
 {
@@ -36,38 +35,59 @@ namespace LiveLink.Messages
             RequestType = typeof(TResponse).GetCustomAttribute<RequestAttribute>().RequestType;
         }
 
-        public static Task<TResponse> From(Connection.Connection target)
+        public static Task<TResponse> From(Connection connection)
         {
             var request = Activator.CreateInstance(RequestType);
-            return Request.From<TResponse>(target, (Request) request);
+            return Request.From<TResponse>(connection, (Request) request);
         }
     }
     
     public partial class Request
     {
-        private static readonly HashSet<Guid> KnownEndpoints = new();
-        private static readonly ConcurrentDictionary<Guid, Action<Response>> ResponseHandlers = new();
+        private static readonly HashSet<Connection> KnownConnections = new();
+        private static readonly ConcurrentDictionary<(Connection, Guid), Action<Response, Exception>> ResponseHandlers = new();
 
-        public static Task<TResponse> From<TResponse>(Connection.Connection target, Request request) where TResponse : Response
+        public static Task<TResponse> From<TResponse>(Connection connection, Request request) where TResponse : Response
         {
-            lock(KnownEndpoints)
+            lock(KnownConnections)
             {
-                var endpoint = (Endpoint) target;
-                if(KnownEndpoints.Add(endpoint.GUID))
+                if(KnownConnections.Add(connection))
                 {
-                    endpoint.OnMessageReceived += OnMessageReceivedImpl;
+                    connection.RegisterMessageHandler<Response>(OnMessageReceived);
+                    connection.OnConnectionLost += OnConnectionLost;
 
-                    static void OnMessageReceivedImpl(Message m)
+                    bool OnMessageReceived(Response response)
                     {
-                        if(m is Response response)
+                        var key = (connection, response.Request);
+                        if(ResponseHandlers.TryRemove(key, out var handler))
                         {
-                            if(ResponseHandlers.TryRemove(response.Request, out var handler))
+                            handler(response, null);
+                            return true;
+                        }
+                        
+                        Debug.Fail("Handler for response not found: " + response.GetType());
+                        return false;
+                    }
+
+                    void OnConnectionLost()
+                    {
+                        bool wasKnown;
+                        lock(KnownConnections)
+                        {
+                            wasKnown = KnownConnections.Remove(connection);
+                        }
+
+                        if(wasKnown)
+                        {
+                            foreach(var key in ResponseHandlers.Keys)
                             {
-                                handler(response);
-                            }
-                            else
-                            {
-                                Debug.Fail("Handler for response not found: " + response.GetType());
+                                if(ReferenceEquals(connection, key.Item1))
+                                {
+                                    if(ResponseHandlers.TryRemove(key, out var handler))
+                                    {
+                                        handler(null, new Exception("ConnectionLost"));
+                                    }
+                                }
                             }
                         }
                     }
@@ -75,19 +95,26 @@ namespace LiveLink.Messages
             }
 
             var tcs = new TaskCompletionSource<TResponse>();
-            ResponseHandlers.TryAdd(request.MsgId, response =>
+            ResponseHandlers.TryAdd((connection, request.MsgId), (response, exception) =>
             {
-                try
+                if(exception is not null)
                 {
-                    tcs.SetResult((TResponse)response);
+                    tcs.TrySetException(exception);
                 }
-                catch(Exception e)
+                else
                 {
-                    tcs.SetException(e);
+                    try
+                    {
+                        tcs.SetResult((TResponse)response);
+                    }
+                    catch(Exception e)
+                    {
+                        tcs.TrySetException(e);
+                    }
                 }
             });
 
-            target.Send(request);
+            connection.Send(request);
             return tcs.Task;
         }
     }

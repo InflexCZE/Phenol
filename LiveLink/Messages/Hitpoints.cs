@@ -55,7 +55,5 @@ namespace LiveLink.Messages
     {
         public long DebugTarget;
         public List<HitPoint> Ids;
-
-        public override bool IsReliable => false;
     }
 }

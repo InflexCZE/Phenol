@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using LiveLink.Connection;
+using LiveLink;
 using LiveLink.Messages;
 using NetPrints.Utils;
 using static NetPrintsEditor.Commands.NetPrintsCommands;
@@ -367,7 +367,7 @@ namespace NetPrintsEditor
             {
                 if(this.Connection == null)
                 {
-                    connection = new Connection(Side.Out);
+                    connection = await Connection.ConnectToServerAsync();
                     dispose = true;
                 }
                 else
@@ -423,8 +423,8 @@ namespace NetPrintsEditor
 
             try
             {
-                this.Connection = new Connection(Side.Out);
-                this.Connection.OnConnectionLost += Disconnect;
+                this.Connection = await Connection.ConnectToServerAsync();
+                this.Connection.OnConnectionLost += () => this.Dispatcher.Invoke(Disconnect);
             }
             catch
             {
