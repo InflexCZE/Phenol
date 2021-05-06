@@ -14,6 +14,11 @@ namespace LiveLink.Messages
         {
             public long Id;
             public string Name;
+
+            public override string ToString()
+            {
+                return this.Name;
+            }
         }
 
         public List<DebugTarget> Targets { get; set; }

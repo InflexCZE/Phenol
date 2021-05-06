@@ -18,6 +18,7 @@ using System.Windows.Input;
 using LiveLink;
 using LiveLink.Messages;
 using NetPrints.Utils;
+using NetPrintsEditor.Dialogs;
 using static NetPrintsEditor.Commands.NetPrintsCommands;
 
 namespace NetPrintsEditor
@@ -354,13 +355,13 @@ namespace NetPrintsEditor
             ViewModel.Project.Save();
         }
 
-        private DebugTargets.DebugTarget DebugTarget;
+        private DebugTargets.DebugTarget LastDebugTarget;
+        private DebugTargets.DebugTarget CurrentDebugTarget;
 
         private async void OnDeployButtonClicked(object sender, RoutedEventArgs e)
         {
             var code = this.ViewModel.Project.GetPBScript();
 
-            //TODO: Merge connection code
             bool dispose = false;
             Connection connection = null;
             try
@@ -376,15 +377,14 @@ namespace NetPrintsEditor
                 }
                 
                 var debugTargets = await Request<DebugTargets>.From(connection);
+                var deployTarget = SelectDebugTarget(debugTargets);
 
-                if(debugTargets.Targets.Count > 0)
+                if(deployTarget.HasValue)
                 {
-                    //TODO: Show selection dialog
-                    var target = debugTargets.Targets[0];
                     connection.Send(new DeployScript
                     {
                         Code = code,
-                        DebugTarget = target.Id,
+                        DebugTarget = deployTarget.Value.Id,
                     });
                 }
             }
@@ -438,8 +438,8 @@ namespace NetPrintsEditor
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    var graphVM = this.ViewModel.OpenedGraph;
-                    var method = graphVM.Graph as ExecutionGraph;
+                    var graphVM = this.ViewModel?.OpenedGraph;
+                    var method = graphVM?.Graph as ExecutionGraph;
                     if(method is null)
                         return;
                     
@@ -477,16 +477,16 @@ namespace NetPrintsEditor
                 return true;
             });
 
-            if(debugTargets.Targets.Count > 0)
+            var debugTarget = SelectDebugTarget(debugTargets);
+            if(debugTarget.HasValue)
             {
-                //TODO: Show selection dialog
-                this.DebugTarget = debugTargets.Targets[0];
+                this.CurrentDebugTarget = debugTarget.Value;
                 this.Connection.OnConnectionLost += () =>
                 {
-                    this.DebugTarget = default;
+                    this.CurrentDebugTarget = default;
                 };
                 
-                this.Connection.Send(new HitpointsRequest {Target = this.DebugTarget.Id});
+                this.Connection.Send(new HitpointsRequest {Target = this.CurrentDebugTarget.Id});
 
                 attachButton.Content = "Detach";
                 attachButton.IsEnabled = true;
@@ -495,6 +495,40 @@ namespace NetPrintsEditor
             {
                 Disconnect();
             }
+        }
+
+        private DebugTargets.DebugTarget? SelectDebugTarget(DebugTargets debugTargets)
+        {
+            if(this.LastDebugTarget.Name is not null)
+            {
+                if(debugTargets.Targets.All(x => x.Id != this.LastDebugTarget.Id))
+                {
+                    //Previous debug target is no longer available
+                    this.LastDebugTarget = default;
+                }
+            }
+
+            if(debugTargets.Targets.Count == 0)
+                return null;
+
+            var firstTarget = debugTargets.Targets[0];
+            if(debugTargets.Targets.Count == 1)
+            {
+                return firstTarget;
+            }
+            
+            if(this.LastDebugTarget.Name is null)
+            {
+                var selectionDialog = new SearchableComboboxDialog("Select Debug Target", debugTargets.Targets, firstTarget);
+                if(selectionDialog.ShowDialog() != true)
+                {
+                    return null;
+                }
+
+                this.LastDebugTarget = (DebugTargets.DebugTarget) selectionDialog.SelectedItem;
+            }
+
+            return this.LastDebugTarget;
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e)

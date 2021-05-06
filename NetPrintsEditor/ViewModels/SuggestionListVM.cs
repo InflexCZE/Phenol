@@ -243,10 +243,10 @@ namespace NetPrintsEditor.ViewModels
 
         private static bool PromptForType(out TypeSpecifier type)
         {
-            SelectTypeDialog selectTypeDialog = new SelectTypeDialog();
+            var selectTypeDialog = new SearchableComboboxDialog("Select Type", App.NonStaticTypes, TypeSpecifier.FromType<object>());
             if (selectTypeDialog.ShowDialog() == true)
             {
-                type = selectTypeDialog.SelectedType;
+                type = (TypeSpecifier) selectTypeDialog.SelectedItem;
                 if(type is not null && type.Equals(null) == false)
                 {
                     return true;
