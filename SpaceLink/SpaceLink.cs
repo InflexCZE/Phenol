@@ -126,7 +126,7 @@ namespace SpaceLink
                         return new DebugTargets.DebugTarget
                         {
                             Id = x.EntityId,
-                            Name = $"{x.CubeGrid.DisplayName} - {x.DisplayName}"
+                            Name = $"{x.CubeGrid.DisplayName} - {x.DisplayNameText}"
                         };
                     });
 
