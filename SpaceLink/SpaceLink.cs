@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,7 @@ using LiveLink;
 using LiveLink.Messages;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Blocks;
-using Sandbox.Game.Gui;
+using Sandbox.Game.World;
 using Sandbox.Graphics.GUI;
 using Sandbox.ModAPI;
 using VRage;
@@ -21,16 +22,62 @@ using VRage.Scripting;
 
 public class __HIT__
 {
-    public static long ActivePB = -1;
-    public static long CurrentlyRunningPB = long.MaxValue;
+    public static long ActiveDebugTarget = -1;
+
+    [ThreadStatic]
+    private static Stack<long> _RunningDebugTargetStack;
+
+    private static Stack<long> RunningDebugTargetStack
+    {
+        get
+        {
+            var targets = _RunningDebugTargetStack;
+            
+            if(targets == null)
+            {
+                targets = new Stack<long>();
+                _RunningDebugTargetStack = targets;
+            }
+
+            return targets;
+        }
+    }
 
     public static void Hit(int @class, int method, int nodeIndex, int pinIndex)
     {
-        if(CurrentlyRunningPB != ActivePB)
+        if(ActiveDebugTarget == -1)
             return;
 
-        var spaceLink = SpaceLink.SpaceLink.Instance;
-        spaceLink.HitPoints.Add(new HitPoint(@class, method, nodeIndex, pinIndex));
+        if(RunningDebugTargetStack.Count == 0 || RunningDebugTargetStack.Peek() != ActiveDebugTarget)
+        {
+            return;
+        }
+
+        var hitPoints = SpaceLink.SpaceLink.Instance.HitPoints;
+        lock(hitPoints)
+        {
+            hitPoints.Add(new HitPoint(@class, method, nodeIndex, pinIndex));
+        }
+    }
+
+    public static void PushRunningDebugTarget(long debugTarget)
+    {
+        RunningDebugTargetStack.Push(debugTarget);
+    }
+    
+    public static void PopDebugTarget(long? expected)
+    {
+        if(RunningDebugTargetStack.Count == 0)
+        {
+            Debug.Fail("No active debug targets");
+            return;
+        }
+
+        var active = RunningDebugTargetStack.Pop();
+        if(expected.HasValue)
+        {
+            Debug.Assert(active == expected, "Debug target mismatch");
+        }
     }
 }
 
@@ -44,7 +91,8 @@ namespace SpaceLink
         public Connection Connection { get; private set; }
         private readonly ConcurrentQueue<Action> InvocationQueue = new();
 
-        public HashSet<HitPoint> HitPoints = new ();
+        public HashSet<HitPoint> HitPoints = new();
+        public List<(string DisplayName, int ModId)> ActiveMods = new();
 
         public void Init(object gameInstance)
         {
@@ -55,6 +103,12 @@ namespace SpaceLink
             this.Harmony.PatchAll();
 
             PatchWhitelist();
+            MySession.BeforeLoading += MySession_BeforeLoading;
+        }
+
+        private void MySession_BeforeLoading()
+        {
+            this.ActiveMods.Clear();
         }
 
         public void OpenConnection()
@@ -74,12 +128,21 @@ namespace SpaceLink
                             Id = x.EntityId,
                             Name = $"{x.CubeGrid.DisplayName} - {x.DisplayName}"
                         };
-                    }).ToList();
+                    });
+
+                    var mods = this.ActiveMods.Select(x =>
+                    {
+                        return new DebugTargets.DebugTarget
+                        {
+                            Id = x.ModId,
+                            Name = x.DisplayName
+                        };
+                    });
 
                     this.Connection?.Send(new DebugTargets
                     {
-                        Targets = blocks,
-                        Request = request.MsgId
+                        Request = request.MsgId,
+                        Targets = blocks.Concat(mods).ToList()
                     });
                 });
 
@@ -101,13 +164,13 @@ namespace SpaceLink
             
             this.Connection.RegisterMessageHandler<HitpointsRequest>(message =>
             {
-                __HIT__.ActivePB = message.Target;
+                __HIT__.ActiveDebugTarget = message.Target;
                 return true;
             });
 
             this.Connection.OnConnectionLost += () =>
             {
-                __HIT__.ActivePB = -1;
+                __HIT__.ActiveDebugTarget = -1;
                 Invoke(() =>
                 {
                     connection.Dispose();
@@ -157,7 +220,7 @@ namespace SpaceLink
                 this.Connection.Send(new HitPoints
                 {
                     Ids = this.HitPoints.ToList(),
-                    DebugTarget = __HIT__.ActivePB,
+                    DebugTarget = __HIT__.ActiveDebugTarget,
                 });
             }
 
@@ -221,12 +284,59 @@ namespace SpaceLink
 
             public static void Prefix(MyProgrammableBlock __instance)
             {
-                __HIT__.CurrentlyRunningPB = __instance.EntityId;
+                __HIT__.PushRunningDebugTarget(__instance.EntityId);
             }
 
             public static void Postfix(MyProgrammableBlock __instance)
             {
-                __HIT__.CurrentlyRunningPB = long.MaxValue;
+                __HIT__.PopDebugTarget(__instance.EntityId);
+            }
+        }
+
+        [HarmonyPatch]
+        public static class ModIdCollectorPatch
+        {
+            public static MethodBase TargetMethod()
+            {
+                return AccessTools.Method(typeof(MyModWatchdog), "AllocateModId");
+            }
+
+            public static void Postfix(string modName, int __result)
+            {
+                var modId = __result;
+                var activeMods = Instance.ActiveMods;
+                lock(activeMods)
+                {
+                    activeMods.Add((modName, modId));
+                }
+            }
+        }
+
+        [HarmonyPatch]
+        public static class CurrentlyRunningModPatch1
+        {
+            public static MethodBase TargetMethod()
+            {
+                return AccessTools.Method(typeof(MyModWatchdog), "ModMethodEnter");
+            }
+
+            public static void Prefix(int modId)
+            {
+                __HIT__.PushRunningDebugTarget(modId);
+            }
+        }
+
+        [HarmonyPatch]
+        public static class CurrentlyRunningModPatch2
+        {
+            public static MethodBase TargetMethod()
+            {
+                return AccessTools.Method(typeof(MyModWatchdog), "ModMethodExit");
+            }
+
+            public static void Prefix()
+            {
+                __HIT__.PopDebugTarget(null);
             }
         }
 
@@ -234,7 +344,6 @@ namespace SpaceLink
         {
             this.InvocationQueue.Enqueue(action);
         }
-
 
         public void Dispose()
         {
