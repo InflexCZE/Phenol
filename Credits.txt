@@ -1,1 +1,8 @@
+https://github.com/Fody/Fody/
+https://github.com/pardeike/Harmony/
 https://github.com/RobinKa/netprints/
+https://github.com/KNShrinidhi/Roslyn/
+https://github.com/Fody/PropertyChanged/
+https://github.com/skolima/ExposedObject/
+https://github.com/JamesNK/Newtonsoft.Json/
+https://github.com/InflexCZE/named-pipe-wrapper/
