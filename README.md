@@ -1,7 +1,7 @@
 # Phenol
 **Visual script for Space Engineers**
 
-Phenol is a visual scripting tool inspired by Unreal Engine 4's Blueprints for development of [Space Engineers](spaceengineersgame.com)' Programmable block and Mod scripts.
+Phenol is a visual scripting tool for development of [Space Engineers](spaceengineersgame.com)' Programmable block and Mod scripts.
 
 # Features
 
@@ -10,8 +10,8 @@ Phenol is a visual scripting tool inspired by Unreal Engine 4's Blueprints for d
  - Live debugging of live script instance 
 
 # Download
-Latest version of Phenol can be obtained [here](https://github.com/inflexCZE/Phenol/releases/latest).<br>
-See [Quick start](https://github.com/InflexCZE/Phenol/wiki/Quick-start) for installation and first launch instructions.
+Latest build of Phenol Editor is avaliable on [Release page](https://github.com/inflexCZE/Phenol/releases/latest).<br>
+See [Quick start](https://github.com/InflexCZE/Phenol/wiki/Quick-start) for Installation and First Script instructions.
 
 # Screenshots
 | | |
