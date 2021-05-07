@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputDirectory>Release</OutputDirectory>
+  </PropertyGroup>
+
+  <Target Name="ReleaseBuild">
+    <RemoveDir Directories="$(OutputDirectory)" />
+
+    <Exec Command="msbuild ../NetPrints.sln /p:Configuration=Release -target:restore" />
+    <Exec Command="msbuild ../NetPrints.sln /p:Configuration=Release -target:SpaceLink;NetPrintsEditor" />
+
+    <ItemGroup>
+      <EditorBuild Include="../NetPrintsEditor\bin\Release\net461\**\*.*" />
+    </ItemGroup>
+    <Copy 
+        SourceFiles="@(EditorBuild)" 
+        DestinationFolder="$(OutputDirectory)\PhenolEditor\%(RecursiveDir)" 
+        />
+
+    <ItemGroup>
+      <SpaceLinkBuild Include="../LiveLink\bin\Release\netstandard2.0\**\*.*" />
+      <SpaceLinkBuild Include="../SpaceLink\bin\Release\netstandard2.0\SpaceLink.*" />
+      <SpaceLinkBuild Include="../SpaceLink\bin\Release\netstandard2.0\0Harmony.dll" />
+    </ItemGroup>
+    <Copy 
+        SourceFiles="@(SpaceLinkBuild)" 
+        DestinationFolder="$(OutputDirectory)\SpaceLink\%(RecursiveDir)" 
+        />
+
+    <ItemGroup>
+      <Assets Include="../Assets\**\*.*" Exclude="../Assets\.gitignore" />
+    </ItemGroup>
+    <Copy 
+        SourceFiles="@(Assets)" 
+        DestinationFolder="$(OutputDirectory)\%(RecursiveDir)" 
+        />
+
+    <ItemGroup>
+      <Archives Include="$([System.IO.Directory]::GetDirectories(&quot;$(OutputDirectory)&quot;))" />
+    </ItemGroup>
+    <ZipDirectory
+            SourceDirectory="%(Archives.Identity)"
+            DestinationFile="%(Archives.Identity).zip"
+            />
+    </Target>
+</Project>
