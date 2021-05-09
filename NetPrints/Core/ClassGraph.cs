@@ -137,7 +137,7 @@ namespace NetPrints.Core
         /// </summary>
         public TypeSpecifier Type
         {
-            get => new TypeSpecifier(FullName, SuperType.IsEnum, SuperType.IsInterface,
+            get => new TypeSpecifier(FullName, SuperType.IsEnum, SuperType.IsInterface, false,
                 DeclaredGenericArguments.Cast<BaseType>().ToList());
         }
 

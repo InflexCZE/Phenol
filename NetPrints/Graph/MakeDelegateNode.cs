@@ -39,7 +39,7 @@ namespace NetPrints.Graph
             get => MethodSpecifier.Modifiers.HasFlag(MethodModifiers.Static);
         }
 
-        public MakeDelegateNode(NodeGraph graph, MethodSpecifier methodSpecifier)
+        public MakeDelegateNode(NodeGraph graph, MethodSpecifier methodSpecifier, TypeSpecifier delegateType = null)
             : base(graph)
         {
             MethodSpecifier = methodSpecifier;
@@ -49,19 +49,20 @@ namespace NetPrints.Graph
                 AddInputDataPin("Target", methodSpecifier.DeclaringType);
             }
 
-            TypeSpecifier delegateType;
-
-            if (methodSpecifier.ReturnTypes.Count == 0)
+            if(delegateType is null)
             {
-                delegateType = new TypeSpecifier("System.Action", false, false, methodSpecifier.ArgumentTypes);
-            }
-            else if (methodSpecifier.ReturnTypes.Count == 1)
-            {
-                delegateType = new TypeSpecifier("System.Func", false, false, methodSpecifier.ArgumentTypes.Concat(methodSpecifier.ReturnTypes).ToList());
-            }
-            else
-            {
-                throw new NotImplementedException("Only 0 and 1 return types are supported right now.");
+                if (methodSpecifier.ReturnTypes.Count == 0)
+                {
+                    delegateType = new TypeSpecifier("System.Action", false, false, true, methodSpecifier.ArgumentTypes);
+                }
+                else if (methodSpecifier.ReturnTypes.Count == 1)
+                {
+                    delegateType = new TypeSpecifier("System.Func", false, false, true, methodSpecifier.ArgumentTypes.Concat(methodSpecifier.ReturnTypes).ToList());
+                }
+                else
+                {
+                    throw new NotImplementedException("Only 0 and 1 return types are supported right now.");
+                }
             }
 
             AddOutputDataPin(delegateType.ShortName, delegateType);

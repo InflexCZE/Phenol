@@ -54,9 +54,13 @@ namespace NetPrintsEditor.Reflection
                 }
             }
 
-            TypeSpecifier typeSpecifier = new TypeSpecifier(typeName,
+            var typeSpecifier = new TypeSpecifier
+            (
+                    typeName,
                     type.TypeKind == TypeKind.Enum,
-                    type.TypeKind == TypeKind.Interface);
+                    type.TypeKind == TypeKind.Interface,
+                    type.TypeKind == TypeKind.Delegate
+            );
 
             if (type is INamedTypeSymbol namedType)
             {
@@ -204,7 +208,31 @@ namespace NetPrintsEditor.Reflection
                 modifiers);
         }
 
-        public static VariableSpecifier VariableSpecifierFromField(IFieldSymbol field)
+        public static VariableSpecifier VariableSpecifierFromEvent(IEventSymbol @event)
+        {
+            var visibility = VisibilityFromAccessibility(@event.DeclaredAccessibility);
+
+            var modifiers = VariableModifiers.Event;
+
+            if (@event.IsStatic)
+            {
+                modifiers |= VariableModifiers.Static;
+            }
+
+            // TODO: More modifiers
+
+            return new VariableSpecifier
+            (
+                @event.Name,
+                TypeSpecifierFromSymbol(@event.Type),
+                visibility,
+                visibility,
+                TypeSpecifierFromSymbol(@event.ContainingType),
+                modifiers
+            );
+        }
+
+        public static VariableSpecifier VariableSpecifierFromField(IFieldSymbol field, List<VariableSpecifier> syntheticSymbols)
         {
             var visibility = VisibilityFromAccessibility(field.DeclaredAccessibility);
 
@@ -226,14 +254,34 @@ namespace NetPrintsEditor.Reflection
             }
 
             // TODO: More modifiers
+            
+            var fieldType = TypeSpecifierFromSymbol(field.Type);
+            var containingType = TypeSpecifierFromSymbol(field.ContainingType);
+            
+            if(fieldType.IsDelegate && field.AssociatedSymbol is null)
+            {
+                //This is delegate field but not defined as full event
+                //=> Emit synthetic symbol to allow (un)subscription
+                syntheticSymbols.Add(new VariableSpecifier
+                (
+                    field.Name,
+                    fieldType,
+                    visibility,
+                    visibility,
+                    containingType,
+                    modifiers | VariableModifiers.Event
+                ));
+            }
 
-            return new VariableSpecifier(
+            return new VariableSpecifier
+            (
                 field.Name,
-                TypeSpecifierFromSymbol(field.Type),
+                fieldType,
                 visibility,
                 visibility,
-                TypeSpecifierFromSymbol(field.ContainingType),
-                modifiers);
+                containingType,
+                modifiers
+            );
         }
 
         public static ConstructorSpecifier ConstructorSpecifierFromSymbol(IMethodSymbol constructorMethodSymbol)

@@ -12,20 +12,21 @@ namespace NetPrints.Core
     [Flags]
     public enum VariableModifiers
     {
-        None = 0,
-        ReadOnly = 8,
-        Const = 16,
-        Static = 32,
-        New = 64,
+        None      = 0,
+        ReadOnly  = 1 << 3,
+        Const     = 1 << 4,
+        Static    = 1 << 5,
+        New       = 1 << 6,
+        Event     = 1 << 7,
 
         [Obsolete]
-        Private = 0,
+        Private   = 0,
         [Obsolete]
-        Public = 1,
+        Public    = 1 << 0,
         [Obsolete]
-        Protected = 2,
+        Protected = 1 << 1,
         [Obsolete]
-        Internal = 4,
+        Internal  = 1 << 2,
     }
 
     /// <summary>

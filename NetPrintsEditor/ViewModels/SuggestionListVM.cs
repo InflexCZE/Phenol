@@ -110,9 +110,19 @@ namespace NetPrintsEditor.ViewModels
             }
             else if (selectedValue is MakeDelegateTypeInfo makeDelegateTypeInfo)
             {
+                var targetType = makeDelegateTypeInfo.TargetType;
+                
+                if(targetType is null)
+                {
+                    if(PromptForType(out targetType) == false)
+                    {
+                        return;
+                    }
+                }
+
                 var methods = App.ReflectionProvider.GetMethods(
                     new Reflection.ReflectionProviderMethodQuery()
-                    .WithType(makeDelegateTypeInfo.Type)
+                    .WithType(targetType)
                     .WithVisibleFrom(makeDelegateTypeInfo.FromType));
 
                 SelectMethodDialog selectMethodDialog = new SelectMethodDialog()
@@ -124,7 +134,7 @@ namespace NetPrintsEditor.ViewModels
                 {
                     // MakeDelegateNode(Method method, MethodSpecifier methodSpecifier)
 
-                    AddNode<MakeDelegateNode>(selectMethodDialog.SelectedMethod);
+                    AddNode<MakeDelegateNode>(selectMethodDialog.SelectedMethod, makeDelegateTypeInfo.DelegateType);
                 }
             }
             else if (selectedValue is TypeSpecifier t)
@@ -243,18 +253,7 @@ namespace NetPrintsEditor.ViewModels
 
         private static bool PromptForType(out TypeSpecifier type)
         {
-            var selectTypeDialog = new SearchableComboboxDialog("Select Type", App.NonStaticTypes, TypeSpecifier.FromType<object>());
-            if (selectTypeDialog.ShowDialog() == true)
-            {
-                type = (TypeSpecifier) selectTypeDialog.SelectedItem;
-                if(type is not null && type.Equals(null) == false)
-                {
-                    return true;
-                }
-            }
-
-            type = default;
-            return false;
+            return SelectTypeDialog.Prompt(out type);
         }
 
     }

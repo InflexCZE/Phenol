@@ -72,7 +72,7 @@ namespace NetPrints.Graph
             {
                 if (ElementType is TypeSpecifier typeSpec)
                 {
-                    return new TypeSpecifier($"{typeSpec.Name}[]", typeSpec.IsEnum, typeSpec.IsInterface, typeSpec.GenericArguments);
+                    return new TypeSpecifier($"{typeSpec.Name}[]", typeSpec.IsEnum, typeSpec.IsInterface, false, typeSpec.GenericArguments);
                 }
                 else
                 {

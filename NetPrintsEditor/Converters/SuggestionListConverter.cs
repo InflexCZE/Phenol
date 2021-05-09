@@ -32,11 +32,23 @@ namespace NetPrintsEditor.Converters
             else if (value is VariableSpecifier variableSpecifier)
             {
                 text = $"{variableSpecifier.Type} {variableSpecifier.Name} : {variableSpecifier.Type}";
-                iconPath = "Property_16x.png";
+                iconPath = (variableSpecifier.Modifiers & VariableModifiers.Event) != 0 ? "Event_16x.png" : "Property_16x.png";
             }
             else if (value is MakeDelegateTypeInfo makeDelegateTypeInfo)
             {
-                text = $"Make Delegate For A Method Of {makeDelegateTypeInfo.Type.ShortName}";
+                if(makeDelegateTypeInfo.TargetType is {} delegateTargetType)
+                {
+                    text = $"Make Delegate For A Method Of {delegateTargetType.ShortName}";
+                }
+                else if (makeDelegateTypeInfo.DelegateType is { } delegateType)
+                {
+                    text = $"Make Delegate of type {delegateType.ShortName}";
+                }
+                else
+                {
+                    text = "Make Delegate";
+                }
+
                 iconPath = "Delegate_16x.png";
             }
             else if (value is TypeSpecifier t)

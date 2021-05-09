@@ -32,6 +32,13 @@ namespace NetPrints.Core
             private set;
         }
 
+        [DataMember]
+        public bool IsDelegate
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// Generic arguments this type takes.
         /// </summary>
@@ -124,11 +131,12 @@ namespace NetPrints.Core
         /// <param name="isEnum">Whether the type is an enum.</param>
         /// <param name="isInterface">Whether the type is an interface.</param>
         /// <param name="genericArguments">Generic arguments the type takes.</param>
-        public TypeSpecifier(string typeName, bool isEnum=false, bool isInterface=false, IEnumerable<BaseType> genericArguments=null)
+        public TypeSpecifier(string typeName, bool isEnum = false, bool isInterface = false, bool isDelegate = false, IEnumerable<BaseType> genericArguments=null)
             : base(typeName)
         {
-            IsEnum = isEnum;
-            IsInterface = isInterface;
+            this.IsEnum = isEnum;
+            this.IsDelegate = isDelegate;
+            this.IsInterface = isInterface;
 
             if (genericArguments == null)
             {
@@ -166,7 +174,8 @@ namespace NetPrints.Core
             (
                 TypeName(type),
                 type.IsSubclassOf(typeof(Enum)),
-                type.IsInterface
+                type.IsInterface,
+                typeof(Delegate).IsAssignableFrom(type)
             );
 
             foreach (Type genType in type.GetGenericArguments())
@@ -283,7 +292,7 @@ namespace NetPrints.Core
 
             // TODO: Make sure all dictionary values were used.
 
-            return new TypeSpecifier(Name, IsEnum, IsInterface, newGenericArgs);
+            return new TypeSpecifier(this.Name, this.IsEnum, this.IsInterface, this.IsDelegate, newGenericArgs);
         }
 
         public static bool operator ==(TypeSpecifier a, TypeSpecifier b)

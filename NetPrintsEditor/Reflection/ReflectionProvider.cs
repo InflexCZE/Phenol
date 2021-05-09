@@ -648,15 +648,19 @@ namespace NetPrintsEditor.Reflection
                     }
                 }
 
-                propertySymbols = typesToVisit.SelectMany(x => x.GetMembers().Where(m => m.Kind == SymbolKind.Property || m.Kind == SymbolKind.Field));
+                propertySymbols = typesToVisit.SelectMany(x => x.GetMembers());
             }
             else
             {
                 // Get all properties of all public types
-                propertySymbols = GetValidTypes()
-                    .SelectMany(t => t.GetAllMembers()
-                        .Where(m => m.Kind == SymbolKind.Property || m.Kind == SymbolKind.Field));
+                propertySymbols = GetValidTypes().SelectMany(t => t.GetAllMembers());
             }
+
+            propertySymbols = propertySymbols.Where(x =>
+            {
+                var k = x.Kind;
+                return k == SymbolKind.Field || k == SymbolKind.Property || k == SymbolKind.Event;
+            });
 
             // Check static
             if (query.Static.HasValue)
@@ -683,11 +687,19 @@ namespace NetPrintsEditor.Reflection
                     searchType.IsSubclassOf(TypeSymbolFromFieldOrProperty(p)));
             }
 
+            var syntheticSymbols = new List<VariableSpecifier>();
+            
             return propertySymbols
                 .OrderBy(p => p.ContainingNamespace?.Name)
                 .ThenBy(p => p.ContainingType?.Name)
                 .ThenBy(p => p.Name)
-                .Select(p => p is IPropertySymbol propertySymbol ? ReflectionConverter.VariableSpecifierFromSymbol(propertySymbol) : ReflectionConverter.VariableSpecifierFromField((IFieldSymbol)p));
+                .Select(p => p switch
+                {
+                    IEventSymbol @event => ReflectionConverter.VariableSpecifierFromEvent(@event),
+                    IPropertySymbol property => ReflectionConverter.VariableSpecifierFromSymbol(property),
+                    IFieldSymbol field => ReflectionConverter.VariableSpecifierFromField(field, syntheticSymbols),
+                })
+                .Concat(syntheticSymbols);
         }
 
         #endregion

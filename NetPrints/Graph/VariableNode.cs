@@ -51,6 +51,11 @@ namespace NetPrints.Graph
             get => Variable.Modifiers.HasFlag(VariableModifiers.Static);
         }
 
+        public bool IsEvent
+        {
+            get => this.Variable.Modifiers.HasFlag(VariableModifiers.Event);
+        }
+        
         /// <summary>
         /// Whether this variable node is for an indexer (eg. dict["key"]).
         /// </summary>

@@ -12,7 +12,7 @@ namespace NetPrints.Core
 
         public static TypeSpecifier GetCoroutineReturnType(IEnumerable<BaseType> types)
         {
-            return new("Ref", false, false, new[]
+            return new("Ref", false, false, false, new[]
             {
                 GenericsHelper.BuildAggregateType(types)
             });

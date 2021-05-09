@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,6 +99,21 @@ namespace NetPrints.Translator
 
             variableNames.Add(pin, pinName);
             return pinName;
+        }
+
+        private bool TryGetConstantValue<T>(NodeInputDataPin pin, out T value)
+        {
+            try
+            {
+                var data = GetPinIncomingValue(pin);
+                value = (T) Convert.ChangeType(data, typeof(T), CultureInfo.InvariantCulture);
+                return true;
+            }
+            catch
+            { }
+
+            value = default;
+            return false;
         }
 
         private string GetPinIncomingValue(NodeInputDataPin pin)
@@ -782,42 +798,87 @@ namespace NetPrints.Translator
         {
             string valueName = GetPinIncomingValue(node.NewValuePin);
 
+            var acessor = string.Empty;
+
             // Add target name if there is a target (null for local and static variables)
             if (node.IsStatic)
             {
                 if (!(node.TargetType is null))
                 {
-                    builder.Append(node.TargetType.FullCodeName);
+                    acessor = node.TargetType.FullCodeName;
                 }
                 else
                 {
-                    builder.Append(node.Graph.Class.Name);
+                    acessor = node.Graph.Class.Name;
                 }
             }
+            
             if (node.TargetPin != null)
             {
                 if (node.TargetPin.IncomingPin != null)
                 {
-                    string targetName = GetOrCreatePinName(node.TargetPin.IncomingPin);
-                    builder.Append(targetName);
+                    acessor += GetOrCreatePinName(node.TargetPin.IncomingPin);
                 }
                 else
                 {
-                    builder.Append("this");
+                    acessor += "this";
                 }
             }
 
-            // Add index if needed
             if (node.IsIndexer)
             {
-                builder.Append($"[{GetPinIncomingValue(node.IndexPin)}]");
+                 acessor += $"[{GetPinIncomingValue(node.IndexPin)}]";
             }
             else
             {
-                builder.Append($".{node.VariableName}");
+                acessor += $".{node.VariableName}";
             }
 
-            builder.AppendLine($" = {valueName};");
+            if(node.IsEvent)
+            {
+                var emitConditions = true;
+                var emitSubscription = true;
+                var emitUnsubscription = true;
+
+                if(TryGetConstantValue(node.SubscribePin, out bool subscribe))
+                {
+                    emitConditions = false;
+                    emitSubscription = subscribe;
+                    emitUnsubscription = subscribe == false;
+                }
+
+                if(emitConditions)
+                {
+                    builder.AppendLine($"if({GetPinIncomingValue(node.SubscribePin)})");
+                    builder.AppendLine("{");
+                }
+
+                if(emitSubscription)
+                {
+                    builder.AppendLine($"{acessor} += {valueName};");
+                }
+
+                if(emitConditions)
+                {
+                    builder.AppendLine("}");
+                    builder.AppendLine("else");
+                    builder.AppendLine("{");
+                }
+
+                if(emitUnsubscription)
+                {
+                    builder.AppendLine($"{acessor} -= {valueName};");
+                }
+
+                if(emitConditions)
+                {
+                    builder.AppendLine("}");
+                }
+            }
+            else
+            {
+                builder.AppendLine($"{acessor} = {valueName};");
+            }
 
             // Set output pin of this node to the same value
             builder.AppendLine($"{GetOrCreatePinName(node.OutputDataPins[0])} = {valueName};");

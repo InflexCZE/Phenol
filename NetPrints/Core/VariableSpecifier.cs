@@ -75,15 +75,22 @@ namespace NetPrints.Core
             set;
         }
 
-        public VariableSpecifier(string name, TypeSpecifier type, MemberVisibility getterVisibility, MemberVisibility setterVisibility,
-            TypeSpecifier declaringType, VariableModifiers modifiers)
+        public VariableSpecifier
+        (
+            string name, 
+            TypeSpecifier type, 
+            MemberVisibility getterVisibility, 
+            MemberVisibility setterVisibility,
+            TypeSpecifier declaringType, 
+            VariableModifiers modifiers
+        )
         {
-            Name = name;
-            Type = type;
-            GetterVisibility = getterVisibility;
-            SetterVisibility = setterVisibility;
-            DeclaringType = declaringType;
-            Modifiers = modifiers;
+            this.Name = name;
+            this.Type = type;
+            this.GetterVisibility = getterVisibility;
+            this.SetterVisibility = setterVisibility;
+            this.DeclaringType = declaringType;
+            this.Modifiers = modifiers;
         }
     }
 }

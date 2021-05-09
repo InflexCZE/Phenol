@@ -17,6 +17,11 @@ namespace NetPrints.Graph
             get { return IsStatic ? InputDataPins[0] : InputDataPins[1]; }
         }
 
+        public NodeInputDataPin SubscribePin
+        {
+            get { return IsStatic ? InputDataPins[1] : InputDataPins[2]; }
+        }
+
         public VariableSetterNode(NodeGraph graph, VariableSpecifier variable)
             : base(graph, variable)
         {
@@ -24,6 +29,11 @@ namespace NetPrints.Graph
             AddOutputExecPin("Exec");
 
             AddInputDataPin("NewValue", variable.Type);
+
+            if(this.IsEvent)
+            {
+                AddInputDataPin("Subscribe", TypeSpecifier.FromType<bool>());
+            }
         }
 
         public override string ToString()

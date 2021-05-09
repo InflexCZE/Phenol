@@ -139,7 +139,7 @@ namespace NetPrintsEditor.ViewModels
                             // Add make delegate
                             AddSuggestionsWithCategory(NodesCategory, new object[]
                             {
-                                new MakeDelegateTypeInfo(pinTypeSpec, Graph.Class.Type),
+                                new MakeDelegateTypeInfo(pinTypeSpec, null, Graph.Class.Type),
                                 TypeSpecifier.FromType<ExplicitCastNode>()
                             });
 
@@ -183,6 +183,14 @@ namespace NetPrintsEditor.ViewModels
                     {
                         if(this.Graph is ExecutionGraph)
                         {
+                            if(pinTypeSpec.IsDelegate)
+                            {
+                                AddSuggestionsWithCategory(NodesCategory, new object[]
+                                {
+                                    new MakeDelegateTypeInfo(null, pinTypeSpec, Graph.Class.Type),
+                                });
+                            }
+
                             // Variables of base classes that inherit from needed type
                             foreach (var baseType in this.Graph.Class.AllBaseTypes)
                             {

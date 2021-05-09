@@ -22,7 +22,7 @@ namespace NetPrintsUnitTests
         [TestMethod]
         public void TestGenericEquality()
         {
-            TypeSpecifier typeA = new TypeSpecifier("TypeA", false, false, new BaseType[] { });
+            TypeSpecifier typeA = new TypeSpecifier("TypeA", false, false, false, new BaseType[] { });
             GenericType genType1 = new GenericType("T1");
             GenericType genType2 = new GenericType("T2");
 
