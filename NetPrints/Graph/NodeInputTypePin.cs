@@ -43,6 +43,8 @@ namespace NetPrints.Graph
             get => IncomingPin?.InferredType;
         }
 
+        public override bool IsConnected => this.IncomingPin is not null;
+
         private NodeOutputTypePin incomingPin;
 
         public NodeInputTypePin(Node node, string name)

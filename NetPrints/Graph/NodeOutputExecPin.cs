@@ -37,6 +37,8 @@ namespace NetPrints.Graph
             }
         }
 
+        public override bool IsConnected => this.OutgoingPin is not null;
+        
         private NodeInputExecPin outgoingPin;
 
         public NodeOutputExecPin(Node node, string name)

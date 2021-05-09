@@ -93,6 +93,8 @@ namespace NetPrints.Graph
             set;
         }
 
+        public override bool IsConnected => this.IncomingPin is not null;
+
         public NodeInputDataPin(Node node, string name, ObservableValue<BaseType> pinType)
             : base(node, name, pinType)
         {

@@ -21,6 +21,8 @@ namespace NetPrints.Graph
             get => outputType;
         }
 
+        public override bool IsConnected => this.OutgoingPins.Count > 0;
+
         [DataMember]
         private ObservableValue<BaseType> outputType;
 

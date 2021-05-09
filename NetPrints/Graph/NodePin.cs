@@ -20,26 +20,20 @@ namespace NetPrints.Graph
         /// Name of the pin.
         /// </summary>
         [DataMember]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Node this pin is contained in.
         /// </summary>
         [DataMember]
-        public Node Node
-        {
-            get;
-            private set;
-        }
+        public Node Node { get; private set; }
+
+        public abstract bool IsConnected { get; }
 
         protected NodePin(Node node, string name)
         {
-            Node = node;
-            Name = name;
+            this.Node = node;
+            this.Name = name;
         }
 
         public override string ToString()

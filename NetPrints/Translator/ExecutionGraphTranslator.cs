@@ -746,7 +746,7 @@ namespace NetPrints.Translator
 
             // If failure pin is not connected just throw, don't check.
             // Otherwise check if cast can be performed and choose appropriate path
-            bool safeCast = node.IsPure == false && node.CastFailedPin.OutgoingPin != null;
+            bool safeCast = node.IsPure == false && (node.CastSuccessPin.IsConnected || node.CastFailedPin.IsConnected);
             if (safeCast)
             {
                 builder.AppendLine($"if(!({inputValue} is {castTypeName}))");
