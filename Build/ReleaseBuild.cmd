@@ -6,4 +6,7 @@ if not []==[%version%] (
 git tag %version%
 git push --tags
 )
+
+rem clear version variable, it confuses nuget in subsequent runs
+set "version="
 pause
