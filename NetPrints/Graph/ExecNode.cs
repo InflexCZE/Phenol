@@ -1,4 +1,5 @@
-﻿using NetPrints.Core;
+﻿using System.Linq;
+using NetPrints.Core;
 using System.Runtime.Serialization;
 
 namespace NetPrints.Graph
@@ -20,10 +21,25 @@ namespace NetPrints.Graph
             }
         }
 
-        private void AddExecPins()
+        protected virtual void AddExecPins()
         {
             AddInputExecPin("Exec");
             AddOutputExecPin("Exec");
+        }
+
+        protected virtual void RemoveExecPins()
+        {
+            foreach(var pin in this.InputExecPins.ToArray())
+            {
+                GraphUtil.DisconnectPin(pin);
+                this.InputExecPins.Remove(pin);
+            }
+
+            foreach (var pin in this.OutputExecPins.ToArray())
+            {
+                GraphUtil.DisconnectPin(pin);
+                this.OutputExecPins.Remove(pin);
+            }
         }
 
         protected override void SetPurity(bool pure)
@@ -32,13 +48,9 @@ namespace NetPrints.Graph
 
             if (pure)
             {
-                GraphUtil.DisconnectInputExecPin(InputExecPins[0]);
-                InputExecPins.RemoveAt(0);
-
-                GraphUtil.DisconnectOutputExecPin(OutputExecPins[0]);
-                OutputExecPins.RemoveAt(0);
+                RemoveExecPins();
             }
-            else if (!pure)
+            else
             {
                 AddExecPins();
             }

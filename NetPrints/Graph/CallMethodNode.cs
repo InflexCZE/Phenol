@@ -191,8 +191,6 @@ namespace NetPrints.Graph
                 AddInputDataPin("Target", DeclaringType);
             }
 
-            AddExceptionPins();
-
             foreach (var argument in MethodSpecifier.Parameters)
             {
                 AddInputDataPin(argument.Name, argument.Value);
@@ -268,21 +266,10 @@ namespace NetPrints.Graph
             UpdateExceptionPin();
         }
 
-        protected override void SetPurity(bool pure)
+        protected override void AddExecPins()
         {
-            base.SetPurity(pure);
-
-            if (pure)
-            {
-                // Remove catch pin. Exception pin gets automatically removed because
-                // of its pin changed ev ent.
-                GraphUtil.DisconnectOutputExecPin(CatchPin);
-                OutputExecPins.Remove(CatchPin);
-            }
-            else
-            {
-                AddExceptionPins();
-            }
+            base.AddExecPins();
+            AddExceptionPins();
         }
 
         protected override void OnInputTypeChanged(object sender, EventArgs eventArgs)
