@@ -63,6 +63,11 @@ namespace NetPrintsEditor.Converters
                     text = "Foreach Loop";
                     iconPath = "Loop_16x.png";
                 }
+                else if (t == TypeSpecifier.FromType<SelectValueNode>())
+                {
+                    text = "Select Value";
+                    iconPath = "LocalVariable_16x.png";
+                }
                 else if (t == TypeSpecifier.FromType<SequenceNode>())
                 {
                     text = "Sequence";

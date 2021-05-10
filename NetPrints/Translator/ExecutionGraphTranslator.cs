@@ -52,6 +52,7 @@ namespace NetPrints.Translator
             SimpleNode<LiteralNode>((x, y) => x.TranslateLiteralNode(y)),
             SimpleNode<DefaultNode>((x, y) => x.TranslateDefaultNode(y)),
             SimpleNode<MakeArrayNode>((x, y) => x.TranslateMakeArrayNode(y)),
+            NodeWithInputs<SelectValueNode>((x, y) => x.TranslateSelectValueNode(y)),
             SimpleNode<MakeDelegateNode>((x, y) => x.TranslateMakeDelegateNode(y)),
             NodeWithInputs<ExplicitCastNode>((x, y) => x.TranslateExplicitCastNode(y)),
             
@@ -124,6 +125,18 @@ namespace NetPrints.Translator
             }
 
             return GetOrCreatePinName(pin.IncomingPin);
+        }
+
+        private string GetPinIncomingValueOrDefault(NodeInputDataPin pin)
+        {
+            try
+            {
+                return GetPinIncomingValue(pin);
+            }
+            catch
+            {
+                return $"default({pin.PinType.Value.FullCodeName})";
+            }
         }
 
         private string[] GetOrCreatePinNames(IEnumerable<NodeOutputDataPin> pins)
@@ -413,6 +426,14 @@ namespace NetPrints.Translator
             }
         }
 
+        private void EmitBlockFromPin(NodeOutputExecPin pin, string enterCondition = null)
+        {
+            builder.AppendLine($"while({enterCondition ?? "true"})");
+            builder.AppendLine("{");
+            FollowExecutionChain(pin, "break");
+            builder.AppendLine("}");
+        }
+
         public void FollowExecutionChain(NodeOutputExecPin pin, string flowEnd = null)
         {
             var hasFlowEnd = flowEnd is not null;
@@ -429,7 +450,7 @@ namespace NetPrints.Translator
             }
             else
             {
-                EmitControlFlowEnd(pin.Node.InputExecPins.FirstOrDefault());
+                EmitControlFlowEnd();
             }
 
             if(hasFlowEnd)
@@ -912,7 +933,7 @@ namespace NetPrints.Translator
 
             if (returnPins.Count == 0 || node.IsInCoroutine)
             {
-                EmitControlFlowEnd(node.InputExecPins[0], fullReturn: true);
+                EmitControlFlowEnd(fullReturn: true);
             }
             else
             {
@@ -1103,6 +1124,36 @@ namespace NetPrints.Translator
             }
         }
 
+        public void TranslateSelectValueNode(SelectValueNode node)
+        {
+            var value = GetOrCreatePinName(node.OutputValuePin);
+
+            foreach(var (branch, condition) in node.Conditionals)
+            {
+                builder.AppendLine($" if({GetPinIncomingValue(condition)})");
+                builder.AppendLine("{");
+                builder.AppendLine($"{value} = {GetPinIncomingValue(branch)};");
+                builder.AppendLine("}");
+                builder.Append("else");
+            }
+
+            builder.AppendLine();
+            builder.AppendLine("{");
+            builder.AppendLine($"{value} = {GetPinIncomingValueOrDefault(node.DefaultValuePin)};");
+
+            if(node.IsPure == false)
+            {
+                FollowExecutionChain(node.DefaultMatchExecPin);
+            }
+
+            builder.AppendLine("}");
+
+            if(node.IsPure == false)
+            {
+                FollowExecutionChain(node.MatchExecPin);
+            }
+        }
+        
         public void TranslateSequenceNode(SequenceNode node)
         {
             foreach(var (branch, condition) in node.Branches.Zip(node.Conditions))
@@ -1110,10 +1161,7 @@ namespace NetPrints.Translator
                 if(branch.OutgoingPin == null)
                     continue;
 
-                builder.AppendLine($"while({GetPinIncomingValue(condition)})");
-                builder.AppendLine("{");
-                FollowExecutionChain(branch, "break");
-                builder.AppendLine("}");
+                EmitBlockFromPin(branch, GetPinIncomingValue(condition));
             }
             
             FollowExecutionChain(node.AlwaysPin);
@@ -1194,7 +1242,7 @@ namespace NetPrints.Translator
             return new FlowToken(this.ControlFlowEndStack);
         }
 
-        public void EmitControlFlowEnd(NodeInputExecPin nodeInputExecPin, bool fullReturn = false)
+        public void EmitControlFlowEnd(bool fullReturn = false)
         {
             var controlFlowEnd = fullReturn ? this.ControlFlowEndStack[0] : this.ControlFlowEndStack.Last();
             builder.Append(controlFlowEnd).Append(';').AppendLine();

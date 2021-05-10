@@ -151,6 +151,10 @@ namespace NetPrintsEditor.ViewModels
                 {
                     AddNode<SequenceNode>();
                 }
+                else if (t == TypeSpecifier.FromType<SelectValueNode>())
+                {
+                    AddNode<SelectValueNode>();
+                }
                 else if (t == TypeSpecifier.FromType<DelayNode>())
                 {
                     AddNode<DelayNode>();

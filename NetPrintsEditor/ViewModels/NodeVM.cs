@@ -145,6 +145,7 @@ namespace NetPrintsEditor.ViewModels
                     ReturnNode      => "Add method return value",
                     ClassReturnNode => "Add interface",
                     AttributesNode  => "Add attribute",
+                    SelectValueNode  => "Add conditional",
                     _               => ""
                 };
             }
@@ -161,6 +162,7 @@ namespace NetPrintsEditor.ViewModels
                     ReturnNode      => "Remove method return value",
                     ClassReturnNode => "Remove interface",
                     AttributesNode  => "Remove attribute",
+                    SelectValueNode  => "Remove conditional",
                     _               => ""
                 };
             }
@@ -583,6 +585,7 @@ namespace NetPrintsEditor.ViewModels
                    node is AttributesNode || 
                    node is ClassReturnNode ||
                    node is MethodEntryNode || 
+                   node is SelectValueNode || 
                    node is ReturnNode && node == this.Method.MainReturnNode;
         }
 
@@ -621,6 +624,10 @@ namespace NetPrintsEditor.ViewModels
             {
                 attributes.AddAttributeNode();
             }
+            else if(node is SelectValueNode selectValue)
+            {
+                selectValue.AddConditional();
+            }
         }
 
         /// <summary>
@@ -647,6 +654,10 @@ namespace NetPrintsEditor.ViewModels
             else if (node is AttributesNode attributes)
             {
                 attributes.RemoveAttributeNode();
+            }
+            else if (node is SelectValueNode selectValue)
+            {
+                selectValue.RemoveConditional();
             }
         }
 

@@ -38,6 +38,7 @@ namespace NetPrints.Graph
     [KnownType(typeof(DefaultNode))]
     [KnownType(typeof(AttributesNode))]
     [KnownType(typeof(SequenceNode))]
+    [KnownType(typeof(SelectValueNode))]
     [AddINotifyPropertyChangedInterface]
     public abstract class Node
     {

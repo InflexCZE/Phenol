@@ -290,19 +290,32 @@ namespace NetPrints.Translator
 
         public static string GetUnconnectedValue(NodeInputDataPin pin)
         {
+            if(TryGetUnconnectedValue(pin, out var value))
+            {
+                return value;
+            }
+
+            throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+        }
+        
+        public static bool TryGetUnconnectedValue(NodeInputDataPin pin, out string value)
+        {
             var valueType = (TypeSpecifier)pin.PinType.Value;
 
             if (pin.UsesUnconnectedValue && pin.UnconnectedValue != null)
             {
-                return ObjectToLiteral(pin.UnconnectedValue, valueType);
+                value = ObjectToLiteral(pin.UnconnectedValue, valueType);
+                return true;
             }
 
             if (pin.UsesExplicitDefaultValue)
             {
-                return ObjectToLiteral(pin.ExplicitDefaultValue, valueType);
+                value = ObjectToLiteral(pin.ExplicitDefaultValue, valueType);
+                return true;
             }
 
-            throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+            value = default;
+            return false;
         }
 
         public static string TranslateAttributes(IEnumerable<ConstructorNode> attributes)
