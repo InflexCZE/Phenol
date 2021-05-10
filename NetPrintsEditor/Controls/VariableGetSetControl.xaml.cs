@@ -4,17 +4,13 @@ using System.Windows.Controls;
 
 namespace NetPrintsEditor.Controls
 {
-    public delegate void VariableGetSetDelegate(VariableGetSetControl sender,
-        VariableSpecifier variableInfo, bool wasSet);
+    public delegate void VariableGetSetDelegate(VariableGetSetControl sender, object callbackData, bool wasSet);
 
     /// <summary>
     /// Interaction logic for VariableGetSetControl.xaml
     /// </summary>
     public partial class VariableGetSetControl : UserControl
     {
-        public static DependencyProperty VariableSpecifierProperty = DependencyProperty.Register(
-            nameof(VariableSpecifier), typeof(VariableSpecifier), typeof(VariableGetSetControl));
-
         public static DependencyProperty CanGetProperty = DependencyProperty.Register(
             nameof(CanGet), typeof(bool), typeof(VariableGetSetControl));
 
@@ -23,11 +19,7 @@ namespace NetPrintsEditor.Controls
 
         public event VariableGetSetDelegate OnVariableGetSet;
 
-        public VariableSpecifier VariableSpecifier
-        {
-            get => (VariableSpecifier)GetValue(VariableSpecifierProperty);
-            set => SetValue(VariableSpecifierProperty, value);
-        }
+        public object CallbackData { get; set; }
 
         public bool CanGet
         {
@@ -48,12 +40,12 @@ namespace NetPrintsEditor.Controls
 
         private void OnVariableSetClicked(object sender, RoutedEventArgs e)
         {
-            OnVariableGetSet?.Invoke(this, VariableSpecifier, true);
+            OnVariableGetSet?.Invoke(this, this.CallbackData, true);
         }
 
         private void OnVariableGetClicked(object sender, RoutedEventArgs e)
         {
-            OnVariableGetSet?.Invoke(this, VariableSpecifier, false);
+            OnVariableGetSet?.Invoke(this, this.CallbackData, false);
         }
 
         public void ShowOrSelect()

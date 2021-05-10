@@ -103,9 +103,10 @@ namespace NetPrintsEditor.ViewModels
                 // Determine whether the getters / setters are public via GetAccessors
                 // and the return type of the accessor methods
 
-                if (EditorCommands.OpenVariableGetSet.CanExecute(variableSpecifier))
+                var message = new AddGerOrSetNodeMessage(variableSpecifier, this.SuggestionPin);
+                if (EditorCommands.OpenVariableGetSet.CanExecute(message))
                 {
-                    EditorCommands.OpenVariableGetSet.Execute(variableSpecifier);
+                    EditorCommands.OpenVariableGetSet.Execute(message);
                 }
             }
             else if (selectedValue is MakeDelegateTypeInfo makeDelegateTypeInfo)

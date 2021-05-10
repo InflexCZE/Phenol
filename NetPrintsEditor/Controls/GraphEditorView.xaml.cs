@@ -57,7 +57,7 @@ namespace NetPrintsEditor.Controls
             grid.ContextMenu.IsOpen = false;
         }
 
-        public void ShowVariableGetSet(VariableSpecifier variableSpecifier, Point? position = null)
+        public void ShowVariableGetSet(AddGerOrSetNodeMessage message, Point? position = null)
         {
             grid.ContextMenu.IsOpen = false;
 
@@ -66,7 +66,9 @@ namespace NetPrintsEditor.Controls
 
             Func<TypeSpecifier, TypeSpecifier, bool> isSubclassOf = App.ReflectionProvider.TypeSpecifierIsSubclassOf;
 
-            variableGetSet.VariableSpecifier = variableSpecifier;
+            variableGetSet.CallbackData = message;
+            
+            var variableSpecifier = message.Variable;
             variableGetSet.CanGet = NetPrintsUtil.IsVisible(Graph.Class.Type, variableSpecifier.DeclaringType, variableSpecifier.GetterVisibility, isSubclassOf);
             variableGetSet.CanSet = NetPrintsUtil.IsVisible(Graph.Class.Type, variableSpecifier.DeclaringType, variableSpecifier.SetterVisibility, isSubclassOf);
 
@@ -78,7 +80,7 @@ namespace NetPrintsEditor.Controls
 
         public void HideVariableGetSet()
         {
-            variableGetSet.VariableSpecifier = null;
+            variableGetSet.CallbackData = null;
             variableGetSet.Visibility = Visibility.Hidden;
         }
 
@@ -87,33 +89,23 @@ namespace NetPrintsEditor.Controls
             HideVariableGetSet();
         }
 
-        private void OnVariableSetClicked(VariableGetSetControl sender,
-            VariableSpecifier variableSpecifier, bool wasSet)
+        private void OnVariableSetClicked(VariableGetSetControl _, object callbackData, bool wasSet)
         {
             Point position = Mouse.GetPosition(drawCanvas);
 
-            if (wasSet)
-            {
-                // VariableSetterNode(Method method, TypeSpecifier targetType, 
-                // string variableName, TypeSpecifier variableType) 
+            var data = (AddGerOrSetNodeMessage) callbackData;
+            var variableSpecifier = data.Variable;
 
-                Graph.AddNode(new AddNodeMessage
-                (
-                    typeof(VariableSetterNode), Graph.Graph, position.X, position.Y,
-                    null, variableSpecifier
-                ));
-            }
-            else
-            {
-                // VariableGetterNode(Method method, TypeSpecifier targetType, 
-                // string variableName, TypeSpecifier variableType) 
-
-                Graph.AddNode(new AddNodeMessage
-                (
-                    typeof(VariableGetterNode), Graph.Graph, position.X, position.Y,
-                    null, variableSpecifier
-                ));
-            }
+            var nodeType = wasSet ? typeof(VariableSetterNode) : typeof(VariableGetterNode);
+            this.Graph.AddNode(new AddNodeMessage
+            (
+                nodeType, 
+                this.Graph.Graph, 
+                position.X, 
+                position.Y,
+                data.SuggestionPin, 
+                variableSpecifier
+            ));
 
             HideVariableGetSet();
         }
@@ -126,7 +118,7 @@ namespace NetPrintsEditor.Controls
                 {
                     MemberVariableVM variable = e.Data.GetData(typeof(MemberVariableVM)) as MemberVariableVM;
 
-                    ShowVariableGetSet(variable.Specifier, e.GetPosition(drawCanvas));
+                    ShowVariableGetSet(new AddGerOrSetNodeMessage(variable.Specifier), e.GetPosition(drawCanvas));
 
                     e.Handled = true;
                 }

@@ -157,12 +157,12 @@ namespace NetPrintsEditor
 
         private void CommandOpenVariableGetSet_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = e.Parameter is VariableSpecifier;
+            e.CanExecute = e.Parameter is AddGerOrSetNodeMessage;
         }
 
         private void CommandOpenVariableGetSet_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            graphEditor.ShowVariableGetSet((VariableSpecifier)e.Parameter);
+            graphEditor.ShowVariableGetSet((AddGerOrSetNodeMessage)e.Parameter);
         }
 
         // Change node overload
