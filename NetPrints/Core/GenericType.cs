@@ -80,12 +80,12 @@ namespace NetPrints.Core
 
         public override bool Equals(object obj)
         {
-            if (obj is TypeSpecifier t)
+            if (obj is TypeSpecifier)
             {
-                // TODO: Check constraints
-                return true;
+                return false;
             }
-            else if (obj is GenericType genType)
+            
+            if (obj is GenericType genType)
             {
                 // TODO: Check constraints
                 return Name == genType.Name;
