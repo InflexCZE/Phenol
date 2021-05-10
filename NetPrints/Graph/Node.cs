@@ -202,10 +202,11 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinType">Specifier for the type of this pin.</param>
-        protected NodeInputDataPin AddInputDataPin(string pinName, ObservableValue<BaseType> pinType)
+        /// <param name="index">Insertion index</param>
+        protected NodeInputDataPin AddInputDataPin(string pinName, ObservableValue<BaseType> pinType, int? index = null)
         {
             var pin = new NodeInputDataPin(this, pinName, pinType);
-            this.InputDataPins.Add(pin);
+            this.InputDataPins.Insert(index ?? this.InputDataPins.Count, pin);
             return pin;
         }
 
@@ -214,10 +215,11 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="pinType">Specifier for the type of this pin.</param>
-        protected NodeOutputDataPin AddOutputDataPin(string pinName, ObservableValue<BaseType> pinType)
+        /// <param name="index">Insertion index</param>
+        protected NodeOutputDataPin AddOutputDataPin(string pinName, ObservableValue<BaseType> pinType, int? index = null)
         {
             var pin = new NodeOutputDataPin(this, pinName, pinType);
-            this.OutputDataPins.Add(pin);
+            this.OutputDataPins.Insert(index ?? this.InputDataPins.Count, pin);
             return pin;
         }
 
@@ -225,10 +227,11 @@ namespace NetPrints.Graph
         /// Adds an input execution pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected NodeInputExecPin AddInputExecPin(string pinName)
+        /// <param name="index">Insertion index</param>
+        protected NodeInputExecPin AddInputExecPin(string pinName, int? index = null)
         {
             var pin = new NodeInputExecPin(this, pinName);
-            this.InputExecPins.Add(pin);
+            this.InputExecPins.Insert(index ?? this.InputDataPins.Count, pin);
             return pin;
         }
 
@@ -236,10 +239,11 @@ namespace NetPrints.Graph
         /// Adds an output execution pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected NodeOutputExecPin AddOutputExecPin(string pinName)
+        /// <param name="index">Insertion index</param>
+        protected NodeOutputExecPin AddOutputExecPin(string pinName, int? index = null)
         {
             var pin = new NodeOutputExecPin(this, pinName);
-            this.OutputExecPins.Add(pin);
+            this.OutputExecPins.Insert(index ?? this.InputDataPins.Count, pin);
             return pin;
         }
 
@@ -247,12 +251,13 @@ namespace NetPrints.Graph
         /// Adds an input data pin to this node.
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
-        protected NodeInputTypePin AddInputTypePin(string pinName)
+        /// <param name="index">Insertion index</param>
+        protected NodeInputTypePin AddInputTypePin(string pinName, int? index = null)
         {
-            var typePin = new NodeInputTypePin(this, pinName);
-            typePin.IncomingPinChanged += OnIncomingTypePinChanged;
-            this.InputTypePins.Add(typePin);
-            return typePin;
+            var pin = new NodeInputTypePin(this, pinName);
+            pin.IncomingPinChanged += OnIncomingTypePinChanged;
+            this.InputTypePins.Insert(index ?? this.InputDataPins.Count, pin);
+            return pin;
         }
 
         /// <summary>
@@ -260,10 +265,11 @@ namespace NetPrints.Graph
         /// </summary>
         /// <param name="pinName">Name of the pin.</param>
         /// <param name="getOutputTypeFunc">Function that generates the output type.</param>
-        protected NodeOutputTypePin AddOutputTypePin(string pinName, ObservableValue<BaseType> outputType)
+        /// <param name="index">Insertion index</param>
+        protected NodeOutputTypePin AddOutputTypePin(string pinName, ObservableValue<BaseType> outputType, int? index = null)
         {
             var pin = new NodeOutputTypePin(this, pinName, outputType);
-            this.OutputTypePins.Add(pin);
+            this.OutputTypePins.Insert(index ?? this.InputDataPins.Count, pin);
             return pin;
         }
 
