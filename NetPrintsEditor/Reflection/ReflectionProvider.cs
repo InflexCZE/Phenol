@@ -610,9 +610,15 @@ namespace NetPrintsEditor.Reflection
                 {
                     return fieldSymbol.Type;
                 }
-                else if (symbol is IPropertySymbol propertySymbol)
+                
+                if (symbol is IPropertySymbol propertySymbol)
                 {
                     return propertySymbol.Type;
+                }
+
+                if(symbol is IEventSymbol @event)
+                {
+                    return @event.Type;
                 }
 
                 throw new ArgumentException("symbol not a property nor field symbol.");
