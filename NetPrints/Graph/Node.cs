@@ -220,7 +220,7 @@ namespace NetPrints.Graph
         protected NodeOutputDataPin AddOutputDataPin(string pinName, ObservableValue<BaseType> pinType, int? index = null)
         {
             var pin = new NodeOutputDataPin(this, pinName, pinType);
-            this.OutputDataPins.Insert(index ?? this.InputDataPins.Count, pin);
+            this.OutputDataPins.Insert(index ?? this.OutputDataPins.Count, pin);
             return pin;
         }
 
@@ -232,7 +232,7 @@ namespace NetPrints.Graph
         protected NodeInputExecPin AddInputExecPin(string pinName, int? index = null)
         {
             var pin = new NodeInputExecPin(this, pinName);
-            this.InputExecPins.Insert(index ?? this.InputDataPins.Count, pin);
+            this.InputExecPins.Insert(index ?? this.InputExecPins.Count, pin);
             return pin;
         }
 
@@ -244,7 +244,7 @@ namespace NetPrints.Graph
         protected NodeOutputExecPin AddOutputExecPin(string pinName, int? index = null)
         {
             var pin = new NodeOutputExecPin(this, pinName);
-            this.OutputExecPins.Insert(index ?? this.InputDataPins.Count, pin);
+            this.OutputExecPins.Insert(index ?? this.OutputExecPins.Count, pin);
             return pin;
         }
 
@@ -257,7 +257,7 @@ namespace NetPrints.Graph
         {
             var pin = new NodeInputTypePin(this, pinName);
             pin.IncomingPinChanged += OnIncomingTypePinChanged;
-            this.InputTypePins.Insert(index ?? this.InputDataPins.Count, pin);
+            this.InputTypePins.Insert(index ?? this.InputTypePins.Count, pin);
             return pin;
         }
 
