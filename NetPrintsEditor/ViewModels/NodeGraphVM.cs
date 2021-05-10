@@ -118,6 +118,11 @@ namespace NetPrintsEditor.ViewModels
             // Show all relevant methods for the type of the pin
             IEnumerable<(string, object)> suggestions = Array.Empty<(string, object)>();
 
+            void AddSuggestionWithCategory(string category, object newSuggestion)
+            {
+                AddSuggestionsWithCategory(category, new[] { newSuggestion });
+            }
+            
             void AddSuggestionsWithCategory(string category, IEnumerable<object> newSuggestions)
             {
                 suggestions = suggestions.Concat(newSuggestions.Select(suggestion => (category, suggestion)));
@@ -212,10 +217,17 @@ namespace NetPrintsEditor.ViewModels
                         }
                         else
                         {
-                            AddSuggestionsWithCategory(NodesCategory, new []
-                            {
-                                TypeSpecifier.FromType<ConstructorNode>()
-                            });
+                            AddSuggestionWithCategory(NodesCategory, TypeSpecifier.FromType<ConstructorNode>());
+                        }
+
+                        if(pinTypeSpec.IsArray)
+                        {
+                            AddSuggestionWithCategory(NodesCategory, TypeSpecifier.FromType<MakeArrayNode>());
+                        }
+
+                        if(pinTypeSpec == TypeSpecifier.FromType<Type>())
+                        {
+                            AddSuggestionWithCategory(NodesCategory, TypeSpecifier.FromType<TypeOfNode>());
                         }
                     }
                 }
@@ -259,11 +271,15 @@ namespace NetPrintsEditor.ViewModels
                 }
                 else if (SuggestionPin is NodeInputTypePin itp)
                 {
+                    AddSuggestionWithCategory(NodesCategory, TypeSpecifier.FromType<MakeArrayTypeNode>());
+                    
                     // TODO: Consider static types
                     AddSuggestionsWithCategory("Types", App.ReflectionProvider.GetNonStaticTypes());
                 }
                 else if (SuggestionPin is NodeOutputTypePin otp)
                 {
+                    AddSuggestionWithCategory(NodesCategory, TypeSpecifier.FromType<MakeArrayTypeNode>());
+
                     if (Graph is ExecutionGraph && otp.InferredType.Value is TypeSpecifier typeSpecifier)
                     {
                         AddSuggestionsWithCategory("Pin Static Methods", App.ReflectionProvider

@@ -39,6 +39,15 @@ namespace NetPrints.Core
             private set;
         }
 
+        public bool IsArray
+        {
+            get
+            {
+                return this.Name.EndsWith("[]") || //TODO: Hack, make nice
+                       this == TypeSpecifier.FromType<Array>();
+            }
+        }
+
         /// <summary>
         /// Generic arguments this type takes.
         /// </summary>
