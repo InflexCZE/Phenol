@@ -14,14 +14,16 @@ namespace NetPrintsEditor.Converters
     {
         private readonly MethodSpecifierConverter methodSpecifierConverter = new MethodSpecifierConverter();
 
+        // See https://docs.microsoft.com/en-us/dotnet/framework/wpf/app-development/pack-uris-in-wpf for format
+        private static readonly string IconPathPrefix = $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/";
+
         public object Convert(object tupleObject, Type targetType, object parameter, CultureInfo culture)
         {
             string text;
             string iconPath;
 
-            SearchableComboBoxItem item = (SearchableComboBoxItem)tupleObject;
-            string category = item.Category;
-            object value = item.Value;
+            var item = (SearchableComboBoxItem)tupleObject;
+            var value = item.Value;
 
             if (value is MethodSpecifier methodSpecifier)
             {
@@ -166,13 +168,11 @@ namespace NetPrintsEditor.Converters
 
             if (targetType == typeof(string))
             {
-                return $"{category} {text}";
+                return text;
             }
             else
             {
-                // See https://docs.microsoft.com/en-us/dotnet/framework/wpf/app-development/pack-uris-in-wpf for format
-                var fullIconPath = $"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/{iconPath}";
-
+                var fullIconPath = IconPathPrefix + iconPath;;
                 return new SuggestionListItemBinding(text, fullIconPath);
             }
         }
