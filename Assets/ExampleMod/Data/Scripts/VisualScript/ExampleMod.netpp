@@ -3,7 +3,7 @@
   <ClassPaths xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
     <d2p1:string>ExampleMod.SensorLogic.netpc</d2p1:string>
   </ClassPaths>
-  <CompilationOutput>Default</CompilationOutput>
+  <CompilationOutput>SourceCode</CompilationOutput>
   <DefaultNamespace>ExampleMod</DefaultNamespace>
   <LastCompiledAssemblyPath i:nil="true" />
   <LiveLinkType>SpaceLink</LiveLinkType>
