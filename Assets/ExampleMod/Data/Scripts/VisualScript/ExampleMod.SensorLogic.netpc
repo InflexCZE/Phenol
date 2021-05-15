@@ -28,6 +28,7 @@
               <d2p1:Type z:Id="19" i:type="TypeSpecifier">
                 <Name z:Id="20">VRage.Game.Components.MyGameLogicComponent</Name>
                 <GenericArguments z:Id="21" z:Size="0" />
+                <IsDelegate>false</IsDelegate>
                 <IsEnum>false</IsEnum>
                 <IsInterface>false</IsInterface>
               </d2p1:Type>
@@ -35,6 +36,7 @@
                 <d2p1:Value z:Id="23" i:type="TypeSpecifier">
                   <Name z:Ref="20" i:nil="true" />
                   <GenericArguments z:Id="24" z:Size="0" />
+                  <IsDelegate>false</IsDelegate>
                   <IsEnum>false</IsEnum>
                   <IsInterface>false</IsInterface>
                 </d2p1:Value>
@@ -65,6 +67,7 @@
             <d2p1:Value z:Id="35" i:type="TypeSpecifier">
               <Name z:Id="36">System.Attribute</Name>
               <GenericArguments z:Id="37" z:Size="0" />
+              <IsDelegate>false</IsDelegate>
               <IsEnum>false</IsEnum>
               <IsInterface>false</IsInterface>
             </d2p1:Value>
@@ -82,6 +85,7 @@
                     <d2p1:Value z:Id="45" i:type="TypeSpecifier">
                       <Name z:Id="46">System.Type</Name>
                       <GenericArguments z:Id="47" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
                       <IsEnum>false</IsEnum>
                       <IsInterface>false</IsInterface>
                     </d2p1:Value>
@@ -115,6 +119,7 @@
                               <d2p1:Type z:Id="65" i:type="TypeSpecifier">
                                 <Name z:Id="66">Sandbox.Common.ObjectBuilders.MyObjectBuilder_SensorBlock</Name>
                                 <GenericArguments z:Id="67" z:Size="0" />
+                                <IsDelegate>false</IsDelegate>
                                 <IsEnum>false</IsEnum>
                                 <IsInterface>false</IsInterface>
                               </d2p1:Type>
@@ -122,6 +127,7 @@
                                 <d2p1:Value z:Id="69" i:type="TypeSpecifier">
                                   <Name z:Ref="66" i:nil="true" />
                                   <GenericArguments z:Id="70" z:Size="0" />
+                                  <IsDelegate>false</IsDelegate>
                                   <IsEnum>false</IsEnum>
                                   <IsInterface>false</IsInterface>
                                 </d2p1:Value>
@@ -147,6 +153,7 @@
                       <d2p1:Value z:Id="77" i:type="TypeSpecifier">
                         <Name z:Id="78">System.Type</Name>
                         <GenericArguments z:Id="79" z:Size="0" />
+                        <IsDelegate>false</IsDelegate>
                         <IsEnum>false</IsEnum>
                         <IsInterface>false</IsInterface>
                       </d2p1:Value>
@@ -165,6 +172,7 @@
                     <d2p1:Value z:Id="84" i:type="TypeSpecifier">
                       <Name z:Id="85">System.Boolean</Name>
                       <GenericArguments z:Id="86" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
                       <IsEnum>false</IsEnum>
                       <IsInterface>false</IsInterface>
                     </d2p1:Value>
@@ -181,6 +189,7 @@
                     <d2p1:Value z:Id="91" i:type="TypeSpecifier">
                       <Name z:Id="92">System.Array</Name>
                       <GenericArguments z:Id="93" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
                       <IsEnum>false</IsEnum>
                       <IsInterface>false</IsInterface>
                     </d2p1:Value>
@@ -198,6 +207,7 @@
                             <d2p1:Value z:Id="101" i:type="TypeSpecifier">
                               <Name z:Id="102">System.Int32</Name>
                               <GenericArguments z:Id="103" z:Size="0" />
+                              <IsDelegate>false</IsDelegate>
                               <IsEnum>false</IsEnum>
                               <IsInterface>false</IsInterface>
                             </d2p1:Value>
@@ -231,6 +241,7 @@
                               <d2p1:Type z:Id="119" i:type="TypeSpecifier">
                                 <Name z:Id="120">System.String</Name>
                                 <GenericArguments z:Id="121" z:Size="0" />
+                                <IsDelegate>false</IsDelegate>
                                 <IsEnum>false</IsEnum>
                                 <IsInterface>false</IsInterface>
                               </d2p1:Type>
@@ -238,6 +249,7 @@
                                 <d2p1:Value z:Id="123" i:type="TypeSpecifier">
                                   <Name z:Ref="120" i:nil="true" />
                                   <GenericArguments z:Id="124" z:Size="0" />
+                                  <IsDelegate>false</IsDelegate>
                                   <IsEnum>false</IsEnum>
                                   <IsInterface>false</IsInterface>
                                 </d2p1:Value>
@@ -264,6 +276,7 @@
                       <d2p1:Value z:Id="131" i:type="TypeSpecifier">
                         <Name z:Id="132">System.String[]</Name>
                         <GenericArguments z:Id="133" z:Size="0" />
+                        <IsDelegate>false</IsDelegate>
                         <IsEnum>false</IsEnum>
                         <IsInterface>false</IsInterface>
                       </d2p1:Value>
@@ -313,6 +326,7 @@
                 <DeclaringType z:Id="146">
                   <Name z:Id="147">VRage.Game.Components.MyEntityComponentDescriptor</Name>
                   <GenericArguments z:Id="148" z:Size="0" />
+                  <IsDelegate>false</IsDelegate>
                   <IsEnum>false</IsEnum>
                   <IsInterface>false</IsInterface>
                 </DeclaringType>
@@ -322,6 +336,7 @@
               <d2p1:Value z:Id="150" i:type="TypeSpecifier">
                 <Name z:Ref="147" i:nil="true" />
                 <GenericArguments z:Id="151" z:Size="0" />
+                <IsDelegate>false</IsDelegate>
                 <IsEnum>false</IsEnum>
                 <IsInterface>false</IsInterface>
               </d2p1:Value>
@@ -378,6 +393,7 @@
                         <d4p1:Value z:Id="179" i:type="TypeSpecifier">
                           <Name z:Id="180">System.Boolean</Name>
                           <GenericArguments z:Id="181" z:Size="0" />
+                          <IsDelegate>false</IsDelegate>
                           <IsEnum>false</IsEnum>
                           <IsInterface>false</IsInterface>
                         </d4p1:Value>
@@ -395,6 +411,7 @@
                                 <d4p1:Value z:Id="189" i:type="TypeSpecifier">
                                   <Name z:Id="190">Sandbox.ModAPI.Ingame.IMySensorBlock</Name>
                                   <GenericArguments z:Id="191" z:Size="0" />
+                                  <IsDelegate>false</IsDelegate>
                                   <IsEnum>false</IsEnum>
                                   <IsInterface>true</IsInterface>
                                 </d4p1:Value>
@@ -412,6 +429,7 @@
                                         <d4p1:Value z:Id="199" i:type="TypeSpecifier">
                                           <Name z:Id="200">System.Object</Name>
                                           <GenericArguments z:Id="201" z:Size="0" />
+                                          <IsDelegate>false</IsDelegate>
                                           <IsEnum>false</IsEnum>
                                           <IsInterface>false</IsInterface>
                                         </d4p1:Value>
@@ -429,6 +447,7 @@
                                                 <d4p1:Value z:Id="208" i:type="TypeSpecifier">
                                                   <Name z:Id="209">VRage.Game.Components.MyEntityComponentBase</Name>
                                                   <GenericArguments z:Id="210" z:Size="0" />
+                                                  <IsDelegate>false</IsDelegate>
                                                   <IsEnum>false</IsEnum>
                                                   <IsInterface>false</IsInterface>
                                                 </d4p1:Value>
@@ -458,6 +477,7 @@
                                             <Type z:Id="219">
                                               <Name z:Id="220">VRage.ModAPI.IMyEntity</Name>
                                               <GenericArguments z:Id="221" z:Size="0" />
+                                              <IsDelegate>false</IsDelegate>
                                               <IsEnum>false</IsEnum>
                                               <IsInterface>true</IsInterface>
                                             </Type>
@@ -498,6 +518,7 @@
                                           <d4p1:Type z:Id="238" i:type="TypeSpecifier">
                                             <Name z:Id="239">Sandbox.ModAPI.IMySensorBlock</Name>
                                             <GenericArguments z:Id="240" z:Size="0" />
+                                            <IsDelegate>false</IsDelegate>
                                             <IsEnum>false</IsEnum>
                                             <IsInterface>true</IsInterface>
                                           </d4p1:Type>
@@ -505,6 +526,7 @@
                                             <d4p1:Value z:Id="242" i:type="TypeSpecifier">
                                               <Name z:Ref="239" i:nil="true" />
                                               <GenericArguments z:Id="243" z:Size="0" />
+                                              <IsDelegate>false</IsDelegate>
                                               <IsEnum>false</IsEnum>
                                               <IsInterface>true</IsInterface>
                                             </d4p1:Value>
@@ -548,6 +570,7 @@
                                             <d4p1:Value z:Id="261" i:type="TypeSpecifier">
                                               <Name z:Id="262">Sandbox.ModAPI.Ingame.MyDetectedEntityInfo</Name>
                                               <GenericArguments z:Id="263" z:Size="0" />
+                                              <IsDelegate>false</IsDelegate>
                                               <IsEnum>false</IsEnum>
                                               <IsInterface>false</IsInterface>
                                             </d4p1:Value>
@@ -571,6 +594,7 @@
                                                       <d4p1:Value z:Id="275" i:type="TypeSpecifier">
                                                         <Name z:Id="276">System.Int64</Name>
                                                         <GenericArguments z:Id="277" z:Size="0" />
+                                                        <IsDelegate>false</IsDelegate>
                                                         <IsEnum>false</IsEnum>
                                                         <IsInterface>false</IsInterface>
                                                       </d4p1:Value>
@@ -589,6 +613,7 @@
                                                                 <d4p1:Value z:Id="286" i:type="TypeSpecifier">
                                                                   <Name z:Id="287">System.Boolean</Name>
                                                                   <GenericArguments z:Id="288" z:Size="0" />
+                                                                  <IsDelegate>false</IsDelegate>
                                                                   <IsEnum>false</IsEnum>
                                                                   <IsInterface>false</IsInterface>
                                                                 </d4p1:Value>
@@ -610,6 +635,7 @@
                                                                 <d4p1:Value z:Id="298" i:type="TypeSpecifier">
                                                                   <Name z:Id="299">VRage.Game.Entity.MyEntity</Name>
                                                                   <GenericArguments z:Id="300" z:Size="0" />
+                                                                  <IsDelegate>false</IsDelegate>
                                                                   <IsEnum>false</IsEnum>
                                                                   <IsInterface>false</IsInterface>
                                                                 </d4p1:Value>
@@ -685,6 +711,7 @@
                                                                             <d4p1:Type z:Id="338" i:type="TypeSpecifier">
                                                                               <Name z:Id="339">VRage.Game.ModAPI.Interfaces.IMyControllableEntity</Name>
                                                                               <GenericArguments z:Id="340" z:Size="0" />
+                                                                              <IsDelegate>false</IsDelegate>
                                                                               <IsEnum>false</IsEnum>
                                                                               <IsInterface>true</IsInterface>
                                                                             </d4p1:Type>
@@ -692,6 +719,7 @@
                                                                               <d4p1:Value z:Id="342" i:type="TypeSpecifier">
                                                                                 <Name z:Ref="339" i:nil="true" />
                                                                                 <GenericArguments z:Id="343" z:Size="0" />
+                                                                                <IsDelegate>false</IsDelegate>
                                                                                 <IsEnum>false</IsEnum>
                                                                                 <IsInterface>true</IsInterface>
                                                                               </d4p1:Value>
@@ -731,6 +759,7 @@
                                                                                     <d4p1:Value z:Id="362" i:type="TypeSpecifier">
                                                                                       <Name z:Id="363">VRage.Game.ModAPI.IMyControllerInfo</Name>
                                                                                       <GenericArguments z:Id="364" z:Size="0" />
+                                                                                      <IsDelegate>false</IsDelegate>
                                                                                       <IsEnum>false</IsEnum>
                                                                                       <IsInterface>true</IsInterface>
                                                                                     </d4p1:Value>
@@ -754,6 +783,7 @@
                                                                                               <d4p1:Value z:Id="376" i:type="TypeSpecifier">
                                                                                                 <Name z:Id="377">System.Int64</Name>
                                                                                                 <GenericArguments z:Id="378" z:Size="0" />
+                                                                                                <IsDelegate>false</IsDelegate>
                                                                                                 <IsEnum>false</IsEnum>
                                                                                                 <IsInterface>false</IsInterface>
                                                                                               </d4p1:Value>
@@ -772,6 +802,7 @@
                                                                                                         <d4p1:Value z:Id="387" i:type="TypeSpecifier">
                                                                                                           <Name z:Id="388">System.Single</Name>
                                                                                                           <GenericArguments z:Id="389" z:Size="0" />
+                                                                                                          <IsDelegate>false</IsDelegate>
                                                                                                           <IsEnum>false</IsEnum>
                                                                                                           <IsInterface>false</IsInterface>
                                                                                                         </d4p1:Value>
@@ -789,6 +820,7 @@
                                                                                                                 <d4p1:Value z:Id="398" i:type="TypeSpecifier">
                                                                                                                   <Name z:Id="399">System.Single</Name>
                                                                                                                   <GenericArguments z:Id="400" z:Size="0" />
+                                                                                                                  <IsDelegate>false</IsDelegate>
                                                                                                                   <IsEnum>false</IsEnum>
                                                                                                                   <IsInterface>false</IsInterface>
                                                                                                                 </d4p1:Value>
@@ -806,6 +838,7 @@
                                                                                                                         <d4p1:Value z:Id="408" i:type="TypeSpecifier">
                                                                                                                           <Name z:Id="409">System.String</Name>
                                                                                                                           <GenericArguments z:Id="410" z:Size="0" />
+                                                                                                                          <IsDelegate>false</IsDelegate>
                                                                                                                           <IsEnum>false</IsEnum>
                                                                                                                           <IsInterface>false</IsInterface>
                                                                                                                         </d4p1:Value>
@@ -823,6 +856,7 @@
                                                                                                                                 <d4p1:Value z:Id="417" i:type="TypeSpecifier">
                                                                                                                                   <Name z:Id="418">Sandbox.ModAPI.Ingame.IMyTerminalBlock</Name>
                                                                                                                                   <GenericArguments z:Id="419" z:Size="0" />
+                                                                                                                                  <IsDelegate>false</IsDelegate>
                                                                                                                                   <IsEnum>false</IsEnum>
                                                                                                                                   <IsInterface>true</IsInterface>
                                                                                                                                 </d4p1:Value>
@@ -852,6 +886,7 @@
                                                                                                                             <Type z:Id="428">
                                                                                                                               <Name z:Id="429">System.String</Name>
                                                                                                                               <GenericArguments z:Id="430" z:Size="0" />
+                                                                                                                              <IsDelegate>false</IsDelegate>
                                                                                                                               <IsEnum>false</IsEnum>
                                                                                                                               <IsInterface>false</IsInterface>
                                                                                                                             </Type>
@@ -881,6 +916,7 @@
                                                                                                                                     <d4p1:Value z:Id="444" i:type="TypeSpecifier">
                                                                                                                                       <Name z:Id="445">System.Boolean</Name>
                                                                                                                                       <GenericArguments z:Id="446" z:Size="0" />
+                                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                                     </d4p1:Value>
@@ -904,6 +940,7 @@
                                                                                                                                               <d4p1:Value z:Id="459" i:type="TypeSpecifier">
                                                                                                                                                 <Name z:Id="460">System.Boolean</Name>
                                                                                                                                                 <GenericArguments z:Id="461" z:Size="0" />
+                                                                                                                                                <IsDelegate>false</IsDelegate>
                                                                                                                                                 <IsEnum>false</IsEnum>
                                                                                                                                                 <IsInterface>false</IsInterface>
                                                                                                                                               </d4p1:Value>
@@ -962,6 +999,7 @@
                                                                                                                                                   <d4p1:Value z:Id="485" i:type="TypeSpecifier">
                                                                                                                                                     <Name z:Id="486">System.Boolean</Name>
                                                                                                                                                     <GenericArguments z:Id="487" z:Size="0" />
+                                                                                                                                                    <IsDelegate>false</IsDelegate>
                                                                                                                                                     <IsEnum>false</IsEnum>
                                                                                                                                                     <IsInterface>false</IsInterface>
                                                                                                                                                   </d4p1:Value>
@@ -998,6 +1036,7 @@
                                                                                                                                 <DeclaringType z:Id="496">
                                                                                                                                   <Name z:Id="497">System.String</Name>
                                                                                                                                   <GenericArguments z:Id="498" z:Size="0" />
+                                                                                                                                  <IsDelegate>false</IsDelegate>
                                                                                                                                   <IsEnum>false</IsEnum>
                                                                                                                                   <IsInterface>false</IsInterface>
                                                                                                                                 </DeclaringType>
@@ -1010,6 +1049,7 @@
                                                                                                                                     <Value z:Id="503" i:type="TypeSpecifier">
                                                                                                                                       <Name z:Id="504">System.String</Name>
                                                                                                                                       <GenericArguments z:Id="505" z:Size="0" />
+                                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                                     </Value>
@@ -1052,6 +1092,7 @@
                                                                                                                     <DeclaringType z:Id="515">
                                                                                                                       <Name z:Id="516">System.Single</Name>
                                                                                                                       <GenericArguments z:Id="517" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </DeclaringType>
@@ -1071,6 +1112,7 @@
                                                                                                                       <BaseType z:Id="523" i:type="TypeSpecifier">
                                                                                                                         <Name z:Id="524">System.Single</Name>
                                                                                                                         <GenericArguments z:Id="525" z:Size="0" />
+                                                                                                                        <IsDelegate>false</IsDelegate>
                                                                                                                         <IsEnum>false</IsEnum>
                                                                                                                         <IsInterface>false</IsInterface>
                                                                                                                       </BaseType>
@@ -1160,6 +1202,7 @@
                                                                                                                     <d4p1:Value z:Id="561" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="562">System.Int64</Name>
                                                                                                                       <GenericArguments z:Id="563" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1176,6 +1219,7 @@
                                                                                                                     <d4p1:Value z:Id="568" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="569">System.Single</Name>
                                                                                                                       <GenericArguments z:Id="570" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1214,6 +1258,7 @@
                                                                                                                 <DeclaringType z:Id="583">
                                                                                                                   <Name z:Id="584">Sandbox.Game.MyVisualScriptLogicProvider</Name>
                                                                                                                   <GenericArguments z:Id="585" z:Size="0" />
+                                                                                                                  <IsDelegate>false</IsDelegate>
                                                                                                                   <IsEnum>false</IsEnum>
                                                                                                                   <IsInterface>false</IsInterface>
                                                                                                                 </DeclaringType>
@@ -1254,6 +1299,7 @@
                                                                                                                     <d4p1:Value z:Id="598" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="599">VRage.Game.ModAPI.Interfaces.IMyDestroyableObject</Name>
                                                                                                                       <GenericArguments z:Id="600" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>true</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1270,6 +1316,7 @@
                                                                                                                     <d4p1:Value z:Id="604" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="605">System.Single</Name>
                                                                                                                       <GenericArguments z:Id="606" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1286,6 +1333,7 @@
                                                                                                                     <d4p1:Value z:Id="610" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="611">VRage.Utils.MyStringHash</Name>
                                                                                                                       <GenericArguments z:Id="612" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1302,6 +1350,7 @@
                                                                                                                     <d4p1:Value z:Id="616" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="617">System.Boolean</Name>
                                                                                                                       <GenericArguments z:Id="618" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1321,10 +1370,12 @@
                                                                                                                         <BaseType z:Id="626" i:type="TypeSpecifier">
                                                                                                                           <Name z:Id="627">VRage.Game.ModAPI.MyHitInfo</Name>
                                                                                                                           <GenericArguments z:Id="628" z:Size="0" />
+                                                                                                                          <IsDelegate>false</IsDelegate>
                                                                                                                           <IsEnum>false</IsEnum>
                                                                                                                           <IsInterface>false</IsInterface>
                                                                                                                         </BaseType>
                                                                                                                       </GenericArguments>
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1341,6 +1392,7 @@
                                                                                                                     <d4p1:Value z:Id="632" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="633">System.Int64</Name>
                                                                                                                       <GenericArguments z:Id="634" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1357,6 +1409,7 @@
                                                                                                                     <d4p1:Value z:Id="639" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="640">System.Int64</Name>
                                                                                                                       <GenericArguments z:Id="641" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1386,6 +1439,7 @@
                                                                                                                     <d4p1:Value z:Id="651" i:type="TypeSpecifier">
                                                                                                                       <Name z:Id="652">System.Boolean</Name>
                                                                                                                       <GenericArguments z:Id="653" z:Size="0" />
+                                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                                       <IsEnum>false</IsEnum>
                                                                                                                       <IsInterface>false</IsInterface>
                                                                                                                     </d4p1:Value>
@@ -1479,6 +1533,7 @@
                                                                                                     <DeclaringType z:Id="674">
                                                                                                       <Name z:Id="675">Sandbox.Game.MyVisualScriptLogicProvider</Name>
                                                                                                       <GenericArguments z:Id="676" z:Size="0" />
+                                                                                                      <IsDelegate>false</IsDelegate>
                                                                                                       <IsEnum>false</IsEnum>
                                                                                                       <IsInterface>false</IsInterface>
                                                                                                     </DeclaringType>
@@ -1491,6 +1546,7 @@
                                                                                                         <Value z:Id="681" i:type="TypeSpecifier">
                                                                                                           <Name z:Id="682">System.Int64</Name>
                                                                                                           <GenericArguments z:Id="683" z:Size="0" />
+                                                                                                          <IsDelegate>false</IsDelegate>
                                                                                                           <IsEnum>false</IsEnum>
                                                                                                           <IsInterface>false</IsInterface>
                                                                                                         </Value>
@@ -1529,6 +1585,7 @@
                                                                                           <DeclaringType z:Id="691">
                                                                                             <Name z:Id="692">VRage.Game.ModAPI.IMyControllerInfo</Name>
                                                                                             <GenericArguments z:Id="693" z:Size="0" />
+                                                                                            <IsDelegate>false</IsDelegate>
                                                                                             <IsEnum>false</IsEnum>
                                                                                             <IsInterface>true</IsInterface>
                                                                                           </DeclaringType>
@@ -1559,6 +1616,7 @@
                                                                                 <DeclaringType z:Id="699">
                                                                                   <Name z:Id="700">VRage.Game.ModAPI.Interfaces.IMyControllableEntity</Name>
                                                                                   <GenericArguments z:Id="701" z:Size="0" />
+                                                                                  <IsDelegate>false</IsDelegate>
                                                                                   <IsEnum>false</IsEnum>
                                                                                   <IsInterface>true</IsInterface>
                                                                                 </DeclaringType>
@@ -1597,6 +1655,7 @@
                                                                     <d4p1:Value z:Id="709" i:type="TypeSpecifier">
                                                                       <Name z:Id="710">System.Object</Name>
                                                                       <GenericArguments z:Id="711" z:Size="0" />
+                                                                      <IsDelegate>false</IsDelegate>
                                                                       <IsEnum>false</IsEnum>
                                                                       <IsInterface>false</IsInterface>
                                                                     </d4p1:Value>
@@ -1617,6 +1676,7 @@
                                                             <DeclaringType z:Id="715">
                                                               <Name z:Id="716">Sandbox.Game.Entities.MyEntities</Name>
                                                               <GenericArguments z:Id="717" z:Size="0" />
+                                                              <IsDelegate>false</IsDelegate>
                                                               <IsEnum>false</IsEnum>
                                                               <IsInterface>false</IsInterface>
                                                             </DeclaringType>
@@ -1629,6 +1689,7 @@
                                                                 <Value z:Id="722" i:type="TypeSpecifier">
                                                                   <Name z:Id="723">System.Int64</Name>
                                                                   <GenericArguments z:Id="724" z:Size="0" />
+                                                                  <IsDelegate>false</IsDelegate>
                                                                   <IsEnum>false</IsEnum>
                                                                   <IsInterface>false</IsInterface>
                                                                 </Value>
@@ -1669,6 +1730,7 @@
                                                   <DeclaringType z:Id="731">
                                                     <Name z:Id="732">Sandbox.ModAPI.Ingame.MyDetectedEntityInfo</Name>
                                                     <GenericArguments z:Id="733" z:Size="0" />
+                                                    <IsDelegate>false</IsDelegate>
                                                     <IsEnum>false</IsEnum>
                                                     <IsInterface>false</IsInterface>
                                                   </DeclaringType>
@@ -1699,6 +1761,7 @@
                                         <DeclaringType z:Id="739">
                                           <Name z:Id="740">Sandbox.ModAPI.Ingame.IMySensorBlock</Name>
                                           <GenericArguments z:Id="741" z:Size="0" />
+                                          <IsDelegate>false</IsDelegate>
                                           <IsEnum>false</IsEnum>
                                           <IsInterface>true</IsInterface>
                                         </DeclaringType>
@@ -1745,6 +1808,7 @@
                             <Type z:Id="752">
                               <Name z:Id="753">System.Boolean</Name>
                               <GenericArguments z:Id="754" z:Size="0" />
+                              <IsDelegate>false</IsDelegate>
                               <IsEnum>false</IsEnum>
                               <IsInterface>false</IsInterface>
                             </Type>
@@ -1849,6 +1913,7 @@
                   <d4p1:Type z:Id="786" i:type="TypeSpecifier">
                     <Name z:Id="787">VRage.ObjectBuilders.MyObjectBuilder_EntityBase</Name>
                     <GenericArguments z:Id="788" z:Size="0" />
+                    <IsDelegate>false</IsDelegate>
                     <IsEnum>false</IsEnum>
                     <IsInterface>false</IsInterface>
                   </d4p1:Type>
@@ -1856,6 +1921,7 @@
                     <d4p1:Value z:Id="790" i:type="TypeSpecifier">
                       <Name z:Ref="787" i:nil="true" />
                       <GenericArguments z:Id="791" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
                       <IsEnum>false</IsEnum>
                       <IsInterface>false</IsInterface>
                     </d4p1:Value>
@@ -1895,6 +1961,7 @@
                         <d4p1:Value z:Id="806" i:type="TypeSpecifier">
                           <Name z:Id="807">VRage.Game.Components.MyGameLogicComponent</Name>
                           <GenericArguments z:Id="808" z:Size="0" />
+                          <IsDelegate>false</IsDelegate>
                           <IsEnum>false</IsEnum>
                           <IsInterface>false</IsInterface>
                         </d4p1:Value>
@@ -1911,6 +1978,7 @@
                         <d4p1:Value z:Id="812" i:type="TypeSpecifier">
                           <Name z:Id="813">VRage.ModAPI.MyEntityUpdateEnum</Name>
                           <GenericArguments z:Id="814" z:Size="0" />
+                          <IsDelegate>false</IsDelegate>
                           <IsEnum>true</IsEnum>
                           <IsInterface>false</IsInterface>
                         </d4p1:Value>

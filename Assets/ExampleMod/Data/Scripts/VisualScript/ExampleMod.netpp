@@ -5,6 +5,7 @@
   </ClassPaths>
   <CompilationOutput>Default</CompilationOutput>
   <DefaultNamespace>ExampleMod</DefaultNamespace>
+  <LastCompiledAssemblyPath i:nil="true" />
   <LiveLinkType>SpaceLink</LiveLinkType>
   <Name>ExampleMod</Name>
   <OutputBinaryType>SharedLibrary</OutputBinaryType>
