@@ -326,6 +326,7 @@ namespace NetPrints.Core
             IsCompiling = true;
             CompilationMessage = "Compiling...";
 
+            bool deleteBinaries = true;
             var references = References.ToArray();
 
             // Compile in another thread
@@ -388,7 +389,7 @@ namespace NetPrints.Core
 
                 var codeCompiler = new Compilation.CodeCompiler();
 
-                bool deleteBinaries = !CompilationOutput.HasFlag(ProjectCompilationOutput.Binaries) && !File.Exists(outputPath);
+                deleteBinaries = !this.CompilationOutput.HasFlag(ProjectCompilationOutput.Binaries) && !File.Exists(outputPath);
 
                 var assemblyPaths = references.OfType<AssemblyReference>().Select(a => a.AssemblyPath);
 
@@ -435,7 +436,11 @@ namespace NetPrints.Core
 
             if (LastCompilationSucceeded)
             {
-                LastCompiledAssemblyPath = results.PathToAssembly;
+                if(deleteBinaries == false)
+                {
+                    LastCompiledAssemblyPath = results.PathToAssembly;
+                }
+
                 CompilationMessage = "Build succeeded";
             }
             else
