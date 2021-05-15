@@ -299,25 +299,20 @@ namespace NetPrints.Graph
         }
 
         protected virtual void OnInputTypeChanged(object sender, EventArgs eventArgs)
-        {
-        }
-
-        [OnDeserialized]
-        private void OnDeserializing(StreamingContext context)
-        {
-            foreach (var inputTypePin in InputTypePins)
-            {
-                if (inputTypePin.InferredType != null)
-                    inputTypePin.InferredType.OnValueChanged += EventInputTypeChanged;
-                inputTypePin.IncomingPinChanged += OnIncomingTypePinChanged;
-            }
-        }
+        { }
 
         /// <summary>
         /// Called when the containing method was deserialized.
         /// </summary>
         public virtual void OnMethodDeserialized()
         {
+            foreach (var inputTypePin in this.InputTypePins)
+            {
+                if (inputTypePin.InferredType != null)
+                    inputTypePin.InferredType.OnValueChanged += EventInputTypeChanged;
+                inputTypePin.IncomingPinChanged += OnIncomingTypePinChanged;
+            }
+
             // Call OnInputTypeChanged to update the types of all nodes correctly.
             OnInputTypeChanged(this, null);
         }
