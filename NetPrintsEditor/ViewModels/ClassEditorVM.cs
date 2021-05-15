@@ -85,6 +85,8 @@ namespace NetPrintsEditor.ViewModels
 
             Class = cls;
 
+            //Note: Reading project from parallel thread is not safe, but
+            //      its readonly access so in worst case it will read partially edited data and throw exception
             codeTimer = new Timer(1000);
             codeTimer.Elapsed += (sender, eventArgs) =>
             {
