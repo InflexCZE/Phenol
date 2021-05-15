@@ -161,7 +161,6 @@ namespace NetPrintsEditor
                 var project = await Task.Run(() => Project.LoadFromPath(projectPath));
 
                 PatchSEReferences(project);
-                PatchRelativeReferences(project);
 
                 this.ViewModel = await Task.Run(() => new MainEditorVM(project));
                 await overlay.CloseAsync().ConfigureAwait(false);
@@ -222,25 +221,6 @@ namespace NetPrintsEditor
                     var toReplace = i + SEsearchPattern.Length;
                     var newPath = Path.Combine(SEPath, refPath.Substring(toReplace));
                     reference.AssemblyPath = newPath;
-                }
-            }
-
-            void PatchRelativeReferences(Project project)
-            {
-                var projectDir = Path.GetDirectoryName(projectPath);
-                if(projectDir is null)
-                    return;
-                
-                foreach(var sourceDir in project.References.OfType<SourceDirectoryReference>())
-                {
-                    if(Path.IsPathRooted(sourceDir.SourceDirectory))
-                        continue;
-
-                    var newDir = Path.Combine(projectDir, sourceDir.SourceDirectory);
-                    if(Directory.Exists(newDir))
-                    {
-                        sourceDir.SourceDirectory = newDir;
-                    }
                 }
             }
         }

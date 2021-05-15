@@ -230,6 +230,11 @@ namespace NetPrints.Core
             {
                 project.Path = path;
 
+                foreach(var reference in project.References)
+                {
+                    reference.Project = project;
+                }
+
                 // Load classes
                 ConcurrentBag<ClassGraph> classes = new ConcurrentBag<ClassGraph>();
 

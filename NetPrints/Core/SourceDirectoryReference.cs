@@ -15,7 +15,9 @@ namespace NetPrints.Core
         {
             get
             {
-                return Directory.GetFiles(SourceDirectory, "*.cs", SearchOption.AllDirectories).Where(p => !p.Contains("obj" + Path.DirectorySeparatorChar) && !p.Contains("bin" + Path.DirectorySeparatorChar));
+                var directory = GetRootedPath(this.SourceDirectory);
+                return Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories)
+                                .Where(p => !p.Contains("obj" + Path.DirectorySeparatorChar) && !p.Contains("bin" + Path.DirectorySeparatorChar));
             }
         }
 
@@ -23,28 +25,20 @@ namespace NetPrints.Core
         /// Whether to include the source files in compilation.
         /// </summary>
         [DataMember]
-        public bool IncludeInCompilation
-        {
-            get;
-            set;
-        }
+        public bool IncludeInCompilation { get; set; }
 
         /// <summary>
         /// Path of source directory.
         /// </summary>
         [DataMember]
-        public string SourceDirectory
-        {
-            get;
-            set;
-        }
+        public string SourceDirectory { get; set; }
 
         public SourceDirectoryReference(string directory, bool includeInCompilation = false)
         {
-            SourceDirectory = directory;
-            IncludeInCompilation = includeInCompilation;
+            this.SourceDirectory = directory;
+            this.IncludeInCompilation = includeInCompilation;
         }
 
-        public override string ToString() => $"Source files at {SourceDirectory}";
+        public override string ToString() => $"Source files at {this.SourceDirectory}";
     }
 }
