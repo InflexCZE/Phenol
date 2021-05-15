@@ -288,6 +288,11 @@ namespace NetPrints.Translator
             return formatted.ToFullString();
         }
 
+        public static Exception NoValue(NodeInputDataPin pin)
+        {
+            return new($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+        }
+
         public static string GetUnconnectedValue(NodeInputDataPin pin)
         {
             if(TryGetUnconnectedValue(pin, out var value))
@@ -295,7 +300,7 @@ namespace NetPrints.Translator
                 return value;
             }
 
-            throw new Exception($"Input data pin {pin} on {pin.Node} was unconnected without an explicit default or unconnected value.");
+            throw NoValue(pin);
         }
         
         public static bool TryGetUnconnectedValue(NodeInputDataPin pin, out string value)

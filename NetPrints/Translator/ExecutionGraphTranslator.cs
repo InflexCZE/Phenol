@@ -119,24 +119,33 @@ namespace NetPrints.Translator
 
         private string GetPinIncomingValue(NodeInputDataPin pin)
         {
-            if (pin.IncomingPin == null)
+            if(TryGetPinIncomingValue(pin, out var value))
             {
-                return TranslatorUtil.GetUnconnectedValue(pin);
+                return value;
             }
 
-            return GetOrCreatePinName(pin.IncomingPin);
+            throw TranslatorUtil.NoValue(pin);
+        }
+
+        private bool TryGetPinIncomingValue(NodeInputDataPin pin, out string value)
+        {
+            if(pin.IncomingPin is {} incomingPin)
+            {
+                value = GetOrCreatePinName(incomingPin);
+                return true;
+            }
+
+            return TranslatorUtil.TryGetUnconnectedValue(pin, out value);
         }
 
         private string GetPinIncomingValueOrDefault(NodeInputDataPin pin)
         {
-            try
+            if(TryGetPinIncomingValue(pin, out var value) == false)
             {
-                return GetPinIncomingValue(pin);
+                value = $"default({pin.PinType.Value.FullCodeName})";
             }
-            catch
-            {
-                return $"default({pin.PinType.Value.FullCodeName})";
-            }
+
+            return value;
         }
 
         private string[] GetOrCreatePinNames(IEnumerable<NodeOutputDataPin> pins)
@@ -525,7 +534,29 @@ namespace NetPrints.Translator
             }
 
             // Get arguments for method call
-            var argumentValues = GetPinIncomingValues(node.ArgumentPins);
+            var argumentPins = node.ArgumentPins;
+            var argumentValues = new string[argumentPins.Count]; 
+            for(int i = 0; i < argumentValues.Length; i++)
+            {
+                var arg = argumentPins[i];
+                if(TryGetPinIncomingValue(arg, out var argValue))
+                {
+                    argumentValues[i] = argValue;
+                }
+                else if
+                (
+                    this.graph is MethodGraph method && 
+                    (method.Modifiers.Value & MethodModifiers.Static) == 0 &&
+                    this.graph.Class.AllBaseTypes.Any(x => x == arg.PinType.Value)
+                )
+                {
+                    argumentValues[i] = "this";
+                }
+                else
+                {
+                    throw TranslatorUtil.NoValue(arg);
+                }
+            }
 
             // Check whether the method is an operator and we need to translate its name
             // into operator symbols. Otherwise just call the method normally.
