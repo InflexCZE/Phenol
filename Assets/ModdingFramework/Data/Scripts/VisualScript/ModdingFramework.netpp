@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/NetPrints.Core">
+  <ClassPaths xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+    <d2p1:string>ModdingFramework.Subparts.netpc</d2p1:string>
+  </ClassPaths>
+  <CompilationOutput>SourceCode</CompilationOutput>
+  <DefaultNamespace>ModdingFramework</DefaultNamespace>
+  <LastCompiledAssemblyPath i:nil="true" />
+  <LiveLinkType>SpaceLink</LiveLinkType>
+  <Name>ModdingFramework</Name>
+  <OutputBinaryType>SharedLibrary</OutputBinaryType>
+  <References>
+    <CompilationReference i:type="FrameworkAssemblyReference">
+      <AssemblyPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework/v4.5/System.dll</AssemblyPath>
+      <frameworkRelativePath>.NETFramework/v4.5/System.dll</frameworkRelativePath>
+    </CompilationReference>
+    <CompilationReference i:type="FrameworkAssemblyReference">
+      <AssemblyPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework/v4.5/System.Core.dll</AssemblyPath>
+      <frameworkRelativePath>.NETFramework/v4.5/System.Core.dll</frameworkRelativePath>
+    </CompilationReference>
+    <CompilationReference i:type="FrameworkAssemblyReference">
+      <AssemblyPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework/v4.5/mscorlib.dll</AssemblyPath>
+      <frameworkRelativePath>.NETFramework/v4.5/mscorlib.dll</frameworkRelativePath>
+    </CompilationReference>
+    <CompilationReference i:type="SourceDirectoryReference">
+      <IncludeInCompilation>true</IncludeInCompilation>
+      <SourceDirectory>Cs</SourceDirectory>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\VRage.Math.dll</AssemblyPath>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\VRage.Game.dll</AssemblyPath>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\Sandbox.Game.dll</AssemblyPath>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\netstandard.dll</AssemblyPath>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\Sandbox.Common.dll</AssemblyPath>
+    </CompilationReference>
+    <CompilationReference i:type="AssemblyReference">
+      <AssemblyPath>D:\Games\Steam\steamapps\common\SpaceEngineers\Bin64\SpaceEngineers.ObjectBuilders.dll</AssemblyPath>
+    </CompilationReference>
+  </References>
+  <SaveVersion xmlns:d2p1="http://schemas.datacontract.org/2004/07/System">
+    <d2p1:_Build>7</d2p1:_Build>
+    <d2p1:_Major>0</d2p1:_Major>
+    <d2p1:_Minor>0</d2p1:_Minor>
+    <d2p1:_Revision>0</d2p1:_Revision>
+  </SaveVersion>
+</Project>
