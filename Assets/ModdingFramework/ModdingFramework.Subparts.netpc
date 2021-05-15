@@ -23,7 +23,7 @@
   </Nodes>
   <Constructors z:Id="13" z:Size="0" />
   <DeclaredGenericArguments z:Id="14" z:Size="0" />
-  <Methods z:Id="15" z:Size="3">
+  <Methods z:Id="15" z:Size="4">
     <MethodGraph z:Id="16">
       <Class z:Ref="1" i:nil="true" />
       <Nodes xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Id="17" z:Size="8">
@@ -1722,16 +1722,22 @@
                         <d4p1:Name z:Ref="97" i:nil="true" />
                         <d4p1:Node z:Ref="695" i:nil="true" />
                         <d4p1:PinType z:Id="698">
-                          <d4p1:Value z:Ref="56" i:nil="true" />
+                          <d4p1:Value z:Id="699" i:type="TypeSpecifier">
+                            <Name z:Ref="53" i:nil="true" />
+                            <GenericArguments z:Id="700" z:Size="0" />
+                            <IsDelegate>false</IsDelegate>
+                            <IsEnum>false</IsEnum>
+                            <IsInterface>false</IsInterface>
+                          </d4p1:Value>
                         </d4p1:PinType>
                         <d4p1:ExplicitDefaultValue i:nil="true" />
-                        <d4p1:IncomingPin z:Id="699">
-                          <d4p1:Name z:Id="700">Subpart</d4p1:Name>
+                        <d4p1:IncomingPin z:Id="701">
+                          <d4p1:Name z:Id="702">Subpart</d4p1:Name>
                           <d4p1:Node z:Ref="630" i:nil="true" />
-                          <d4p1:PinType z:Id="701">
+                          <d4p1:PinType z:Id="703">
                             <d4p1:Value z:Ref="668" i:nil="true" />
                           </d4p1:PinType>
-                          <d4p1:OutgoingPins z:Id="702" z:Size="1">
+                          <d4p1:OutgoingPins z:Id="704" z:Size="1">
                             <d4p1:NodeInputDataPin z:Ref="697" i:nil="true" />
                           </d4p1:OutgoingPins>
                         </d4p1:IncomingPin>
@@ -1739,295 +1745,313 @@
                         <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                       </d4p1:NodeInputDataPin>
                     </d4p1:InputDataPins>
-                    <d4p1:InputExecPins z:Id="703" z:Size="0" />
-                    <d4p1:InputTypePins z:Id="704" z:Size="0" />
-                    <d4p1:Name z:Id="705">CallMethodNode</d4p1:Name>
-                    <d4p1:OutputDataPins z:Id="706" z:Size="1">
-                      <d4p1:NodeOutputDataPin z:Id="707">
-                        <d4p1:Name z:Id="708">IMyEntity</d4p1:Name>
+                    <d4p1:InputExecPins z:Id="705" z:Size="0" />
+                    <d4p1:InputTypePins z:Id="706" z:Size="0" />
+                    <d4p1:Name z:Id="707">CallMethodNode</d4p1:Name>
+                    <d4p1:OutputDataPins z:Id="708" z:Size="1">
+                      <d4p1:NodeOutputDataPin z:Id="709">
+                        <d4p1:Name z:Id="710">IMyEntity</d4p1:Name>
                         <d4p1:Node z:Ref="695" i:nil="true" />
-                        <d4p1:PinType z:Id="709">
-                          <d4p1:Value z:Ref="185" i:nil="true" />
+                        <d4p1:PinType z:Id="711">
+                          <d4p1:Value z:Id="712" i:type="TypeSpecifier">
+                            <Name z:Ref="182" i:nil="true" />
+                            <GenericArguments z:Id="713" z:Size="0" />
+                            <IsDelegate>false</IsDelegate>
+                            <IsEnum>false</IsEnum>
+                            <IsInterface>true</IsInterface>
+                          </d4p1:Value>
                         </d4p1:PinType>
-                        <d4p1:OutgoingPins z:Id="710" z:Size="1">
-                          <d4p1:NodeInputDataPin z:Id="711">
-                            <d4p1:Name z:Id="712">Target</d4p1:Name>
-                            <d4p1:Node z:Id="713" i:type="d4p1:VariableGetterNode">
+                        <d4p1:OutgoingPins z:Id="714" z:Size="1">
+                          <d4p1:NodeInputDataPin z:Id="715">
+                            <d4p1:Name z:Id="716">Target</d4p1:Name>
+                            <d4p1:Node z:Id="717" i:type="d4p1:VariableGetterNode">
                               <d4p1:Graph z:Ref="628" i:nil="true" />
-                              <d4p1:InputDataPins z:Id="714" z:Size="1">
-                                <d4p1:NodeInputDataPin z:Ref="711" i:nil="true" />
+                              <d4p1:InputDataPins z:Id="718" z:Size="1">
+                                <d4p1:NodeInputDataPin z:Ref="715" i:nil="true" />
                               </d4p1:InputDataPins>
-                              <d4p1:InputExecPins z:Id="715" z:Size="0" />
-                              <d4p1:InputTypePins z:Id="716" z:Size="0" />
-                              <d4p1:Name z:Id="717">VariableGetterNode</d4p1:Name>
-                              <d4p1:OutputDataPins z:Id="718" z:Size="1">
-                                <d4p1:NodeOutputDataPin z:Id="719">
-                                  <d4p1:Name z:Id="720">MyRenderComponentBase</d4p1:Name>
-                                  <d4p1:Node z:Ref="713" i:nil="true" />
-                                  <d4p1:PinType z:Id="721">
-                                    <d4p1:Value z:Id="722" i:type="TypeSpecifier">
-                                      <Name z:Id="723">VRage.Game.Components.MyRenderComponentBase</Name>
-                                      <GenericArguments z:Id="724" z:Size="0" />
+                              <d4p1:InputExecPins z:Id="719" z:Size="0" />
+                              <d4p1:InputTypePins z:Id="720" z:Size="0" />
+                              <d4p1:Name z:Id="721">VariableGetterNode</d4p1:Name>
+                              <d4p1:OutputDataPins z:Id="722" z:Size="1">
+                                <d4p1:NodeOutputDataPin z:Id="723">
+                                  <d4p1:Name z:Id="724">MyRenderComponentBase</d4p1:Name>
+                                  <d4p1:Node z:Ref="717" i:nil="true" />
+                                  <d4p1:PinType z:Id="725">
+                                    <d4p1:Value z:Id="726" i:type="TypeSpecifier">
+                                      <Name z:Id="727">VRage.Game.Components.MyRenderComponentBase</Name>
+                                      <GenericArguments z:Id="728" z:Size="0" />
                                       <IsDelegate>false</IsDelegate>
                                       <IsEnum>false</IsEnum>
                                       <IsInterface>false</IsInterface>
                                     </d4p1:Value>
                                   </d4p1:PinType>
-                                  <d4p1:OutgoingPins z:Id="725" z:Size="1">
-                                    <d4p1:NodeInputDataPin z:Id="726">
-                                      <d4p1:Name z:Ref="712" i:nil="true" />
-                                      <d4p1:Node z:Id="727" i:type="d4p1:VariableSetterNode">
+                                  <d4p1:OutgoingPins z:Id="729" z:Size="1">
+                                    <d4p1:NodeInputDataPin z:Id="730">
+                                      <d4p1:Name z:Ref="716" i:nil="true" />
+                                      <d4p1:Node z:Id="731" i:type="d4p1:VariableSetterNode">
                                         <d4p1:Graph z:Ref="628" i:nil="true" />
-                                        <d4p1:InputDataPins z:Id="728" z:Size="2">
-                                          <d4p1:NodeInputDataPin z:Ref="726" i:nil="true" />
-                                          <d4p1:NodeInputDataPin z:Id="729">
-                                            <d4p1:Name z:Id="730">NewValue</d4p1:Name>
-                                            <d4p1:Node z:Ref="727" i:nil="true" />
-                                            <d4p1:PinType z:Id="731">
-                                              <d4p1:Value z:Id="732" i:type="TypeSpecifier">
-                                                <Name z:Id="733">System.Boolean</Name>
-                                                <GenericArguments z:Id="734" z:Size="0" />
+                                        <d4p1:InputDataPins z:Id="732" z:Size="2">
+                                          <d4p1:NodeInputDataPin z:Ref="730" i:nil="true" />
+                                          <d4p1:NodeInputDataPin z:Id="733">
+                                            <d4p1:Name z:Id="734">NewValue</d4p1:Name>
+                                            <d4p1:Node z:Ref="731" i:nil="true" />
+                                            <d4p1:PinType z:Id="735">
+                                              <d4p1:Value z:Id="736" i:type="TypeSpecifier">
+                                                <Name z:Id="737">System.Boolean</Name>
+                                                <GenericArguments z:Id="738" z:Size="0" />
                                                 <IsDelegate>false</IsDelegate>
                                                 <IsEnum>false</IsEnum>
                                                 <IsInterface>false</IsInterface>
                                               </d4p1:Value>
                                             </d4p1:PinType>
                                             <d4p1:ExplicitDefaultValue i:nil="true" />
-                                            <d4p1:IncomingPin z:Id="735">
-                                              <d4p1:Name z:Id="736">Data0</d4p1:Name>
-                                              <d4p1:Node z:Id="737" i:type="d4p1:RerouteNode">
+                                            <d4p1:IncomingPin z:Id="739">
+                                              <d4p1:Name z:Id="740">Data0</d4p1:Name>
+                                              <d4p1:Node z:Id="741" i:type="d4p1:RerouteNode">
                                                 <d4p1:Graph z:Ref="628" i:nil="true" />
-                                                <d4p1:InputDataPins z:Id="738" z:Size="1">
-                                                  <d4p1:NodeInputDataPin z:Id="739">
-                                                    <d4p1:Name z:Id="740">Data0</d4p1:Name>
-                                                    <d4p1:Node z:Ref="737" i:nil="true" />
-                                                    <d4p1:PinType z:Id="741">
-                                                      <d4p1:Value z:Ref="686" i:nil="true" />
+                                                <d4p1:InputDataPins z:Id="742" z:Size="1">
+                                                  <d4p1:NodeInputDataPin z:Id="743">
+                                                    <d4p1:Name z:Id="744">Data0</d4p1:Name>
+                                                    <d4p1:Node z:Ref="741" i:nil="true" />
+                                                    <d4p1:PinType z:Id="745">
+                                                      <d4p1:Value z:Id="746" i:type="TypeSpecifier">
+                                                        <Name z:Ref="683" i:nil="true" />
+                                                        <GenericArguments z:Id="747" z:Size="0" />
+                                                        <IsDelegate>false</IsDelegate>
+                                                        <IsEnum>false</IsEnum>
+                                                        <IsInterface>false</IsInterface>
+                                                      </d4p1:Value>
                                                     </d4p1:PinType>
                                                     <d4p1:ExplicitDefaultValue i:nil="true" />
-                                                    <d4p1:IncomingPin z:Id="742">
-                                                      <d4p1:Name z:Id="743">Data0</d4p1:Name>
-                                                      <d4p1:Node z:Id="744" i:type="d4p1:RerouteNode">
+                                                    <d4p1:IncomingPin z:Id="748">
+                                                      <d4p1:Name z:Id="749">Data0</d4p1:Name>
+                                                      <d4p1:Node z:Id="750" i:type="d4p1:RerouteNode">
                                                         <d4p1:Graph z:Ref="628" i:nil="true" />
-                                                        <d4p1:InputDataPins z:Id="745" z:Size="1">
-                                                          <d4p1:NodeInputDataPin z:Id="746">
-                                                            <d4p1:Name z:Id="747">Data0</d4p1:Name>
-                                                            <d4p1:Node z:Ref="744" i:nil="true" />
-                                                            <d4p1:PinType z:Id="748">
-                                                              <d4p1:Value z:Ref="686" i:nil="true" />
+                                                        <d4p1:InputDataPins z:Id="751" z:Size="1">
+                                                          <d4p1:NodeInputDataPin z:Id="752">
+                                                            <d4p1:Name z:Id="753">Data0</d4p1:Name>
+                                                            <d4p1:Node z:Ref="750" i:nil="true" />
+                                                            <d4p1:PinType z:Id="754">
+                                                              <d4p1:Value z:Ref="746" i:nil="true" />
                                                             </d4p1:PinType>
                                                             <d4p1:ExplicitDefaultValue i:nil="true" />
-                                                            <d4p1:IncomingPin z:Id="749">
-                                                              <d4p1:Name z:Id="750">IsVisible</d4p1:Name>
+                                                            <d4p1:IncomingPin z:Id="755">
+                                                              <d4p1:Name z:Id="756">IsVisible</d4p1:Name>
                                                               <d4p1:Node z:Ref="630" i:nil="true" />
-                                                              <d4p1:PinType z:Id="751">
+                                                              <d4p1:PinType z:Id="757">
                                                                 <d4p1:Value z:Ref="686" i:nil="true" />
                                                               </d4p1:PinType>
-                                                              <d4p1:OutgoingPins z:Id="752" z:Size="1">
-                                                                <d4p1:NodeInputDataPin z:Ref="746" i:nil="true" />
+                                                              <d4p1:OutgoingPins z:Id="758" z:Size="1">
+                                                                <d4p1:NodeInputDataPin z:Ref="752" i:nil="true" />
                                                               </d4p1:OutgoingPins>
                                                             </d4p1:IncomingPin>
                                                             <d4p1:UnconnectedValue i:nil="true" />
                                                             <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                                                           </d4p1:NodeInputDataPin>
                                                         </d4p1:InputDataPins>
-                                                        <d4p1:InputExecPins z:Id="753" z:Size="0" />
-                                                        <d4p1:InputTypePins z:Id="754" z:Size="0" />
-                                                        <d4p1:Name z:Id="755">RerouteNode</d4p1:Name>
-                                                        <d4p1:OutputDataPins z:Id="756" z:Size="1">
-                                                          <d4p1:NodeOutputDataPin z:Ref="742" i:nil="true" />
+                                                        <d4p1:InputExecPins z:Id="759" z:Size="0" />
+                                                        <d4p1:InputTypePins z:Id="760" z:Size="0" />
+                                                        <d4p1:Name z:Id="761">RerouteNode</d4p1:Name>
+                                                        <d4p1:OutputDataPins z:Id="762" z:Size="1">
+                                                          <d4p1:NodeOutputDataPin z:Ref="748" i:nil="true" />
                                                         </d4p1:OutputDataPins>
-                                                        <d4p1:OutputExecPins z:Id="757" z:Size="0" />
-                                                        <d4p1:OutputTypePins z:Id="758" z:Size="0" />
+                                                        <d4p1:OutputExecPins z:Id="763" z:Size="0" />
+                                                        <d4p1:OutputTypePins z:Id="764" z:Size="0" />
                                                         <d4p1:PositionX>840</d4p1:PositionX>
                                                         <d4p1:PositionY>588</d4p1:PositionY>
                                                       </d4p1:Node>
-                                                      <d4p1:PinType z:Id="759">
-                                                        <d4p1:Value z:Ref="686" i:nil="true" />
+                                                      <d4p1:PinType z:Id="765">
+                                                        <d4p1:Value z:Ref="746" i:nil="true" />
                                                       </d4p1:PinType>
-                                                      <d4p1:OutgoingPins z:Id="760" z:Size="1">
-                                                        <d4p1:NodeInputDataPin z:Ref="739" i:nil="true" />
+                                                      <d4p1:OutgoingPins z:Id="766" z:Size="1">
+                                                        <d4p1:NodeInputDataPin z:Ref="743" i:nil="true" />
                                                       </d4p1:OutgoingPins>
                                                     </d4p1:IncomingPin>
                                                     <d4p1:UnconnectedValue i:nil="true" />
                                                     <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                                                   </d4p1:NodeInputDataPin>
                                                 </d4p1:InputDataPins>
-                                                <d4p1:InputExecPins z:Id="761" z:Size="0" />
-                                                <d4p1:InputTypePins z:Id="762" z:Size="0" />
-                                                <d4p1:Name z:Id="763">RerouteNode2</d4p1:Name>
-                                                <d4p1:OutputDataPins z:Id="764" z:Size="1">
-                                                  <d4p1:NodeOutputDataPin z:Ref="735" i:nil="true" />
+                                                <d4p1:InputExecPins z:Id="767" z:Size="0" />
+                                                <d4p1:InputTypePins z:Id="768" z:Size="0" />
+                                                <d4p1:Name z:Id="769">RerouteNode2</d4p1:Name>
+                                                <d4p1:OutputDataPins z:Id="770" z:Size="1">
+                                                  <d4p1:NodeOutputDataPin z:Ref="739" i:nil="true" />
                                                 </d4p1:OutputDataPins>
-                                                <d4p1:OutputExecPins z:Id="765" z:Size="0" />
-                                                <d4p1:OutputTypePins z:Id="766" z:Size="0" />
+                                                <d4p1:OutputExecPins z:Id="771" z:Size="0" />
+                                                <d4p1:OutputTypePins z:Id="772" z:Size="0" />
                                                 <d4p1:PositionX>1764</d4p1:PositionX>
                                                 <d4p1:PositionY>588</d4p1:PositionY>
                                               </d4p1:Node>
-                                              <d4p1:PinType z:Id="767">
-                                                <d4p1:Value z:Ref="686" i:nil="true" />
+                                              <d4p1:PinType z:Id="773">
+                                                <d4p1:Value z:Ref="746" i:nil="true" />
                                               </d4p1:PinType>
-                                              <d4p1:OutgoingPins z:Id="768" z:Size="1">
-                                                <d4p1:NodeInputDataPin z:Ref="729" i:nil="true" />
+                                              <d4p1:OutgoingPins z:Id="774" z:Size="1">
+                                                <d4p1:NodeInputDataPin z:Ref="733" i:nil="true" />
                                               </d4p1:OutgoingPins>
                                             </d4p1:IncomingPin>
                                             <d4p1:UnconnectedValue i:nil="true" />
                                             <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                                           </d4p1:NodeInputDataPin>
                                         </d4p1:InputDataPins>
-                                        <d4p1:InputExecPins z:Id="769" z:Size="1">
-                                          <d4p1:NodeInputExecPin z:Id="770">
-                                            <d4p1:Name z:Id="771">Exec</d4p1:Name>
-                                            <d4p1:Node z:Ref="727" i:nil="true" />
-                                            <d4p1:IncomingPins z:Id="772" z:Size="2">
-                                              <d4p1:NodeOutputExecPin z:Id="773">
+                                        <d4p1:InputExecPins z:Id="775" z:Size="1">
+                                          <d4p1:NodeInputExecPin z:Id="776">
+                                            <d4p1:Name z:Id="777">Exec</d4p1:Name>
+                                            <d4p1:Node z:Ref="731" i:nil="true" />
+                                            <d4p1:IncomingPins z:Id="778" z:Size="2">
+                                              <d4p1:NodeOutputExecPin z:Id="779">
                                                 <d4p1:Name z:Ref="291" i:nil="true" />
                                                 <d4p1:Node z:Ref="630" i:nil="true" />
-                                                <d4p1:OutgoingPin z:Ref="770" i:nil="true" />
+                                                <d4p1:OutgoingPin z:Ref="776" i:nil="true" />
                                               </d4p1:NodeOutputExecPin>
-                                              <d4p1:NodeOutputExecPin z:Ref="773" i:nil="true" />
+                                              <d4p1:NodeOutputExecPin z:Ref="779" i:nil="true" />
                                             </d4p1:IncomingPins>
                                           </d4p1:NodeInputExecPin>
                                         </d4p1:InputExecPins>
-                                        <d4p1:InputTypePins z:Id="774" z:Size="0" />
-                                        <d4p1:Name z:Id="775">VariableSetterNode</d4p1:Name>
-                                        <d4p1:OutputDataPins z:Id="776" z:Size="1">
-                                          <d4p1:NodeOutputDataPin z:Id="777">
-                                            <d4p1:Name z:Id="778">Boolean</d4p1:Name>
-                                            <d4p1:Node z:Ref="727" i:nil="true" />
-                                            <d4p1:PinType z:Id="779">
-                                              <d4p1:Value z:Ref="732" i:nil="true" />
+                                        <d4p1:InputTypePins z:Id="780" z:Size="0" />
+                                        <d4p1:Name z:Id="781">VariableSetterNode</d4p1:Name>
+                                        <d4p1:OutputDataPins z:Id="782" z:Size="1">
+                                          <d4p1:NodeOutputDataPin z:Id="783">
+                                            <d4p1:Name z:Id="784">Boolean</d4p1:Name>
+                                            <d4p1:Node z:Ref="731" i:nil="true" />
+                                            <d4p1:PinType z:Id="785">
+                                              <d4p1:Value z:Ref="736" i:nil="true" />
                                             </d4p1:PinType>
-                                            <d4p1:OutgoingPins z:Id="780" z:Size="0" />
+                                            <d4p1:OutgoingPins z:Id="786" z:Size="0" />
                                           </d4p1:NodeOutputDataPin>
                                         </d4p1:OutputDataPins>
-                                        <d4p1:OutputExecPins z:Id="781" z:Size="1">
-                                          <d4p1:NodeOutputExecPin z:Id="782">
-                                            <d4p1:Name z:Ref="771" i:nil="true" />
-                                            <d4p1:Node z:Ref="727" i:nil="true" />
-                                            <d4p1:OutgoingPin z:Id="783">
+                                        <d4p1:OutputExecPins z:Id="787" z:Size="1">
+                                          <d4p1:NodeOutputExecPin z:Id="788">
+                                            <d4p1:Name z:Ref="777" i:nil="true" />
+                                            <d4p1:Node z:Ref="731" i:nil="true" />
+                                            <d4p1:OutgoingPin z:Id="789">
                                               <d4p1:Name z:Ref="291" i:nil="true" />
-                                              <d4p1:Node z:Id="784" i:type="d4p1:ReturnNode">
+                                              <d4p1:Node z:Id="790" i:type="d4p1:ReturnNode">
                                                 <d4p1:Graph z:Ref="628" i:nil="true" />
-                                                <d4p1:InputDataPins z:Id="785" z:Size="0" />
-                                                <d4p1:InputExecPins z:Id="786" z:Size="1">
-                                                  <d4p1:NodeInputExecPin z:Ref="783" i:nil="true" />
+                                                <d4p1:InputDataPins z:Id="791" z:Size="0" />
+                                                <d4p1:InputExecPins z:Id="792" z:Size="1">
+                                                  <d4p1:NodeInputExecPin z:Ref="789" i:nil="true" />
                                                 </d4p1:InputExecPins>
-                                                <d4p1:InputTypePins z:Id="787" z:Size="0" />
+                                                <d4p1:InputTypePins z:Id="793" z:Size="0" />
                                                 <d4p1:Name z:Ref="584" i:nil="true" />
-                                                <d4p1:OutputDataPins z:Id="788" z:Size="0" />
-                                                <d4p1:OutputExecPins z:Id="789" z:Size="0" />
-                                                <d4p1:OutputTypePins z:Id="790" z:Size="0" />
+                                                <d4p1:OutputDataPins z:Id="794" z:Size="0" />
+                                                <d4p1:OutputExecPins z:Id="795" z:Size="0" />
+                                                <d4p1:OutputTypePins z:Id="796" z:Size="0" />
                                                 <d4p1:PositionX>2324</d4p1:PositionX>
                                                 <d4p1:PositionY>364</d4p1:PositionY>
                                               </d4p1:Node>
-                                              <d4p1:IncomingPins z:Id="791" z:Size="2">
-                                                <d4p1:NodeOutputExecPin z:Ref="782" i:nil="true" />
-                                                <d4p1:NodeOutputExecPin z:Ref="782" i:nil="true" />
+                                              <d4p1:IncomingPins z:Id="797" z:Size="2">
+                                                <d4p1:NodeOutputExecPin z:Ref="788" i:nil="true" />
+                                                <d4p1:NodeOutputExecPin z:Ref="788" i:nil="true" />
                                               </d4p1:IncomingPins>
                                             </d4p1:OutgoingPin>
                                           </d4p1:NodeOutputExecPin>
                                         </d4p1:OutputExecPins>
-                                        <d4p1:OutputTypePins z:Id="792" z:Size="0" />
+                                        <d4p1:OutputTypePins z:Id="798" z:Size="0" />
                                         <d4p1:PositionX>1904</d4p1:PositionX>
                                         <d4p1:PositionY>364</d4p1:PositionY>
-                                        <d4p1:FieldOrProperty z:Id="793">
-                                          <DeclaringType z:Id="794">
-                                            <Name z:Id="795">VRage.Game.Components.MyRenderComponentBase</Name>
-                                            <GenericArguments z:Id="796" z:Size="0" />
+                                        <d4p1:FieldOrProperty z:Id="799">
+                                          <DeclaringType z:Id="800">
+                                            <Name z:Id="801">VRage.Game.Components.MyRenderComponentBase</Name>
+                                            <GenericArguments z:Id="802" z:Size="0" />
                                             <IsDelegate>false</IsDelegate>
                                             <IsEnum>false</IsEnum>
                                             <IsInterface>false</IsInterface>
                                           </DeclaringType>
                                           <GetterVisibility>Public</GetterVisibility>
                                           <Modifiers>None</Modifiers>
-                                          <Name z:Id="797">Visible</Name>
+                                          <Name z:Id="803">Visible</Name>
                                           <SetterVisibility>Public</SetterVisibility>
-                                          <Type z:Ref="732" i:nil="true" />
+                                          <Type z:Ref="736" i:nil="true" />
                                           <Visibility>Private</Visibility>
                                         </d4p1:FieldOrProperty>
                                       </d4p1:Node>
-                                      <d4p1:PinType z:Id="798">
-                                        <d4p1:Value z:Ref="794" i:nil="true" />
+                                      <d4p1:PinType z:Id="804">
+                                        <d4p1:Value z:Ref="800" i:nil="true" />
                                       </d4p1:PinType>
                                       <d4p1:ExplicitDefaultValue i:nil="true" />
-                                      <d4p1:IncomingPin z:Ref="719" i:nil="true" />
+                                      <d4p1:IncomingPin z:Ref="723" i:nil="true" />
                                       <d4p1:UnconnectedValue i:nil="true" />
                                       <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                                     </d4p1:NodeInputDataPin>
                                   </d4p1:OutgoingPins>
                                 </d4p1:NodeOutputDataPin>
                               </d4p1:OutputDataPins>
-                              <d4p1:OutputExecPins z:Id="799" z:Size="0" />
-                              <d4p1:OutputTypePins z:Id="800" z:Size="0" />
+                              <d4p1:OutputExecPins z:Id="805" z:Size="0" />
+                              <d4p1:OutputTypePins z:Id="806" z:Size="0" />
                               <d4p1:PositionX>1288</d4p1:PositionX>
                               <d4p1:PositionY>448</d4p1:PositionY>
-                              <d4p1:FieldOrProperty z:Id="801">
-                                <DeclaringType z:Id="802">
-                                  <Name z:Id="803">VRage.ModAPI.IMyEntity</Name>
-                                  <GenericArguments z:Id="804" z:Size="0" />
+                              <d4p1:FieldOrProperty z:Id="807">
+                                <DeclaringType z:Id="808">
+                                  <Name z:Id="809">VRage.ModAPI.IMyEntity</Name>
+                                  <GenericArguments z:Id="810" z:Size="0" />
                                   <IsDelegate>false</IsDelegate>
                                   <IsEnum>false</IsEnum>
                                   <IsInterface>true</IsInterface>
                                 </DeclaringType>
                                 <GetterVisibility>Public</GetterVisibility>
                                 <Modifiers>None</Modifiers>
-                                <Name z:Id="805">Render</Name>
+                                <Name z:Id="811">Render</Name>
                                 <SetterVisibility>Public</SetterVisibility>
-                                <Type z:Ref="722" i:nil="true" />
+                                <Type z:Ref="726" i:nil="true" />
                                 <Visibility>Private</Visibility>
                               </d4p1:FieldOrProperty>
                             </d4p1:Node>
-                            <d4p1:PinType z:Id="806">
-                              <d4p1:Value z:Ref="802" i:nil="true" />
+                            <d4p1:PinType z:Id="812">
+                              <d4p1:Value z:Ref="808" i:nil="true" />
                             </d4p1:PinType>
                             <d4p1:ExplicitDefaultValue i:nil="true" />
-                            <d4p1:IncomingPin z:Ref="707" i:nil="true" />
+                            <d4p1:IncomingPin z:Ref="709" i:nil="true" />
                             <d4p1:UnconnectedValue i:nil="true" />
                             <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
                           </d4p1:NodeInputDataPin>
                         </d4p1:OutgoingPins>
                       </d4p1:NodeOutputDataPin>
                     </d4p1:OutputDataPins>
-                    <d4p1:OutputExecPins z:Id="807" z:Size="0" />
-                    <d4p1:OutputTypePins z:Id="808" z:Size="0" />
+                    <d4p1:OutputExecPins z:Id="813" z:Size="0" />
+                    <d4p1:OutputTypePins z:Id="814" z:Size="0" />
                     <d4p1:PositionX>840</d4p1:PositionX>
                     <d4p1:PositionY>448</d4p1:PositionY>
-                    <d4p1:MethodSpecifier z:Id="809">
-                      <DeclaringType z:Id="810">
-                        <Name z:Id="811">ModdingFramework.Subparts</Name>
-                        <GenericArguments z:Id="812" z:Size="0" />
+                    <d4p1:MethodSpecifier z:Id="815">
+                      <DeclaringType z:Id="816">
+                        <Name z:Id="817">ModdingFramework.Subparts</Name>
+                        <GenericArguments z:Id="818" z:Size="0" />
                         <IsDelegate>false</IsDelegate>
                         <IsEnum>false</IsEnum>
                         <IsInterface>false</IsInterface>
                       </DeclaringType>
-                      <GenericArguments z:Id="813" z:Size="0" />
+                      <GenericArguments z:Id="819" z:Size="0" />
                       <Modifiers>Static</Modifiers>
                       <Name z:Ref="216" i:nil="true" />
-                      <Parameters z:Id="814" z:Size="2">
-                        <MethodParameter z:Id="815">
+                      <Parameters z:Id="820" z:Size="2">
+                        <MethodParameter z:Id="821">
                           <Name z:Ref="62" i:nil="true" />
-                          <Value z:Ref="38" i:nil="true" />
+                          <Value z:Id="822" i:type="TypeSpecifier">
+                            <Name z:Ref="35" i:nil="true" />
+                            <GenericArguments z:Id="823" z:Size="0" />
+                            <IsDelegate>false</IsDelegate>
+                            <IsEnum>false</IsEnum>
+                            <IsInterface>false</IsInterface>
+                          </Value>
                           <ExplicitDefaultValue i:nil="true" />
                           <HasExplicitDefaultValue>false</HasExplicitDefaultValue>
                           <PassType>Default</PassType>
                         </MethodParameter>
-                        <MethodParameter z:Id="816">
+                        <MethodParameter z:Id="824">
                           <Name z:Ref="97" i:nil="true" />
-                          <Value z:Ref="56" i:nil="true" />
+                          <Value z:Ref="699" i:nil="true" />
                           <ExplicitDefaultValue i:nil="true" />
                           <HasExplicitDefaultValue>false</HasExplicitDefaultValue>
                           <PassType>Default</PassType>
                         </MethodParameter>
                       </Parameters>
-                      <ReturnTypes z:Id="817" z:Size="1">
-                        <BaseType z:Ref="185" i:nil="true" />
+                      <ReturnTypes z:Id="825" z:Size="1">
+                        <BaseType z:Ref="712" i:nil="true" />
                       </ReturnTypes>
                       <Visibility>Public</Visibility>
                     </d4p1:MethodSpecifier>
                   </d4p1:Node>
-                  <d4p1:PinType z:Id="818">
-                    <d4p1:Value z:Ref="38" i:nil="true" />
+                  <d4p1:PinType z:Id="826">
+                    <d4p1:Value z:Ref="822" i:nil="true" />
                   </d4p1:PinType>
                   <d4p1:ExplicitDefaultValue i:nil="true" />
                   <d4p1:IncomingPin z:Ref="690" i:nil="true" />
@@ -2036,37 +2060,519 @@
                 </d4p1:NodeInputDataPin>
               </d4p1:OutgoingPins>
             </d4p1:NodeOutputDataPin>
-            <d4p1:NodeOutputDataPin z:Ref="699" i:nil="true" />
-            <d4p1:NodeOutputDataPin z:Ref="749" i:nil="true" />
+            <d4p1:NodeOutputDataPin z:Ref="701" i:nil="true" />
+            <d4p1:NodeOutputDataPin z:Ref="755" i:nil="true" />
           </d4p1:OutputDataPins>
-          <d4p1:OutputExecPins z:Id="819" z:Size="1">
-            <d4p1:NodeOutputExecPin z:Ref="773" i:nil="true" />
+          <d4p1:OutputExecPins z:Id="827" z:Size="1">
+            <d4p1:NodeOutputExecPin z:Ref="779" i:nil="true" />
           </d4p1:OutputExecPins>
-          <d4p1:OutputTypePins z:Id="820" z:Size="0" />
+          <d4p1:OutputTypePins z:Id="828" z:Size="0" />
           <d4p1:PositionX>504</d4p1:PositionX>
           <d4p1:PositionY>364</d4p1:PositionY>
         </d4p1:Node>
-        <d4p1:Node z:Ref="784" i:nil="true" />
+        <d4p1:Node z:Ref="790" i:nil="true" />
         <d4p1:Node z:Ref="674" i:nil="true" />
         <d4p1:Node z:Ref="656" i:nil="true" />
         <d4p1:Node z:Ref="638" i:nil="true" />
         <d4p1:Node z:Ref="695" i:nil="true" />
-        <d4p1:Node z:Ref="713" i:nil="true" />
-        <d4p1:Node z:Ref="727" i:nil="true" />
-        <d4p1:Node z:Ref="744" i:nil="true" />
-        <d4p1:Node z:Ref="737" i:nil="true" />
+        <d4p1:Node z:Ref="717" i:nil="true" />
+        <d4p1:Node z:Ref="731" i:nil="true" />
+        <d4p1:Node z:Ref="750" i:nil="true" />
+        <d4p1:Node z:Ref="741" i:nil="true" />
       </Nodes>
       <EntryNode xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Ref="630" i:nil="true" />
       <Visibility>Public</Visibility>
-      <Modifiers xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Id="821">
+      <Modifiers xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Id="829">
         <d4p1:Value>Static</d4p1:Value>
       </Modifiers>
-      <Name z:Id="822">SetSubpartVisible</Name>
+      <Name z:Id="830">SetSubpartVisible</Name>
+    </MethodGraph>
+    <MethodGraph z:Id="831">
+      <Class z:Ref="1" i:nil="true" />
+      <Nodes xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Id="832" z:Size="9">
+        <d4p1:Node z:Id="833" i:type="d4p1:MethodEntryNode">
+          <d4p1:Graph z:Ref="831" i:nil="true" />
+          <d4p1:InputDataPins z:Id="834" z:Size="0" />
+          <d4p1:InputExecPins z:Id="835" z:Size="0" />
+          <d4p1:InputTypePins z:Id="836" z:Size="2">
+            <d4p1:NodeInputTypePin z:Id="837">
+              <d4p1:Name z:Id="838">Input0Type</d4p1:Name>
+              <d4p1:Node z:Ref="833" i:nil="true" />
+              <d4p1:IncomingPin z:Id="839">
+                <d4p1:Name z:Id="840">OutputType</d4p1:Name>
+                <d4p1:Node z:Id="841" i:type="d4p1:TypeNode">
+                  <d4p1:Graph z:Ref="831" i:nil="true" />
+                  <d4p1:InputDataPins z:Id="842" z:Size="0" />
+                  <d4p1:InputExecPins z:Id="843" z:Size="0" />
+                  <d4p1:InputTypePins z:Id="844" z:Size="0" />
+                  <d4p1:Name z:Id="845">TypeNode</d4p1:Name>
+                  <d4p1:OutputDataPins z:Id="846" z:Size="0" />
+                  <d4p1:OutputExecPins z:Id="847" z:Size="0" />
+                  <d4p1:OutputTypePins z:Id="848" z:Size="1">
+                    <d4p1:NodeOutputTypePin z:Ref="839" i:nil="true" />
+                  </d4p1:OutputTypePins>
+                  <d4p1:PositionX>476</d4p1:PositionX>
+                  <d4p1:PositionY>308</d4p1:PositionY>
+                  <d4p1:Type z:Id="849" i:type="TypeSpecifier">
+                    <Name z:Id="850">VRage.Game.Components.MyGameLogicComponent</Name>
+                    <GenericArguments z:Id="851" z:Size="0" />
+                    <IsDelegate>false</IsDelegate>
+                    <IsEnum>false</IsEnum>
+                    <IsInterface>false</IsInterface>
+                  </d4p1:Type>
+                  <d4p1:constructedType z:Id="852">
+                    <d4p1:Value z:Id="853" i:type="TypeSpecifier">
+                      <Name z:Ref="850" i:nil="true" />
+                      <GenericArguments z:Id="854" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
+                      <IsEnum>false</IsEnum>
+                      <IsInterface>false</IsInterface>
+                    </d4p1:Value>
+                  </d4p1:constructedType>
+                </d4p1:Node>
+                <d4p1:OutgoingPins z:Id="855" z:Size="1">
+                  <d4p1:NodeInputTypePin z:Ref="837" i:nil="true" />
+                </d4p1:OutgoingPins>
+                <d4p1:outputType z:Ref="852" i:nil="true" />
+              </d4p1:IncomingPin>
+            </d4p1:NodeInputTypePin>
+            <d4p1:NodeInputTypePin z:Id="856">
+              <d4p1:Name z:Id="857">Input1Type</d4p1:Name>
+              <d4p1:Node z:Ref="833" i:nil="true" />
+              <d4p1:IncomingPin z:Id="858">
+                <d4p1:Name z:Ref="840" i:nil="true" />
+                <d4p1:Node z:Id="859" i:type="d4p1:TypeNode">
+                  <d4p1:Graph z:Ref="831" i:nil="true" />
+                  <d4p1:InputDataPins z:Id="860" z:Size="0" />
+                  <d4p1:InputExecPins z:Id="861" z:Size="0" />
+                  <d4p1:InputTypePins z:Id="862" z:Size="0" />
+                  <d4p1:Name z:Id="863">TypeNode2</d4p1:Name>
+                  <d4p1:OutputDataPins z:Id="864" z:Size="0" />
+                  <d4p1:OutputExecPins z:Id="865" z:Size="0" />
+                  <d4p1:OutputTypePins z:Id="866" z:Size="1">
+                    <d4p1:NodeOutputTypePin z:Ref="858" i:nil="true" />
+                  </d4p1:OutputTypePins>
+                  <d4p1:PositionX>476</d4p1:PositionX>
+                  <d4p1:PositionY>420</d4p1:PositionY>
+                  <d4p1:Type z:Id="867" i:type="TypeSpecifier">
+                    <Name z:Id="868">System.String</Name>
+                    <GenericArguments z:Id="869" z:Size="0" />
+                    <IsDelegate>false</IsDelegate>
+                    <IsEnum>false</IsEnum>
+                    <IsInterface>false</IsInterface>
+                  </d4p1:Type>
+                  <d4p1:constructedType z:Id="870">
+                    <d4p1:Value z:Id="871" i:type="TypeSpecifier">
+                      <Name z:Ref="868" i:nil="true" />
+                      <GenericArguments z:Id="872" z:Size="0" />
+                      <IsDelegate>false</IsDelegate>
+                      <IsEnum>false</IsEnum>
+                      <IsInterface>false</IsInterface>
+                    </d4p1:Value>
+                  </d4p1:constructedType>
+                </d4p1:Node>
+                <d4p1:OutgoingPins z:Id="873" z:Size="1">
+                  <d4p1:NodeInputTypePin z:Ref="856" i:nil="true" />
+                </d4p1:OutgoingPins>
+                <d4p1:outputType z:Ref="870" i:nil="true" />
+              </d4p1:IncomingPin>
+            </d4p1:NodeInputTypePin>
+          </d4p1:InputTypePins>
+          <d4p1:Name z:Id="874">MethodEntryNode</d4p1:Name>
+          <d4p1:OutputDataPins z:Id="875" z:Size="2">
+            <d4p1:NodeOutputDataPin z:Id="876">
+              <d4p1:Name z:Id="877">Context</d4p1:Name>
+              <d4p1:Node z:Ref="833" i:nil="true" />
+              <d4p1:PinType z:Id="878">
+                <d4p1:Value z:Ref="853" i:nil="true" />
+              </d4p1:PinType>
+              <d4p1:OutgoingPins z:Id="879" z:Size="1">
+                <d4p1:NodeInputDataPin z:Id="880">
+                  <d4p1:Name z:Id="881">Target</d4p1:Name>
+                  <d4p1:Node z:Id="882" i:type="d4p1:VariableGetterNode">
+                    <d4p1:Graph z:Ref="831" i:nil="true" />
+                    <d4p1:InputDataPins z:Id="883" z:Size="1">
+                      <d4p1:NodeInputDataPin z:Ref="880" i:nil="true" />
+                    </d4p1:InputDataPins>
+                    <d4p1:InputExecPins z:Id="884" z:Size="0" />
+                    <d4p1:InputTypePins z:Id="885" z:Size="0" />
+                    <d4p1:Name z:Id="886">VariableGetterNode</d4p1:Name>
+                    <d4p1:OutputDataPins z:Id="887" z:Size="1">
+                      <d4p1:NodeOutputDataPin z:Id="888">
+                        <d4p1:Name z:Id="889">IMyEntity</d4p1:Name>
+                        <d4p1:Node z:Ref="882" i:nil="true" />
+                        <d4p1:PinType z:Id="890">
+                          <d4p1:Value z:Id="891" i:type="TypeSpecifier">
+                            <Name z:Id="892">VRage.ModAPI.IMyEntity</Name>
+                            <GenericArguments z:Id="893" z:Size="0" />
+                            <IsDelegate>false</IsDelegate>
+                            <IsEnum>false</IsEnum>
+                            <IsInterface>true</IsInterface>
+                          </d4p1:Value>
+                        </d4p1:PinType>
+                        <d4p1:OutgoingPins z:Id="894" z:Size="1">
+                          <d4p1:NodeInputDataPin z:Id="895">
+                            <d4p1:Name z:Ref="881" i:nil="true" />
+                            <d4p1:Node z:Id="896" i:type="d4p1:CallMethodNode">
+                              <d4p1:Graph z:Ref="831" i:nil="true" />
+                              <d4p1:InputDataPins z:Id="897" z:Size="2">
+                                <d4p1:NodeInputDataPin z:Ref="895" i:nil="true" />
+                                <d4p1:NodeInputDataPin z:Id="898">
+                                  <d4p1:Name z:Id="899">name</d4p1:Name>
+                                  <d4p1:Node z:Ref="896" i:nil="true" />
+                                  <d4p1:PinType z:Id="900">
+                                    <d4p1:Value z:Id="901" i:type="TypeSpecifier">
+                                      <Name z:Id="902">System.String</Name>
+                                      <GenericArguments z:Id="903" z:Size="0" />
+                                      <IsDelegate>false</IsDelegate>
+                                      <IsEnum>false</IsEnum>
+                                      <IsInterface>false</IsInterface>
+                                    </d4p1:Value>
+                                  </d4p1:PinType>
+                                  <d4p1:ExplicitDefaultValue i:nil="true" />
+                                  <d4p1:IncomingPin z:Id="904">
+                                    <d4p1:Name z:Id="905">String</d4p1:Name>
+                                    <d4p1:Node z:Ref="833" i:nil="true" />
+                                    <d4p1:PinType z:Id="906">
+                                      <d4p1:Value z:Ref="871" i:nil="true" />
+                                    </d4p1:PinType>
+                                    <d4p1:OutgoingPins z:Id="907" z:Size="1">
+                                      <d4p1:NodeInputDataPin z:Ref="898" i:nil="true" />
+                                    </d4p1:OutgoingPins>
+                                  </d4p1:IncomingPin>
+                                  <d4p1:UnconnectedValue i:nil="true" />
+                                  <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                                </d4p1:NodeInputDataPin>
+                              </d4p1:InputDataPins>
+                              <d4p1:InputExecPins z:Id="908" z:Size="1">
+                                <d4p1:NodeInputExecPin z:Id="909">
+                                  <d4p1:Name z:Id="910">Exec</d4p1:Name>
+                                  <d4p1:Node z:Ref="896" i:nil="true" />
+                                  <d4p1:IncomingPins z:Id="911" z:Size="2">
+                                    <d4p1:NodeOutputExecPin z:Id="912">
+                                      <d4p1:Name z:Ref="910" i:nil="true" />
+                                      <d4p1:Node z:Ref="833" i:nil="true" />
+                                      <d4p1:OutgoingPin z:Ref="909" i:nil="true" />
+                                    </d4p1:NodeOutputExecPin>
+                                    <d4p1:NodeOutputExecPin z:Ref="912" i:nil="true" />
+                                  </d4p1:IncomingPins>
+                                </d4p1:NodeInputExecPin>
+                              </d4p1:InputExecPins>
+                              <d4p1:InputTypePins z:Id="913" z:Size="0" />
+                              <d4p1:Name z:Id="914">CallMethodNode</d4p1:Name>
+                              <d4p1:OutputDataPins z:Id="915" z:Size="1">
+                                <d4p1:NodeOutputDataPin z:Id="916">
+                                  <d4p1:Name z:Id="917">MyEntitySubpart</d4p1:Name>
+                                  <d4p1:Node z:Ref="896" i:nil="true" />
+                                  <d4p1:PinType z:Id="918">
+                                    <d4p1:Value z:Id="919" i:type="TypeSpecifier">
+                                      <Name z:Id="920">VRage.Game.Entity.MyEntitySubpart</Name>
+                                      <GenericArguments z:Id="921" z:Size="0" />
+                                      <IsDelegate>false</IsDelegate>
+                                      <IsEnum>false</IsEnum>
+                                      <IsInterface>false</IsInterface>
+                                    </d4p1:Value>
+                                  </d4p1:PinType>
+                                  <d4p1:OutgoingPins z:Id="922" z:Size="1">
+                                    <d4p1:NodeInputDataPin z:Id="923">
+                                      <d4p1:Name z:Ref="881" i:nil="true" />
+                                      <d4p1:Node z:Id="924" i:type="d4p1:VariableGetterNode">
+                                        <d4p1:Graph z:Ref="831" i:nil="true" />
+                                        <d4p1:InputDataPins z:Id="925" z:Size="1">
+                                          <d4p1:NodeInputDataPin z:Ref="923" i:nil="true" />
+                                        </d4p1:InputDataPins>
+                                        <d4p1:InputExecPins z:Id="926" z:Size="0" />
+                                        <d4p1:InputTypePins z:Id="927" z:Size="0" />
+                                        <d4p1:Name z:Id="928">VariableGetterNode2</d4p1:Name>
+                                        <d4p1:OutputDataPins z:Id="929" z:Size="1">
+                                          <d4p1:NodeOutputDataPin z:Id="930">
+                                            <d4p1:Name z:Id="931">MyRenderComponentBase</d4p1:Name>
+                                            <d4p1:Node z:Ref="924" i:nil="true" />
+                                            <d4p1:PinType z:Id="932">
+                                              <d4p1:Value z:Id="933" i:type="TypeSpecifier">
+                                                <Name z:Id="934">VRage.Game.Components.MyRenderComponentBase</Name>
+                                                <GenericArguments z:Id="935" z:Size="0" />
+                                                <IsDelegate>false</IsDelegate>
+                                                <IsEnum>false</IsEnum>
+                                                <IsInterface>false</IsInterface>
+                                              </d4p1:Value>
+                                            </d4p1:PinType>
+                                            <d4p1:OutgoingPins z:Id="936" z:Size="1">
+                                              <d4p1:NodeInputDataPin z:Id="937">
+                                                <d4p1:Name z:Ref="881" i:nil="true" />
+                                                <d4p1:Node z:Id="938" i:type="d4p1:VariableGetterNode">
+                                                  <d4p1:Graph z:Ref="831" i:nil="true" />
+                                                  <d4p1:InputDataPins z:Id="939" z:Size="1">
+                                                    <d4p1:NodeInputDataPin z:Ref="937" i:nil="true" />
+                                                  </d4p1:InputDataPins>
+                                                  <d4p1:InputExecPins z:Id="940" z:Size="0" />
+                                                  <d4p1:InputTypePins z:Id="941" z:Size="0" />
+                                                  <d4p1:Name z:Id="942">VariableGetterNode3</d4p1:Name>
+                                                  <d4p1:OutputDataPins z:Id="943" z:Size="1">
+                                                    <d4p1:NodeOutputDataPin z:Id="944">
+                                                      <d4p1:Name z:Id="945">Boolean</d4p1:Name>
+                                                      <d4p1:Node z:Ref="938" i:nil="true" />
+                                                      <d4p1:PinType z:Id="946">
+                                                        <d4p1:Value z:Id="947" i:type="TypeSpecifier">
+                                                          <Name z:Id="948">System.Boolean</Name>
+                                                          <GenericArguments z:Id="949" z:Size="0" />
+                                                          <IsDelegate>false</IsDelegate>
+                                                          <IsEnum>false</IsEnum>
+                                                          <IsInterface>false</IsInterface>
+                                                        </d4p1:Value>
+                                                      </d4p1:PinType>
+                                                      <d4p1:OutgoingPins z:Id="950" z:Size="1">
+                                                        <d4p1:NodeInputDataPin z:Id="951">
+                                                          <d4p1:Name z:Id="952">IsVisible</d4p1:Name>
+                                                          <d4p1:Node z:Id="953" i:type="d4p1:ReturnNode">
+                                                            <d4p1:Graph z:Ref="831" i:nil="true" />
+                                                            <d4p1:InputDataPins z:Id="954" z:Size="1">
+                                                              <d4p1:NodeInputDataPin z:Ref="951" i:nil="true" />
+                                                            </d4p1:InputDataPins>
+                                                            <d4p1:InputExecPins z:Id="955" z:Size="1">
+                                                              <d4p1:NodeInputExecPin z:Id="956">
+                                                                <d4p1:Name z:Ref="910" i:nil="true" />
+                                                                <d4p1:Node z:Ref="953" i:nil="true" />
+                                                                <d4p1:IncomingPins z:Id="957" z:Size="2">
+                                                                  <d4p1:NodeOutputExecPin z:Id="958">
+                                                                    <d4p1:Name z:Ref="910" i:nil="true" />
+                                                                    <d4p1:Node z:Ref="896" i:nil="true" />
+                                                                    <d4p1:OutgoingPin z:Ref="956" i:nil="true" />
+                                                                  </d4p1:NodeOutputExecPin>
+                                                                  <d4p1:NodeOutputExecPin z:Ref="958" i:nil="true" />
+                                                                </d4p1:IncomingPins>
+                                                              </d4p1:NodeInputExecPin>
+                                                            </d4p1:InputExecPins>
+                                                            <d4p1:InputTypePins z:Id="959" z:Size="1">
+                                                              <d4p1:NodeInputTypePin z:Id="960">
+                                                                <d4p1:Name z:Id="961">Output0Type</d4p1:Name>
+                                                                <d4p1:Node z:Ref="953" i:nil="true" />
+                                                                <d4p1:IncomingPin z:Id="962">
+                                                                  <d4p1:Name z:Ref="840" i:nil="true" />
+                                                                  <d4p1:Node z:Id="963" i:type="d4p1:TypeNode">
+                                                                    <d4p1:Graph z:Ref="831" i:nil="true" />
+                                                                    <d4p1:InputDataPins z:Id="964" z:Size="0" />
+                                                                    <d4p1:InputExecPins z:Id="965" z:Size="0" />
+                                                                    <d4p1:InputTypePins z:Id="966" z:Size="0" />
+                                                                    <d4p1:Name z:Id="967">TypeNode3</d4p1:Name>
+                                                                    <d4p1:OutputDataPins z:Id="968" z:Size="0" />
+                                                                    <d4p1:OutputExecPins z:Id="969" z:Size="0" />
+                                                                    <d4p1:OutputTypePins z:Id="970" z:Size="1">
+                                                                      <d4p1:NodeOutputTypePin z:Ref="962" i:nil="true" />
+                                                                    </d4p1:OutputTypePins>
+                                                                    <d4p1:PositionX>2856</d4p1:PositionX>
+                                                                    <d4p1:PositionY>504</d4p1:PositionY>
+                                                                    <d4p1:Type z:Id="971" i:type="TypeSpecifier">
+                                                                      <Name z:Id="972">System.Boolean</Name>
+                                                                      <GenericArguments z:Id="973" z:Size="0" />
+                                                                      <IsDelegate>false</IsDelegate>
+                                                                      <IsEnum>false</IsEnum>
+                                                                      <IsInterface>false</IsInterface>
+                                                                    </d4p1:Type>
+                                                                    <d4p1:constructedType z:Id="974">
+                                                                      <d4p1:Value z:Id="975" i:type="TypeSpecifier">
+                                                                        <Name z:Ref="972" i:nil="true" />
+                                                                        <GenericArguments z:Id="976" z:Size="0" />
+                                                                        <IsDelegate>false</IsDelegate>
+                                                                        <IsEnum>false</IsEnum>
+                                                                        <IsInterface>false</IsInterface>
+                                                                      </d4p1:Value>
+                                                                    </d4p1:constructedType>
+                                                                  </d4p1:Node>
+                                                                  <d4p1:OutgoingPins z:Id="977" z:Size="1">
+                                                                    <d4p1:NodeInputTypePin z:Ref="960" i:nil="true" />
+                                                                  </d4p1:OutgoingPins>
+                                                                  <d4p1:outputType z:Ref="974" i:nil="true" />
+                                                                </d4p1:IncomingPin>
+                                                              </d4p1:NodeInputTypePin>
+                                                            </d4p1:InputTypePins>
+                                                            <d4p1:Name z:Id="978">ReturnNode</d4p1:Name>
+                                                            <d4p1:OutputDataPins z:Id="979" z:Size="0" />
+                                                            <d4p1:OutputExecPins z:Id="980" z:Size="0" />
+                                                            <d4p1:OutputTypePins z:Id="981" z:Size="0" />
+                                                            <d4p1:PositionX>3164</d4p1:PositionX>
+                                                            <d4p1:PositionY>308</d4p1:PositionY>
+                                                          </d4p1:Node>
+                                                          <d4p1:PinType z:Id="982">
+                                                            <d4p1:Value z:Ref="975" i:nil="true" />
+                                                          </d4p1:PinType>
+                                                          <d4p1:ExplicitDefaultValue i:nil="true" />
+                                                          <d4p1:IncomingPin z:Ref="944" i:nil="true" />
+                                                          <d4p1:UnconnectedValue i:nil="true" />
+                                                          <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                                                        </d4p1:NodeInputDataPin>
+                                                      </d4p1:OutgoingPins>
+                                                    </d4p1:NodeOutputDataPin>
+                                                  </d4p1:OutputDataPins>
+                                                  <d4p1:OutputExecPins z:Id="983" z:Size="0" />
+                                                  <d4p1:OutputTypePins z:Id="984" z:Size="0" />
+                                                  <d4p1:PositionX>2660</d4p1:PositionX>
+                                                  <d4p1:PositionY>392</d4p1:PositionY>
+                                                  <d4p1:FieldOrProperty z:Id="985">
+                                                    <DeclaringType z:Id="986">
+                                                      <Name z:Id="987">VRage.Game.Components.MyRenderComponentBase</Name>
+                                                      <GenericArguments z:Id="988" z:Size="0" />
+                                                      <IsDelegate>false</IsDelegate>
+                                                      <IsEnum>false</IsEnum>
+                                                      <IsInterface>false</IsInterface>
+                                                    </DeclaringType>
+                                                    <GetterVisibility>Public</GetterVisibility>
+                                                    <Modifiers>None</Modifiers>
+                                                    <Name z:Id="989">Visible</Name>
+                                                    <SetterVisibility>Public</SetterVisibility>
+                                                    <Type z:Ref="947" i:nil="true" />
+                                                    <Visibility>Private</Visibility>
+                                                  </d4p1:FieldOrProperty>
+                                                </d4p1:Node>
+                                                <d4p1:PinType z:Id="990">
+                                                  <d4p1:Value z:Ref="986" i:nil="true" />
+                                                </d4p1:PinType>
+                                                <d4p1:ExplicitDefaultValue i:nil="true" />
+                                                <d4p1:IncomingPin z:Ref="930" i:nil="true" />
+                                                <d4p1:UnconnectedValue i:nil="true" />
+                                                <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                                              </d4p1:NodeInputDataPin>
+                                            </d4p1:OutgoingPins>
+                                          </d4p1:NodeOutputDataPin>
+                                        </d4p1:OutputDataPins>
+                                        <d4p1:OutputExecPins z:Id="991" z:Size="0" />
+                                        <d4p1:OutputTypePins z:Id="992" z:Size="0" />
+                                        <d4p1:PositionX>2100</d4p1:PositionX>
+                                        <d4p1:PositionY>392</d4p1:PositionY>
+                                        <d4p1:FieldOrProperty z:Id="993">
+                                          <DeclaringType z:Id="994">
+                                            <Name z:Id="995">VRage.Game.Entity.MyEntity</Name>
+                                            <GenericArguments z:Id="996" z:Size="0" />
+                                            <IsDelegate>false</IsDelegate>
+                                            <IsEnum>false</IsEnum>
+                                            <IsInterface>false</IsInterface>
+                                          </DeclaringType>
+                                          <GetterVisibility>Public</GetterVisibility>
+                                          <Modifiers>None</Modifiers>
+                                          <Name z:Id="997">Render</Name>
+                                          <SetterVisibility>Public</SetterVisibility>
+                                          <Type z:Ref="933" i:nil="true" />
+                                          <Visibility>Private</Visibility>
+                                        </d4p1:FieldOrProperty>
+                                      </d4p1:Node>
+                                      <d4p1:PinType z:Id="998">
+                                        <d4p1:Value z:Ref="994" i:nil="true" />
+                                      </d4p1:PinType>
+                                      <d4p1:ExplicitDefaultValue i:nil="true" />
+                                      <d4p1:IncomingPin z:Ref="916" i:nil="true" />
+                                      <d4p1:UnconnectedValue i:nil="true" />
+                                      <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                                    </d4p1:NodeInputDataPin>
+                                  </d4p1:OutgoingPins>
+                                </d4p1:NodeOutputDataPin>
+                              </d4p1:OutputDataPins>
+                              <d4p1:OutputExecPins z:Id="999" z:Size="2">
+                                <d4p1:NodeOutputExecPin z:Ref="958" i:nil="true" />
+                                <d4p1:NodeOutputExecPin z:Id="1000">
+                                  <d4p1:Name z:Id="1001">Catch</d4p1:Name>
+                                  <d4p1:Node z:Ref="896" i:nil="true" />
+                                  <d4p1:OutgoingPin i:nil="true" />
+                                </d4p1:NodeOutputExecPin>
+                              </d4p1:OutputExecPins>
+                              <d4p1:OutputTypePins z:Id="1002" z:Size="0" />
+                              <d4p1:PositionX>1624</d4p1:PositionX>
+                              <d4p1:PositionY>308</d4p1:PositionY>
+                              <d4p1:MethodSpecifier z:Id="1003">
+                                <DeclaringType z:Id="1004">
+                                  <Name z:Id="1005">VRage.ModAPI.IMyEntity</Name>
+                                  <GenericArguments z:Id="1006" z:Size="0" />
+                                  <IsDelegate>false</IsDelegate>
+                                  <IsEnum>false</IsEnum>
+                                  <IsInterface>true</IsInterface>
+                                </DeclaringType>
+                                <GenericArguments z:Id="1007" z:Size="0" />
+                                <Modifiers>Abstract</Modifiers>
+                                <Name z:Id="1008">GetSubpart</Name>
+                                <Parameters z:Id="1009" z:Size="1">
+                                  <MethodParameter z:Id="1010">
+                                    <Name z:Ref="899" i:nil="true" />
+                                    <Value z:Ref="901" i:nil="true" />
+                                    <ExplicitDefaultValue i:nil="true" />
+                                    <HasExplicitDefaultValue>false</HasExplicitDefaultValue>
+                                    <PassType>Default</PassType>
+                                  </MethodParameter>
+                                </Parameters>
+                                <ReturnTypes z:Id="1011" z:Size="1">
+                                  <BaseType z:Ref="919" i:nil="true" />
+                                </ReturnTypes>
+                                <Visibility>Public</Visibility>
+                              </d4p1:MethodSpecifier>
+                            </d4p1:Node>
+                            <d4p1:PinType z:Id="1012">
+                              <d4p1:Value z:Ref="1004" i:nil="true" />
+                            </d4p1:PinType>
+                            <d4p1:ExplicitDefaultValue i:nil="true" />
+                            <d4p1:IncomingPin z:Ref="888" i:nil="true" />
+                            <d4p1:UnconnectedValue i:nil="true" />
+                            <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                          </d4p1:NodeInputDataPin>
+                        </d4p1:OutgoingPins>
+                      </d4p1:NodeOutputDataPin>
+                    </d4p1:OutputDataPins>
+                    <d4p1:OutputExecPins z:Id="1013" z:Size="0" />
+                    <d4p1:OutputTypePins z:Id="1014" z:Size="0" />
+                    <d4p1:PositionX>1120</d4p1:PositionX>
+                    <d4p1:PositionY>448</d4p1:PositionY>
+                    <d4p1:FieldOrProperty z:Id="1015">
+                      <DeclaringType z:Id="1016">
+                        <Name z:Id="1017">VRage.Game.Components.MyEntityComponentBase</Name>
+                        <GenericArguments z:Id="1018" z:Size="0" />
+                        <IsDelegate>false</IsDelegate>
+                        <IsEnum>false</IsEnum>
+                        <IsInterface>false</IsInterface>
+                      </DeclaringType>
+                      <GetterVisibility>Public</GetterVisibility>
+                      <Modifiers>ReadOnly</Modifiers>
+                      <Name z:Id="1019">Entity</Name>
+                      <SetterVisibility>Private</SetterVisibility>
+                      <Type z:Ref="891" i:nil="true" />
+                      <Visibility>Private</Visibility>
+                    </d4p1:FieldOrProperty>
+                  </d4p1:Node>
+                  <d4p1:PinType z:Id="1020">
+                    <d4p1:Value z:Ref="1016" i:nil="true" />
+                  </d4p1:PinType>
+                  <d4p1:ExplicitDefaultValue i:nil="true" />
+                  <d4p1:IncomingPin z:Ref="876" i:nil="true" />
+                  <d4p1:UnconnectedValue i:nil="true" />
+                  <d4p1:UsesExplicitDefaultValue>false</d4p1:UsesExplicitDefaultValue>
+                </d4p1:NodeInputDataPin>
+              </d4p1:OutgoingPins>
+            </d4p1:NodeOutputDataPin>
+            <d4p1:NodeOutputDataPin z:Ref="904" i:nil="true" />
+          </d4p1:OutputDataPins>
+          <d4p1:OutputExecPins z:Id="1021" z:Size="1">
+            <d4p1:NodeOutputExecPin z:Ref="912" i:nil="true" />
+          </d4p1:OutputExecPins>
+          <d4p1:OutputTypePins z:Id="1022" z:Size="0" />
+          <d4p1:PositionX>812</d4p1:PositionX>
+          <d4p1:PositionY>308</d4p1:PositionY>
+        </d4p1:Node>
+        <d4p1:Node z:Ref="953" i:nil="true" />
+        <d4p1:Node z:Ref="841" i:nil="true" />
+        <d4p1:Node z:Ref="859" i:nil="true" />
+        <d4p1:Node z:Ref="882" i:nil="true" />
+        <d4p1:Node z:Ref="896" i:nil="true" />
+        <d4p1:Node z:Ref="924" i:nil="true" />
+        <d4p1:Node z:Ref="938" i:nil="true" />
+        <d4p1:Node z:Ref="963" i:nil="true" />
+      </Nodes>
+      <EntryNode xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Ref="833" i:nil="true" />
+      <Visibility>Public</Visibility>
+      <Modifiers xmlns:d4p1="http://schemas.datacontract.org/2004/07/NetPrints.Graph" z:Id="1023">
+        <d4p1:Value>Static</d4p1:Value>
+      </Modifiers>
+      <Name z:Id="1024">IsSubpartVisible</Name>
     </MethodGraph>
   </Methods>
   <Modifiers>Static</Modifiers>
-  <Name z:Id="823">Subparts</Name>
-  <Namespace z:Id="824">ModdingFramework</Namespace>
-  <Variables z:Id="825" z:Size="0" />
+  <Name z:Id="1025">Subparts</Name>
+  <Namespace z:Id="1026">ModdingFramework</Namespace>
+  <Variables z:Id="1027" z:Size="0" />
   <Visibility>Public</Visibility>
 </ClassGraph>
