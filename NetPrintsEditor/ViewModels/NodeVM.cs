@@ -52,6 +52,11 @@ namespace NetPrintsEditor.ViewModels
         private static readonly SolidColorBrush TernaryBrush =
             new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0x3A, 0x3A));
 
+        private const string MakeArrayNode_UseInitializerList = "Use initializer list";
+        private const string MakeArrayNode_usePredefinedSize = "Use predefined size";
+        private const string SelectNode_useConditions = "Use conditions";
+        private const string SelectNode_useFlow = "Use flow";
+
         /// <summary>
         /// Brush for the header of the node.
         /// </summary>
@@ -454,13 +459,20 @@ namespace NetPrintsEditor.ViewModels
                 {
                     return callMethodNode.MethodSpecifier;
                 }
-                else if (Node is ConstructorNode constructorNode)
+                
+                if (Node is ConstructorNode constructorNode)
                 {
                     return constructorNode.ConstructorSpecifier;
                 }
-                else if (Node is MakeArrayNode makeArrayNode)
+                
+                if (Node is MakeArrayNode makeArrayNode)
                 {
-                    return makeArrayNode.UsePredefinedSize ? "Use initializer list" : "Use predefined size";
+                    return makeArrayNode.UsePredefinedSize ? MakeArrayNode_UseInitializerList : MakeArrayNode_usePredefinedSize;
+                }
+
+                if(Node is SelectValueNode selectValueNode)
+                {
+                    return selectValueNode.UseFlowInputs ? SelectNode_useFlow : SelectNode_useConditions;
                 }
 
                 return null;
@@ -485,8 +497,16 @@ namespace NetPrintsEditor.ViewModels
             }
             else if (overload is string overloadString && Node is MakeArrayNode makeArrayNode)
             {
-                makeArrayNode.UsePredefinedSize = string.Equals(overloadString, "Use predefined size", StringComparison.OrdinalIgnoreCase);
+                makeArrayNode.UsePredefinedSize = string.Equals(overloadString, MakeArrayNode_usePredefinedSize, StringComparison.OrdinalIgnoreCase);
                 UpdateOverloads();
+            }
+            else if (overload is string typeString && Node is SelectValueNode selectValueNode)
+            {
+                selectValueNode.UseFlowInputs = string.Equals(typeString, SelectNode_useFlow, StringComparison.OrdinalIgnoreCase);
+                UpdateOverloads();
+
+                RaisePropertyChanged(nameof(IsPure));
+                RaisePropertyChanged(nameof(CanSetPure));
             }
             else
             {
@@ -626,7 +646,7 @@ namespace NetPrintsEditor.ViewModels
             }
             else if(node is SelectValueNode selectValue)
             {
-                selectValue.AddConditional();
+                selectValue.AddBranch();
             }
         }
 
@@ -657,7 +677,7 @@ namespace NetPrintsEditor.ViewModels
             }
             else if (node is SelectValueNode selectValue)
             {
-                selectValue.RemoveConditional();
+                selectValue.RemoveBranch();
             }
         }
 
@@ -718,11 +738,22 @@ namespace NetPrintsEditor.ViewModels
             {
                 if (makeArrayNode.UsePredefinedSize)
                 {
-                    Overloads.Replace("Use initializer list");
+                    Overloads.Replace(MakeArrayNode_UseInitializerList);
                 }
                 else
                 {
-                    Overloads.Replace("Use predefined size");
+                    Overloads.Replace(MakeArrayNode_usePredefinedSize);
+                }
+            }
+            else if(node is SelectValueNode selectValueNode)
+            {
+                if(selectValueNode.UseFlowInputs)
+                {
+                    this.Overloads.Replace(SelectNode_useConditions);
+                }
+                else
+                {
+                    this.Overloads.Replace(SelectNode_useFlow);
                 }
             }
             else

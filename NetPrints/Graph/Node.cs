@@ -316,5 +316,39 @@ namespace NetPrints.Graph
             // Call OnInputTypeChanged to update the types of all nodes correctly.
             OnInputTypeChanged(this, null);
         }
+
+        protected void RemovePin(NodePin pin)
+        {
+            GraphUtil.DisconnectPin(pin);
+
+            if (pin is NodeInputDataPin idp)
+            {
+                this.InputDataPins.Remove(idp);
+            }
+            else if (pin is NodeOutputDataPin odp)
+            {
+                this.OutputDataPins.Replace(odp);
+            }
+            else if (pin is NodeInputExecPin ixp)
+            {
+                this.InputExecPins.Remove(ixp);
+            }
+            else if (pin is NodeOutputExecPin oxp)
+            {
+                this.OutputExecPins.Remove(oxp);
+            }
+            else if (pin is NodeInputTypePin itp)
+            {
+                this.InputTypePins.Remove(itp);
+            }
+            else if (pin is NodeOutputTypePin otp)
+            {
+                this.OutputTypePins.Remove(otp);
+            }
+            else
+            {
+                throw new NotImplementedException("Unknown pin type");
+            }
+        }
     }
 }

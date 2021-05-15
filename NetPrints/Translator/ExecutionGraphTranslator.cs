@@ -28,7 +28,7 @@ namespace NetPrints.Translator
 
         private Random random;
 
-        private delegate void NodeTypeHandler(ExecutionGraphTranslator translator, Node node);
+        private delegate void NodeTypeHandler(ExecutionGraphTranslator translator, Node node, NodeInputExecPin inputExecPin);
 
         private static readonly Dictionary<Type, NodeTypeHandler> nodeTypeHandlers = new()
         {
@@ -52,7 +52,7 @@ namespace NetPrints.Translator
             SimpleNode<LiteralNode>((x, y) => x.TranslateLiteralNode(y)),
             SimpleNode<DefaultNode>((x, y) => x.TranslateDefaultNode(y)),
             SimpleNode<MakeArrayNode>((x, y) => x.TranslateMakeArrayNode(y)),
-            NodeWithInputs<SelectValueNode>((x, y) => x.TranslateSelectValueNode(y)),
+            NodeWithInputs<SelectValueNode>((x, y, z) => x.TranslateSelectValueNode(y, z)),
             SimpleNode<MakeDelegateNode>((x, y) => x.TranslateMakeDelegateNode(y)),
             NodeWithInputs<ExplicitCastNode>((x, y) => x.TranslateExplicitCastNode(y)),
             
@@ -312,7 +312,7 @@ namespace NetPrints.Translator
             builder.AppendLine();
 
             // Translate every exec node
-            TranslateNode(graph.EntryNode);
+            TranslateNode(graph.EntryNode, null);
 
             builder.AppendLine("}"); // Method end
 
@@ -375,7 +375,7 @@ namespace NetPrints.Translator
                 emittedNodes.Add(targetNode, jumpTable);
 
                 builder.AppendLine($"State{emittedNodes[targetNode][0]}:");
-                TranslateNode(targetNode);
+                TranslateNode(targetNode, targetPin);
                 builder.AppendLine();
 
                 emittedNodes.Remove(targetNode);
@@ -395,7 +395,7 @@ namespace NetPrints.Translator
             return code;
         }
 
-        public void TranslateNode(Node node)
+        public void TranslateNode(Node node, NodeInputExecPin inputExecPin)
         {
             if (!(node is RerouteNode))
             {
@@ -404,7 +404,7 @@ namespace NetPrints.Translator
 
             if (nodeTypeHandlers.TryGetValue(node.GetType(), out var handlers))
             {
-                handlers(this, node);
+                handlers(this, node, inputExecPin);
             }
             else
             {
@@ -420,9 +420,9 @@ namespace NetPrints.Translator
         public void TranslateDependentPureNodes(Node node)
         {
             var sortedPureNodes = TranslatorUtil.GetSortedPureNodes(node);
-            foreach(Node depNode in sortedPureNodes)
+            foreach(var depNode in sortedPureNodes)
             {
-                TranslateNode(depNode);
+                TranslateNode(depNode, null);
             }
         }
 
@@ -1124,29 +1124,43 @@ namespace NetPrints.Translator
             }
         }
 
-        public void TranslateSelectValueNode(SelectValueNode node)
+        public void TranslateSelectValueNode(SelectValueNode node, NodeInputExecPin inputExecPin)
         {
             var value = GetOrCreatePinName(node.OutputValuePin);
 
-            foreach(var (branch, condition) in node.Conditionals)
+            if(node.UseFlowInputs)
             {
-                builder.AppendLine($" if({GetPinIncomingValue(condition)})");
+                foreach(var (branch, exec) in node.InputFlows)
+                {
+                    if(ReferenceEquals(inputExecPin, exec))
+                    {
+                        builder.AppendLine($"{value} = {GetPinIncomingValue(branch)};");
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach(var (branch, condition) in node.Conditionals)
+                {
+                    builder.AppendLine($" if({GetPinIncomingValue(condition)})");
+                    builder.AppendLine("{");
+                    builder.AppendLine($"{value} = {GetPinIncomingValue(branch)};");
+                    builder.AppendLine("}");
+                    builder.Append("else");
+                }
+
+                builder.AppendLine();
                 builder.AppendLine("{");
-                builder.AppendLine($"{value} = {GetPinIncomingValue(branch)};");
+                builder.AppendLine($"{value} = {GetPinIncomingValueOrDefault(node.DefaultValuePin)};");
+
+                if(node.IsPure == false)
+                {
+                    FollowExecutionChain(node.DefaultMatchExecPin);
+                }
+
                 builder.AppendLine("}");
-                builder.Append("else");
             }
-
-            builder.AppendLine();
-            builder.AppendLine("{");
-            builder.AppendLine($"{value} = {GetPinIncomingValueOrDefault(node.DefaultValuePin)};");
-
-            if(node.IsPure == false)
-            {
-                FollowExecutionChain(node.DefaultMatchExecPin);
-            }
-
-            builder.AppendLine("}");
 
             if(node.IsPure == false)
             {
@@ -1169,7 +1183,7 @@ namespace NetPrints.Translator
 
         private static KeyValuePair<Type, NodeTypeHandler> RawNode<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
         {
-            return new (typeof(TNode), (translator, node) => nodeHandler(translator, (TNode) node));
+            return new (typeof(TNode), (translator, node, _) => nodeHandler(translator, (TNode) node));
         }
         
         private static KeyValuePair<Type, NodeTypeHandler> SimpleNode<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
@@ -1188,17 +1202,22 @@ namespace NetPrints.Translator
                 }
             });
         }
-        
+
         private static KeyValuePair<Type, NodeTypeHandler> NodeWithInputs<TNode>(Action<ExecutionGraphTranslator, TNode> nodeHandler) where TNode : Node
         {
-            return new(typeof(TNode), (translator, node) =>
+            return NodeWithInputs<TNode>((t, n, _) => nodeHandler(t, n));
+        }
+        
+        private static KeyValuePair<Type, NodeTypeHandler> NodeWithInputs<TNode>(Action<ExecutionGraphTranslator, TNode, NodeInputExecPin> nodeHandler) where TNode : Node
+        {
+            return new(typeof(TNode), (translator, node, inputPin) =>
             {
                 if(node.IsPure == false)
                 {
                     translator.TranslateDependentPureNodes(node);
                 }
                 
-                nodeHandler(translator, (TNode) node);
+                nodeHandler(translator, (TNode) node, inputPin);
             });
         }
 
