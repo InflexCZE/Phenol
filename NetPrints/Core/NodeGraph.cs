@@ -34,14 +34,12 @@ namespace NetPrints.Core
             set;
         }
 
+        public Project OwningProject { get; private set; }
+
         /// <summary>
         /// Project the graph is part of.
         /// </summary>
-        public Project Project
-        {
-            get;
-            set;
-        }
+        public Project Project { get; set; }
 
         /// <summary>
         /// Return node of this class that receives the metadata for it.
@@ -66,6 +64,12 @@ namespace NetPrints.Core
                     }
                 }
             }
+        }
+
+        public void SetOwningProject(Project project)
+        {
+            this.OwningProject = project;
+            this.Project = project;
         }
     }
 }

@@ -26,12 +26,37 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource MetroFlatButton}">
+                    <Setter Property="FontSize" Value="12" />
+                </Style>
+            </Grid.Resources>
 
-            <Button Grid.Column="0" Style="{StaticResource MetroFlatButton}" Margin="0,0,2,0" Content="Assembly" Click="OnAddAssemblyReferenceClicked" FontSize="12"
-                    ToolTip="Add an assembly reference"/>
-            <Button Grid.Column="1" Style="{StaticResource MetroFlatButton}" Margin="2,0,0,0" Content="Source code" Click="OnAddSourceDirectoryReferenceClicked" FontSize="12"
-                    ToolTip="Add a source code directory reference which searches for .cs files" />
+            <Button
+                Grid.Column="0" 
+                Margin="0,0,2,0"
+                Content="Assembly"
+                Click="OnAddAssemblyReferenceClicked"
+                ToolTip="Add an assembly reference"
+                />
+            
+            <Button
+                Grid.Column="1" 
+                Margin="2,0,2,0"
+                Content="Source code"
+                Click="OnAddSourceDirectoryReferenceClicked"
+                ToolTip="Add a source code directory reference which searches for .cs files" 
+                />
+
+            <Button
+                Grid.Column="2" 
+                Margin="2,0,0,0"
+                Content="Package"
+                Click="OnAddPackageClicked"
+                ToolTip="Add package reference" 
+            />
         </Grid>
             
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 namespace NetPrints.Core
 {
     [DataContract]
+    [KnownType(typeof(PackageReference))]
     [KnownType(typeof(AssemblyReference))]
     [KnownType(typeof(FrameworkAssemblyReference))]
     [KnownType(typeof(SourceDirectoryReference))]

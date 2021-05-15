@@ -70,12 +70,51 @@ namespace NetPrintsEditor
                 }
             }
         }
+        
+        private void OnAddPackageClicked(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Filter = "Package (*.netpp)|*.netpp"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var packageFile = openFileDialog.FileName;
+                    var project = this.ViewModel.Project;
+                    var references = project.References;
+
+                    if(references.OfType<PackageReference>().All(x => x.PackagePath != packageFile))
+                    {
+                        var package = Project.LoadFromPath(packageFile);
+                        project.LoadPackage(package);
+                        
+                        references.Add(new PackageReference(packageFile)
+                        {
+                            LoadedPackage = package
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to add package at {openFileDialog.FileName}:\n\n{ex}");
+                }
+            }
+        }
 
         private void OnRemoveReferenceClicked(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is CompilationReferenceVM reference)
+            if (sender is Button button && button.DataContext is CompilationReferenceVM referenceVM)
             {
-                ViewModel.Project.References.Remove(reference.Reference);
+                var reference = referenceVM.Reference;
+                this.ViewModel.Project.References.Remove(reference);
+
+                if(reference is PackageReference)
+                {
+                    MessageBox.Show("Save and reload the project to finish the package removal");
+                }
             }
         }
     }

@@ -175,20 +175,26 @@ namespace NetPrints.Core
         /// </summary>
         public void Save()
         {
+            var classesToSave = this.Classes.Where(x => ReferenceEquals(x.OwningProject, this)).ToArray();
+
             // Save all classes
-            foreach (ClassGraph cls in Classes)
+            foreach (var cls in classesToSave)
             {
                 SaveClassInProjectDirectory(cls);
             }
 
-            // Set class paths from class storage paths
-            ClassPaths = new ObservableRangeCollection<string>(Classes.Select(c => GetClassStoragePath(c)));
-
-            SaveVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            // Set class paths from class storage paths so we know what to load next time
+            this.ClassPaths = new ObservableRangeCollection<string>(classesToSave.Select(GetClassStoragePath));
+            this.SaveVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
             using var fileStream = File.Open(Path, FileMode.Create);
             using var writer = XmlWriter.Create(fileStream, new XmlWriterSettings { Indent = true});
             ProjectSerializer.WriteObject(writer, this);
+
+            foreach(var package in this.References.OfType<PackageReference>())
+            {
+                package.LoadedPackage?.Save();
+            }
         }
 
         /// <summary>
@@ -222,8 +228,13 @@ namespace NetPrints.Core
         /// </summary>
         /// <param name="path">Path to the project file.</param>
         /// <returns>Loaded project or null if unsuccessful</returns>
-        public static Project LoadFromPath(string path)
+        public static Project LoadFromPath(string path, int depth = 0)
         {
+            if(depth > 25)
+            {
+                throw new Exception("Probably recursive project references");
+            }
+
             using FileStream fileStream = File.OpenRead(path);
 
             if (ProjectSerializer.ReadObject(fileStream) is Project project)
@@ -235,22 +246,43 @@ namespace NetPrints.Core
                     reference.Project = project;
                 }
 
-                // Load classes
-                ConcurrentBag<ClassGraph> classes = new ConcurrentBag<ClassGraph>();
-
+                ConcurrentBag<ClassGraph> classes = new();
                 Parallel.ForEach(project.ClassPaths, classPath =>
                 {
                     ClassGraph cls = SerializationHelper.LoadClass(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(project.Path), classPath));
-                    cls.Project = project;
+                    cls.SetOwningProject(project);
                     classes.Add(cls);
                 });
-
                 project.Classes.ReplaceRange(classes.OrderBy(c => c.Name));
+
+                ConcurrentBag<Project> packages = new();
+                Parallel.ForEach(project.References.OfType<PackageReference>(), reference =>
+                {
+                    var package = LoadFromPath(reference.PackagePath, depth + 1);
+                    reference.LoadedPackage = package;
+                    packages.Add(package);
+                });
+
+                foreach(var package in packages)
+                {
+                    project.LoadPackage(package);
+                }
 
                 return project;
             }
 
             return null;
+        }
+
+        public void LoadPackage(Project package)
+        {
+            foreach(var @class in package.Classes)
+            {
+                @class.Project = this;
+            }
+            this.Classes.AddRange(package.Classes);
+
+            //TODO: Pickup also references
         }
 
         public bool CanCompileAndRun
@@ -645,8 +677,9 @@ namespace NetPrints.Core
             {
                 Name = name,
                 Namespace = DefaultNamespace,
-                Project = this,
             };
+
+            cls.SetOwningProject(this);
 
             // TODO: SaveClassInProjectDirectory(clsVM);
             Classes.Add(cls);
@@ -688,7 +721,7 @@ namespace NetPrints.Core
             {
                 // Load the class and save it relative to the project
                 cls = SerializationHelper.LoadClass(path);
-                cls.Project = this;
+                cls.SetOwningProject(this);
                 SaveClassInProjectDirectory(cls);
                 Classes.Add(cls);
             }
