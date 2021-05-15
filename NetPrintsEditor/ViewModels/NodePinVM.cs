@@ -141,7 +141,15 @@ namespace NetPrintsEditor.ViewModels
                     if (pin != null)
                     {
                         pin.Node.OnPositionChanged -= OnNodePositionChanged;
-                        pin.Node.InputTypeChanged -= OnInputTypeChanged;
+
+                        if(pin is NodeDataPin dataPin)
+                        {
+                            dataPin.PinType.OnValueChanged -= OnInputTypeChanged;
+                        }
+                        else
+                        {
+                            pin.Node.InputTypeChanged -= OnInputTypeChanged;
+                        }
                     }
 
                     pin = value;
@@ -149,7 +157,15 @@ namespace NetPrintsEditor.ViewModels
                     if (pin != null)
                     {
                         pin.Node.OnPositionChanged += OnNodePositionChanged;
-                        pin.Node.InputTypeChanged += OnInputTypeChanged;
+
+                        if (pin is NodeDataPin dataPin)
+                        {
+                            dataPin.PinType.OnValueChanged += OnInputTypeChanged;
+                        }
+                        else
+                        {
+                            pin.Node.InputTypeChanged += OnInputTypeChanged;
+                        }
                     }
 
                     RaisePropertyChanged();
