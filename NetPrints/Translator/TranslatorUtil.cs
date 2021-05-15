@@ -347,7 +347,14 @@ namespace NetPrints.Translator
                             return $"typeof({type.InputTypePin.InferredType?.Value?.FullCodeNameUnbound ?? "System.Object"})";
 
                         case MakeArrayNode array:
-                            return $"new {array.ElementType.FullCodeName}[{HackyTranslate(array.SizePin)}]";
+                            if(array.UsePredefinedSize)
+                            {
+                                return $"new {array.ElementType.FullCodeName}[{HackyTranslate(array.SizePin)}]";
+                            }
+                            else
+                            {
+                                return $"new {array.ElementType.FullCodeName}[]{{{string.Join(", ", array.InputDataPins.Select(HackyTranslate))}}}";
+                            }
                     }
                 }
 
